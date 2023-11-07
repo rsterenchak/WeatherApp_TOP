@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import printMe from './logic.js';
+import { forecastLogic } from './logic.js';
 import './style.css';
 import rightArrow from './arrowRight.svg';
 import leftArrow from './arrowLeft.svg';
@@ -7,10 +7,10 @@ import rainCloud from './rain-cloud.svg';
 import thermometer from './thermometer.svg';
 import wind from './wind.svg';
 import drop from './water-drop.svg';
+import snowing from './snowing.svg';
 import Icon from './icon.png';
 
-// import Data from './data.xml';
-// import Notes from './data.csv';
+
 
 function component() {
   
@@ -36,7 +36,8 @@ function component() {
   let formInput = document.createElement('div'); // form input
   let inputInner = document.createElement('input');
   
-  let formButton = document.createElement('button'); // form button
+  let formButton = document.createElement('div'); // form button
+  let buttonText = document.createElement('div'); //  button submit text
   let formSpace3 = document.createElement('div'); // form space 3
   let formSpace4 = document.createElement('div'); // form space 4
 
@@ -76,12 +77,14 @@ function component() {
 
 
   let weatherUpper = document.createElement('div');
+  let weatherIcon = document.createElement('img');
+  let weatherTemps = document.createElement('div');
+  let weatherLocation = document.createElement('div');
 
-
+  let tempUpper = document.createElement('div');
+  let tempLower = document.createElement('div');
 
   let weatherLower = document.createElement('div');
-
-  let weatherGraphic = document.createElement('div'); // weatherUpper graphic
 
   let typeUpper = document.createElement('div');
   let weatherType = document.createElement('div'); // weather description
@@ -144,6 +147,7 @@ function component() {
   formInput.id = "formInput";
   inputInner.id = "inputInner"
   formButton.id = "formButton";
+  buttonText.id = 'buttonText';
   formSpace3.id = "formSpace3";
   formSpace4.id = "formSpace4";
 
@@ -173,7 +177,14 @@ function component() {
   spacer1.id = "spacer1";
   spacer2.id = "spacer2";
 
-  weatherUpper.id = "weatherUpper"
+  weatherUpper.id = "weatherUpper";
+  weatherIcon.id = "weatherIcon";
+  weatherTemps.id = "weatherTemps";
+  weatherLocation.id = "weatherLocation";
+
+  tempUpper.id = "tempUpper";
+  tempLower.id = "tempLower";
+
   weatherLower.id = "weatherLower";
 
   typeUpper.id = "typeUpper";
@@ -217,14 +228,22 @@ function component() {
 
 
   // stylings
+
   dateMain.textContent = "Friday, 3rd Nov '23";
 
-  inputInner.placeholder = "Search Location"
+  inputInner.placeholder = "Search Location";
 
   arrowRight.src = rightArrow;
   arrowLeft.src = leftArrow;
 
-  weatherType.textContent = "Cloudy";
+  weatherIcon.src = snowing;
+
+  // weatherLocation.textContent = "Snowing"
+  // weatherType.textContent = "Honolulu, HI";
+
+
+  // tempUpper.textContent = "21°C"
+  // tempLower.textContent = "10 °C"
 
   block1Top.textContent = "Feels Like";
   block1Bottom.textContent = "21°";
@@ -243,6 +262,8 @@ function component() {
   block4Bottom.textContent = "20.4 km/h";
   block4Left.src = wind;
 
+
+  buttonText.textContent = "Submit"
 
   // child appends - within body
   outerContainer.appendChild(header);
@@ -271,6 +292,8 @@ function component() {
   spaceForm.appendChild(formSpace3);
   spaceForm.appendChild(formButton);
   spaceForm.appendChild(formSpace4);
+
+  formButton.appendChild(buttonText);
 
   // child appends - withing formInput element
   formInput.appendChild(inputInner);
@@ -305,6 +328,13 @@ function component() {
 
   weatherSection.appendChild(weatherUpper);
   weatherSection.appendChild(weatherLower); // contains small weather description block
+
+  weatherUpper.appendChild(weatherIcon);
+  weatherUpper.appendChild(weatherTemps);
+  weatherUpper.appendChild(weatherLocation);
+
+  weatherTemps.appendChild(tempUpper);
+  weatherTemps.appendChild(tempLower);
 
   weatherLower.appendChild(typeUpper);
   weatherLower.appendChild(weatherType); // Weather type description
@@ -345,7 +375,52 @@ function component() {
   block4Right.appendChild(block4Bottom);
 
 
+
+
+
+
+  // Event Listeners
+
+  arrowLeft.addEventListener("mouseenter", function() {
+    this.style.boxShadow = "0 6px 8px rgba(0, 0, 0, 0.2)"; 
+    this.style.border = "1px solid black";
+  });
+  
+  arrowLeft.addEventListener("mouseleave", function() {
+    this.style.boxShadow = "none";
+    this.style.border = "none";
+  });  
+
+  arrowRight.addEventListener("mouseenter", function() {
+    this.style.boxShadow = "0 6px 8px rgba(0, 0, 0, 0.2)";
+    this.style.border = "1px solid black"; 
+  });
+  
+  arrowRight.addEventListener("mouseleave", function() {
+    this.style.boxShadow = "none";
+    this.style.border = "none";
+  });   
+
+
+
+  formButton.addEventListener("mouseenter", function() {
+    this.style.boxShadow = "0 6px 8px rgba(0, 0, 0, 0.2)";
+    this.style.background = "#919191"; 
+  });
+  
+  formButton.addEventListener("mouseleave", function() {
+    this.style.boxShadow = "none";
+    this.style.background = "#ccc";  
+  });   
+
+
+
   return outerContainer;
 }
-  
+
+
 document.body.appendChild(component());
+
+
+
+

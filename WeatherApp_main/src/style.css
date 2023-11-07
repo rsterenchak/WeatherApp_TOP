@@ -14,7 +14,7 @@ body {
 #outerContainer {
   display: grid;
   height: 110vh;
-  grid-template-rows: 10vh 70px 650px 35px 30px 70px 20vh;
+  grid-template-rows: 10vh 70px 1fr 20px 35px 90px 20vh;
   grid-template-areas: 
   "header"
   "space1"
@@ -29,12 +29,12 @@ body {
 
 #header {
   grid-area: header;
-  background-color: #ccc;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  
 }
 
 #space1 {
   grid-area: space1;
-
 }
 
 #main {
@@ -44,7 +44,6 @@ body {
   grid-template-areas: 
   "sideSpace1 weatherOuter sideSpace2"
   ;
-
 }
 
 #sideSpace1 {
@@ -59,7 +58,6 @@ body {
   grid-template-areas: 
   "inner1 innerMain inner2"
   ;
-  border: 1px solid #ccc;
   border-radius: 10px;
 }
 
@@ -82,6 +80,7 @@ body {
 
 #arrowLeft {
   grid-area: arrowLeft;
+  cursor: pointer;
   width: 65px;
 }
 
@@ -92,7 +91,7 @@ body {
 
 #innerMain {
   display: grid;
-  grid-template-rows: 1fr 4fr 1fr;
+  grid-template-rows: 1fr 4fr 0.5fr;
   grid-template-areas: 
   "mainTop"
   "mainMiddle"
@@ -140,8 +139,13 @@ body {
 #dateMain {
   grid-area: dateMain;
   text-align: center;
-  font-size: 24px;
-  border: 1px solid black;
+  background-color: white;
+  border: 0.5px solid black;
+  border-left: none;
+  
+  border-right: none;
+  
+  font-size: 26px;
 }
 
 #dateSpace2 {
@@ -167,12 +171,13 @@ body {
   ". weatherSection . weatherData ."
   "spacer2 spacer2 spacer2 spacer2 spacer2"
   ;
-  border: 1px solid black;
+  border: 0.5px solid black;
+  box-shadow: 0px 2px 11px rgba(0, 0, 0, 0.3);
 }
 
 #spacer1 {
   grid-area: spacer1;
-
+  
 }
 
 #spacer2 {
@@ -192,9 +197,53 @@ body {
 }
 
 #weatherUpper {
+  display: grid;
+  background-color: white;
   grid-area: weatherUpper;
-  border: 1px solid green;
+  grid-template-rows: 0.5fr 2fr 0.5fr 1fr;
+  grid-template-columns: 1fr 4fr 1fr 2fr 1fr;
+  grid-template-areas: 
+  ". . . . . "
+  ". weatherIcon . weatherTemps . "
+  ". . . . . "
+  ". weatherLocation weatherLocation weatherLocation . "
+  ;
 }
+
+#weatherIcon {
+  grid-area: weatherIcon;
+  justify-self: end;
+  width: 140px;
+}
+
+#weatherTemps {
+  display: grid;
+  grid-area: weatherTemps;
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas:
+  "tempUpper"
+  "tempLower"
+  ;
+}
+
+#weatherLocation {
+  grid-area: weatherLocation;
+  text-align: center;
+  font-size: 24px;
+}
+
+#tempUpper {
+  grid-area: tempUpper;
+  align-self: end;
+  font-size: 36px;
+  
+}
+
+#tempLower {
+  grid-area: tempLower;
+  
+}
+
 
 #weatherLower {
   display: grid;
@@ -214,9 +263,13 @@ body {
 
 #weatherType {
   grid-area: weatherType;
+  background-color: white;
   text-align: center;
-  border: 1px solid black;
   font-size: 24px;
+  border: 1px solid black;
+  border-left: none;
+  border-right: none;
+  border-top: none;
 }
 
 #typeLower {
@@ -227,6 +280,7 @@ body {
 
 #weatherData {
   display: grid;
+  background-color: white;
   grid-area: weatherData;
   grid-template-rows: 0.5fr 3fr 0.5fr 3fr 0.5fr 3fr 0.5fr 3fr 0.5fr;
   grid-template-columns: 1fr;
@@ -241,7 +295,6 @@ body {
   "block4"
   "spaced5"
   ;
-  border: 1px solid black;
 }
 
 #spaced1 {
@@ -282,12 +335,12 @@ body {
 
 #block1Bottom {
   grid-area: block1Bottom;
-  font-size: 24px;
+  font-size: 20px;
 }
 
 #spaced2 {
   grid-area: spaced2;
-
+  
 }
 
 #block2 {
@@ -412,7 +465,7 @@ body {
 
 #block4Bottom {
   grid-area: block4Bottom;
-  font-size: 12px;
+  font-size: 15px;
 }
 
 #spaced5 {
@@ -445,6 +498,7 @@ body {
 
 #arrowRight {
   grid-area: arrowRight;
+  cursor: pointer;
   width: 65px;
 }
 
@@ -467,11 +521,10 @@ body {
 #spaceForm {
   display: grid;
   grid-area: spaceForm;
-  grid-template-columns: 1fr 1fr 350px 15px 100px 2fr;
+  grid-template-columns: 1fr 1fr 450px 15px 100px 2fr;
   grid-template-areas: 
   "formSpace1 formSpace2 formInput formSpace3 formButton formSpace4"
   ;
-
 }
 
 #formSpace1 {
@@ -505,10 +558,27 @@ body {
 }
 
 #formButton {
+  display: grid;
   grid-area: formButton;
+  grid-template-rows: 5px 1fr 5px;
+  grid-template-areas: 
+  '.'
+  'buttonText'
+  '.'
+  ;
+  text-align: center;
+  text-justify: center;
+  background-color: #ccc;
+  cursor: pointer;
   border-radius: 6px;
-  border: 1px solid #ccc;
+  font-size: 16px;
+  border: 1px solid black;
 }
+
+#buttonText {
+  grid-area: buttonText;
+}
+
 #formSpace3 {
   grid-area: formSpace3;
 
@@ -521,7 +591,6 @@ body {
 
 #space3 {
   grid-area: space3;
-
 }
 
 #footer {
