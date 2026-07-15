@@ -2,3 +2,4 @@
 # tree (including gh-pages' cache dir, which contains a nested .git) was
 # misread as an undeclared submodule and broke `actions/checkout`.
 node_modules/
+WeatherApp_main/dist/
