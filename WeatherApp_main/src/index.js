@@ -1,7 +1,8 @@
 import './style.css';
-import './logic.js'; // side-effect import: evaluates the IIFE that fires the initial fetch
+import './logic.js'; // defines forecastLogic (no fetch fires at import — see initFavourites)
 import { wireEvents } from './indexChanges.js';
 import { buildRibbon } from './ribbon.js';
+import { initFavourites } from './favourites.js';
 
 // The whole UI is built here with document.createElement (there is no HTML source
 // file — html-webpack-plugin generates an empty document). The forecast is one
@@ -42,6 +43,12 @@ function component() {
   locationName.id = 'locationName';
   locationName.textContent = '—';
 
+  // Saved-location indicator: one dot per saved location, the current one filled.
+  // Populated by favourites.js; hidden until two or more locations are saved.
+  const dotRow = document.createElement('div');
+  dotRow.id = 'dotRow';
+  dotRow.className = 'hidden';
+
   const currentTemp = document.createElement('div');
   currentTemp.id = 'currentTemp';
   currentTemp.textContent = '—';
@@ -58,6 +65,7 @@ function component() {
   statRow.appendChild(stat('windVal', 'WIND'));
 
   readout.appendChild(locationName);
+  readout.appendChild(dotRow);
   readout.appendChild(currentTemp);
   readout.appendChild(currentCondition);
   readout.appendChild(statRow);
@@ -92,7 +100,10 @@ document.body.appendChild(component());
 
 // Build the SVG scaffold now that #ribbonWrap exists, then register listeners
 // exactly once. Both run off the render path, so nothing multiplies across
-// fetches. The initial forecast (fired by logic.js's IIFE on import) resolves
+// fetches. initFavourites() loads the saved locations, wires the swipe/dot
+// gestures once, draws the dots, and fires the single initial fetch (the first
+// saved location, or the default when none are saved), which resolves
 // afterwards and renders into this scaffold.
 buildRibbon(document.getElementById('ribbonWrap'));
 wireEvents();
+initFavourites();

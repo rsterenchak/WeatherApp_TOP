@@ -10,25 +10,29 @@ let lastForecast = null;
 
 export const forecastLogic = (function () {
 
-  initialAPICall(); // Calls default 'Redmond' (98052) weather
+  // No fetch fires at module-eval time. The single initial fetch (default
+  // location, or the first saved location) is driven from the bootstrap in
+  // index.js via initFavourites() -> futureAPICalls, so it happens exactly once
+  // in the index bundle rather than once per bundle that imports this module.
 
-  function initialAPICall() {
-    fulfillPromise(pullForecast('98052'));
-  }
-
+  // Fires one fetch for a location and renders on success. Returns a promise
+  // resolving to the built forecast on success, or null on a failed lookup, so
+  // the search submit handler can append the location to the saved list only
+  // when the lookup actually succeeded.
   function futureAPICalls(value) {
-    fulfillPromise(pullForecast(value));
+    return fulfillPromise(pullForecast(value));
   }
 
   function fulfillPromise(forecastJSON) {
-    forecastJSON.then((result) => {
+    return forecastJSON.then((result) => {
       // pullForecast resolves to null on a failed lookup — leave the current
       // ribbon untouched (invalidInput() has already reddened the input).
-      if (!result) { return; }
+      if (!result) { return null; }
 
       const forecast = buildForecast(result);
       lastForecast = forecast;
       renderForecast(forecast);
+      return forecast;
     });
   }
 
