@@ -11,319 +11,300 @@ import sunny from './sunny.svg';
 import foggy from './foggy.svg';
 
 
-export function changeWeatherInfo(dayArray){
+// dayCounter is hoisted to module scope so the render path, the arrow
+// listeners, and any future navigation all read one source of truth. Each call
+// to the old changeWeatherInfo() created a private `let dayCounter = 1`, so
+// every stacked listener generation incremented its own counter and the ‹ ›
+// pair stopped tracking the day on screen.
+let dayCounter = 1;
 
-  let dayCounter = 1; // keeps track of which day we should be on
+// The most recently rendered day set. renderDay() records it so the arrow
+// listeners can re-render a different day without needing a fresh fetch.
+let latestDays = null;
 
-  // left and right arrow references
-  let leftArrowIcon = document.getElementById('arrowLeft');
-  let rightArrowIcon = document.getElementById('arrowRight');
+// Guard so wireEvents() only ever registers one set of listeners.
+let eventsWired = false;
 
-  let submitForm = document.getElementById('formButton');
-  let formValue = document.getElementById('inputInner');
+// Cached DOM references, populated once by cacheDom(). Left null until the
+// first renderDay()/wireEvents() call, both of which run after index.js has
+// appended the DOM.
+let leftArrowIcon, rightArrowIcon, submitForm, formValue, weatherIcon,
+  outerContainer, dateMain, weatherConditionText, locationText,
+  tempUpper, tempLower, block1Bottom, block2Bottom, block3Bottom, block4Bottom;
 
-  leftArrowIcon.style.pointerEvents = "none";
-  leftArrowIcon.style.visibility = "hidden";
 
-  let weatherIcon = document.getElementById('weatherIcon');
+function cacheDom(){
 
-  let outerContainer = document.getElementById('outerContainer');
+  if(leftArrowIcon){ return; } // already cached
 
+  leftArrowIcon = document.getElementById('arrowLeft');
+  rightArrowIcon = document.getElementById('arrowRight');
 
+  submitForm = document.getElementById('formButton');
+  formValue = document.getElementById('inputInner');
 
-  let dateMain = document.getElementById('dateMain');
-  let weatherType = document.getElementById('weatherLocation');
-  let weatherLocation = document.getElementById('weatherType');
-  let tempUpper = document.getElementById('tempUpper');
-  let tempLower = document.getElementById('tempLower');
-  let block1Bottom = document.getElementById('block1Bottom');
-  let block2Bottom = document.getElementById('block2Bottom');
-  let block3Bottom = document.getElementById('block3Bottom');
-  let block4Bottom = document.getElementById('block4Bottom');
+  weatherIcon = document.getElementById('weatherIcon');
+  outerContainer = document.getElementById('outerContainer');
 
-  day1Call(); // initial call for UI Display
+  dateMain = document.getElementById('dateMain');
 
+  // The element ids are intentionally the reverse of what they render:
+  // #weatherLocation shows the weather condition, #weatherType shows the
+  // location name (see CLAUDE.md "Known fragile areas"). These variables are
+  // named for what they DISPLAY, so the write sites in renderDay() read the way
+  // they look. Don't rename one side without the other.
+  weatherConditionText = document.getElementById('weatherLocation');
+  locationText = document.getElementById('weatherType');
 
-  function day1Call(){
+  tempUpper = document.getElementById('tempUpper');
+  tempLower = document.getElementById('tempLower');
+  block1Bottom = document.getElementById('block1Bottom');
+  block2Bottom = document.getElementById('block2Bottom');
+  block3Bottom = document.getElementById('block3Bottom');
+  block4Bottom = document.getElementById('block4Bottom');
 
-    let dayName = dayArray.day1[0].dayName;
-    let dayDate = dayArray.day1[0].dayDate;
-    let weather = dayArray.day1[0].weather;
+}
 
-    let selHeaderText = createDateHeader(dayName, dayDate);
-    adjustWeather(weather);
 
-    dateMain.textContent = selHeaderText;
-    block1Bottom.textContent = dayArray.day1[0].feelsLike  + ' °C';
-    block2Bottom.textContent = dayArray.day1[0].humidity  + '%';
-    block3Bottom.textContent = dayArray.day1[0].rainChance  + '%';
-    block4Bottom.textContent = dayArray.day1[0].windSpeed  + ' km/h';
+// Pure render path. fulfillPromise() in logic.js calls this on every resolved
+// API response; it registers NO listeners, so it is safe to call repeatedly.
+// `n` selects which loaded day (1-3) to display. A fresh fetch renders day 1,
+// which resets the ‹ › navigation for the new location.
+export function renderDay(dayArray, n){
 
-    tempLower.textContent = dayArray.day1[0].lowTemp + ' °C';
-    tempUpper.textContent = dayArray.day1[0].highTemp + '°C';
-    weatherLocation.textContent = dayArray.day1[0].locationName;
-    weatherType.textContent = weather;
-    
-  }
+  cacheDom();
 
+  latestDays = dayArray;
+  dayCounter = n;
 
+  const info = dayArray['day' + n][0];
 
-  // *** Functions ***
+  updateArrows(n);
 
-  // create function that based on the weather, we change the weatherIcon to reflect accordingly  
-  function adjustWeather(weather){
+  let selHeaderText = createDateHeader(info.dayName, info.dayDate);
+  adjustWeather(info.weather);
 
-    const currentWeather = weather;
+  dateMain.textContent = selHeaderText;
+  block1Bottom.textContent = info.feelsLike + ' °C';
+  block2Bottom.textContent = info.humidity + '%';
+  block3Bottom.textContent = info.rainChance + '%';
+  block4Bottom.textContent = info.windSpeed + ' km/h';
 
-    // condition text comes back Title Case ("Sunny", "Partly cloudy", "Overcast",
-    // "Fog"), so the match must be case-insensitive or most branches never fire.
-    const rainRegex = /rain/i;
-    const snowRegex = /snow/i;
-    const hailRegex = /hail/i;
-    const partlyRegex = /partly/i;
-    const sunnyRegex = /sunny/i;
-    const fogRegex = /fog/i;
-    const overcastRegex = /overcast/i;
+  tempLower.textContent = info.lowTemp + ' °C';
+  tempUpper.textContent = info.highTemp + '°C';
 
-    // theme class follows the matched condition; anything that matches nothing
-    // ("Cloudy", "Mist", "Clear", ...) falls back to the neutral theme.
-    let themeClass = 'weather-neutral';
+  locationText.textContent = info.locationName;
+  weatherConditionText.textContent = info.weather;
 
+}
 
-    // adjust for rain
-    if(currentWeather.match(rainRegex)){
 
-      weatherIcon.src = rainCloud;
-      themeClass = 'weather-rain';
-    }
+// Registers the arrow + submit listeners EXACTLY ONCE for the life of the page.
+// index.js calls this at bootstrap, after the DOM is appended. Kept off the
+// render path so listeners never multiply across fetches (one fetch per submit
+// click, exactly one listener per element).
+export function wireEvents(){
 
-    // adjust for snow
-    if(currentWeather.match(snowRegex)){
-      weatherIcon.src = snowing;
-      themeClass = 'weather-snow';
-    }
+  if(eventsWired){ return; }
 
-    // adjust for hail
-    if(currentWeather.match(hailRegex)){
-      weatherIcon.src = hail;
-      themeClass = 'weather-hail';
-    }
+  cacheDom();
+  eventsWired = true;
 
-    // adjust for partly cloudy
-    if(currentWeather.match(partlyRegex)){
-      weatherIcon.src = partly;
-      themeClass = 'weather-partly';
-    }
+  rightArrowIcon.addEventListener("click", function(){
 
-    // adjust for sunny
-    if(currentWeather.match(sunnyRegex)){
-      weatherIcon.src = sunny;
-      themeClass = 'weather-sunny';
-    }
+    if(!latestDays){ return; }
 
-    // adjust for fog
-    if(currentWeather.match(fogRegex)){
-      weatherIcon.src = foggy;
-      themeClass = 'weather-fog';
-    }
-
-    // adjust for overcast
-    if(currentWeather.match(overcastRegex)){
-      weatherIcon.src = foggy;
-      themeClass = 'weather-overcast';
-    }
-
-    // apply the per-weather theme to the outer container (drives the sky
-    // gradient + accents); this follows the ‹ › day navigation for free.
-    outerContainer.classList.remove(
-      'weather-neutral', 'weather-rain', 'weather-snow', 'weather-hail',
-      'weather-partly', 'weather-sunny', 'weather-fog', 'weather-overcast'
-    );
-    outerContainer.classList.add(themeClass);
-
-  }
-
-  // create function that constructs string for changing date header
-  function createDateHeader(day, date){
-    const dateString = date;
-    const parts = dateString.split('-');
-
-    const startIndex = dateString.lastIndexOf('-') + 1;
-
-    const extractedDay = dateString.substring(startIndex);
-
-    const extractedValue = parseInt(parts[1]);
-
-    const months = {
-      1: 'Jan',
-      2: 'Feb',
-      3: 'Mar',
-      4: 'Apr',
-      5: 'May',
-      6: 'Jun',
-      7: 'Jul',
-      8: 'Aug',
-      9: 'Sept',
-      10: 'Oct',
-      11: 'Nov',
-      12: 'Dec',
-
-    }
-
-    let targetMonth = months[extractedValue];
-    let targetDay = extractedDay;
-    let targetYear = dateString.substring(0, 4);
-    let targetName = day;
-
-    let dateHeaderText = targetName + ', ' + targetDay + ' ' + targetMonth + ' ' + targetYear;
-    return dateHeaderText;
-
-  }
-  
-  function offLeftArrow(){
-
-    // Hide via visibility (not src='') so the disabled arrow doesn't render a
-    // broken-image placeholder box now that #outerContainer has a background.
-    // index.js sets the src once; we never touch it again.
-    leftArrowIcon.style.pointerEvents = "none";
-    leftArrowIcon.style.visibility = "hidden";
-
-  }
-
-  function onLeftArrow(){
-
-    leftArrowIcon.style.pointerEvents = "auto";
-    leftArrowIcon.style.visibility = "visible";
-
-  }
-
-  function offRightArrow(){
-
-    rightArrowIcon.style.pointerEvents = "none";
-    rightArrowIcon.style.visibility = "hidden";
-
-  }
-
-  function onRightArrow(){
-
-    rightArrowIcon.style.pointerEvents = "auto";
-    rightArrowIcon.style.visibility = "visible";
-
-  }
-
-  function day2Call(){
-
-    let dayName = dayArray.day2[0].dayName;
-    let dayDate = dayArray.day2[0].dayDate;
-    let weather = dayArray.day2[0].weather;
-
-    let selHeaderText = createDateHeader(dayName, dayDate);
-    adjustWeather(weather);
-
-    dateMain.textContent = selHeaderText;
-    block1Bottom.textContent = dayArray.day2[0].feelsLike  + ' °C';
-    block2Bottom.textContent = dayArray.day2[0].humidity  + '%';
-    block3Bottom.textContent = dayArray.day2[0].rainChance  + '%';
-    block4Bottom.textContent = dayArray.day2[0].windSpeed  + ' km/h';
-
-    tempLower.textContent = dayArray.day2[0].lowTemp + ' °C';
-    tempUpper.textContent = dayArray.day2[0].highTemp + '°C';
-    weatherLocation.textContent = dayArray.day2[0].locationName;
-    weatherType.textContent = weather;
-    
-  }
-
-  function day3Call(){
-
-    let dayName = dayArray.day3[0].dayName;
-    let dayDate = dayArray.day3[0].dayDate;
-    let weather = dayArray.day3[0].weather;
-
-    let selHeaderText = createDateHeader(dayName, dayDate);
-    adjustWeather(weather);
-
-    dateMain.textContent = selHeaderText;
-    block1Bottom.textContent = dayArray.day3[0].feelsLike  + ' °C';
-    block2Bottom.textContent = dayArray.day3[0].humidity  + '%';
-    block3Bottom.textContent = dayArray.day3[0].rainChance  + '%';
-    block4Bottom.textContent = dayArray.day3[0].windSpeed  + ' km/h';
-
-    tempLower.textContent = dayArray.day3[0].lowTemp + ' °C';
-    tempUpper.textContent = dayArray.day3[0].highTemp + '°C';
-    weatherLocation.textContent = dayArray.day3[0].locationName;
-    weatherType.textContent = weather;
-    
-  }
-
-
-
-
-  // *** Click Listeners ***
-
-  // create click listeners for arrow to determine click interactions
-
-  rightArrowIcon.addEventListener("click", function(){  
-       
     if(dayCounter < 3){
       dayCounter++;
     }
 
-    if(dayCounter === 1){
-      offLeftArrow();
-      day1Call();
-
-    }
-    if(dayCounter === 2){
-      onLeftArrow();
-      onRightArrow();
-      day2Call();
-
-    }
-    if(dayCounter === 3){
-      offRightArrow();
-      day3Call();
-
-    }    
-
+    renderDay(latestDays, dayCounter);
 
   });
 
-  leftArrowIcon.addEventListener("click", function(){  
-       
+  leftArrowIcon.addEventListener("click", function(){
+
+    if(!latestDays){ return; }
+
     if(dayCounter > 1){
       dayCounter--;
     }
 
-    if(dayCounter === 1){
-      offLeftArrow();
-      day1Call();
-
-    }
-    if(dayCounter === 2){
-      onLeftArrow();
-      onRightArrow();      
-      day2Call();
-
-    }
-    if(dayCounter === 3){
-      offRightArrow();
-      day3Call();
-
-    }    
-
+    renderDay(latestDays, dayCounter);
 
   });
 
-  submitForm.addEventListener("click", function(){ 
-
+  submitForm.addEventListener("click", function(){
 
     forecastLogic.futureAPICalls(formValue.value);
 
   });
 
+}
+
+
+// *** Functions ***
+
+// Show/hide the ‹ › arrows for the day being displayed: no left arrow on day 1,
+// no right arrow on day 3. Uses visibility (not src='') so a disabled arrow
+// doesn't render a broken-image placeholder box now that #outerContainer has a
+// background.
+function updateArrows(n){
+
+  if(n <= 1){
+    offLeftArrow();
+  } else {
+    onLeftArrow();
+  }
+
+  if(n >= 3){
+    offRightArrow();
+  } else {
+    onRightArrow();
+  }
 
 }
 
+// create function that based on the weather, we change the weatherIcon to reflect accordingly
+function adjustWeather(weather){
+
+  const currentWeather = weather;
+
+  // condition text comes back Title Case ("Sunny", "Partly cloudy", "Overcast",
+  // "Fog"), so the match must be case-insensitive or most branches never fire.
+  const rainRegex = /rain/i;
+  const snowRegex = /snow/i;
+  const hailRegex = /hail/i;
+  const partlyRegex = /partly/i;
+  const sunnyRegex = /sunny/i;
+  const fogRegex = /fog/i;
+  const overcastRegex = /overcast/i;
+
+  // theme class follows the matched condition; anything that matches nothing
+  // ("Cloudy", "Mist", "Clear", ...) falls back to the neutral theme.
+  let themeClass = 'weather-neutral';
+
+
+  // adjust for rain
+  if(currentWeather.match(rainRegex)){
+
+    weatherIcon.src = rainCloud;
+    themeClass = 'weather-rain';
+  }
+
+  // adjust for snow
+  if(currentWeather.match(snowRegex)){
+    weatherIcon.src = snowing;
+    themeClass = 'weather-snow';
+  }
+
+  // adjust for hail
+  if(currentWeather.match(hailRegex)){
+    weatherIcon.src = hail;
+    themeClass = 'weather-hail';
+  }
+
+  // adjust for partly cloudy
+  if(currentWeather.match(partlyRegex)){
+    weatherIcon.src = partly;
+    themeClass = 'weather-partly';
+  }
+
+  // adjust for sunny
+  if(currentWeather.match(sunnyRegex)){
+    weatherIcon.src = sunny;
+    themeClass = 'weather-sunny';
+  }
+
+  // adjust for fog
+  if(currentWeather.match(fogRegex)){
+    weatherIcon.src = foggy;
+    themeClass = 'weather-fog';
+  }
+
+  // adjust for overcast
+  if(currentWeather.match(overcastRegex)){
+    weatherIcon.src = foggy;
+    themeClass = 'weather-overcast';
+  }
+
+  // apply the per-weather theme to the outer container (drives the sky
+  // gradient + accents); this follows the ‹ › day navigation for free.
+  outerContainer.classList.remove(
+    'weather-neutral', 'weather-rain', 'weather-snow', 'weather-hail',
+    'weather-partly', 'weather-sunny', 'weather-fog', 'weather-overcast'
+  );
+  outerContainer.classList.add(themeClass);
+
+}
+
+// create function that constructs string for changing date header
+function createDateHeader(day, date){
+  const dateString = date;
+  const parts = dateString.split('-');
+
+  const startIndex = dateString.lastIndexOf('-') + 1;
+
+  const extractedDay = dateString.substring(startIndex);
+
+  const extractedValue = parseInt(parts[1]);
+
+  const months = {
+    1: 'Jan',
+    2: 'Feb',
+    3: 'Mar',
+    4: 'Apr',
+    5: 'May',
+    6: 'Jun',
+    7: 'Jul',
+    8: 'Aug',
+    9: 'Sept',
+    10: 'Oct',
+    11: 'Nov',
+    12: 'Dec',
+
+  }
+
+  let targetMonth = months[extractedValue];
+  let targetDay = extractedDay;
+  let targetYear = dateString.substring(0, 4);
+  let targetName = day;
+
+  let dateHeaderText = targetName + ', ' + targetDay + ' ' + targetMonth + ' ' + targetYear;
+  return dateHeaderText;
+
+}
+
+function offLeftArrow(){
+
+  // Hide via visibility (not src='') so the disabled arrow doesn't render a
+  // broken-image placeholder box now that #outerContainer has a background.
+  // index.js sets the src once; we never touch it again.
+  leftArrowIcon.style.pointerEvents = "none";
+  leftArrowIcon.style.visibility = "hidden";
+
+}
+
+function onLeftArrow(){
+
+  leftArrowIcon.style.pointerEvents = "auto";
+  leftArrowIcon.style.visibility = "visible";
+
+}
+
+function offRightArrow(){
+
+  rightArrowIcon.style.pointerEvents = "none";
+  rightArrowIcon.style.visibility = "hidden";
+
+}
+
+function onRightArrow(){
+
+  rightArrowIcon.style.pointerEvents = "auto";
+  rightArrowIcon.style.visibility = "visible";
+
+}
 
 
 export function validInput(){
@@ -341,4 +322,3 @@ export function invalidInput(){
     formInput.style.borderColor = 'red';
 
   }
-

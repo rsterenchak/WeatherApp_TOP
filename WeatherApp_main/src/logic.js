@@ -1,6 +1,6 @@
 import './style.css';
 import Day from './day.js';
-import { changeWeatherInfo, validInput, invalidInput } from './indexChanges.js';
+import { renderDay, validInput, invalidInput } from './indexChanges.js';
 
 //  3 day forecast - http://api.weatherapi.com/v1/forecast.json?key=39c28f85ab034521b9921705232710&q=98052&days=3&aqi=no&alerts=no
 
@@ -69,8 +69,10 @@ export const forecastLogic = (function () {
       storeForecastDay(day2, 1, result.forecast.forecastday[1], result.location.name);
       storeForecastDay(day3, 2, result.forecast.forecastday[2], result.location.name);
 
-      // call DOM function to display day1 information on web page
-      changeWeatherInfo(alldays);
+      // render day 1 for the freshly loaded location. This is a pure render —
+      // it registers no listeners, so calling it on every resolved response
+      // never multiplies handlers (wireEvents() owns listener registration).
+      renderDay(alldays, 1);
 
     })
     ;

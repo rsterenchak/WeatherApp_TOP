@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { forecastLogic } from './logic.js';
+import { wireEvents } from './indexChanges.js';
 import './style.css';
 import rightArrow from './arrowRight.svg';
 import leftArrow from './arrowLeft.svg';
@@ -387,6 +388,11 @@ function component() {
 
 
 document.body.appendChild(component());
+
+// Register the arrow + submit listeners exactly once, now that the DOM exists.
+// Keeping this off the render path is what stops handlers multiplying on every
+// forecast fetch.
+wireEvents();
 
 
 
