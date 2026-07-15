@@ -1,6 +1,7 @@
 import './style.css';
 import { renderRibbon, currentHourIndex } from './ribbon.js';
 import { forecastLogic } from './logic.js';
+import { addLocation } from './favourites.js';
 
 // Guard so wireEvents() only ever registers one set of listeners. The old
 // changeWeatherInfo() re-registered on every fetch, doubling the handler count
@@ -61,10 +62,19 @@ export function wireEvents() {
 
   // The button is a real submit button, so this catches both the click and the
   // Enter key as one submit event. preventDefault stops the form reloading the
-  // page; futureAPICalls does the single fetch.
+  // page; futureAPICalls does the single fetch. The search form is also the
+  // add path for saved locations: on a successful lookup the query is appended
+  // to the saved list and becomes current; a failed lookup resolves to null and
+  // leaves the list untouched (invalidInput has already reddened the input).
   searchForm.addEventListener('submit', function (e) {
     e.preventDefault();
-    forecastLogic.futureAPICalls(searchInput.value);
+    const query = searchInput.value;
+    forecastLogic.futureAPICalls(query).then(function (forecast) {
+      if (forecast) {
+        addLocation(query);
+        searchInput.value = '';
+      }
+    });
   });
 }
 

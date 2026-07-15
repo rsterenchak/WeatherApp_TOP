@@ -103,6 +103,31 @@ body {
   color: var(--muted);
 }
 
+/* Saved-location dots: one per saved location, the active one filled. Hidden at
+   a count of one (a single location needs no affordance). */
+#dotRow {
+  display: flex;
+  gap: 8px;
+  margin: 4px 0 2px;
+}
+
+#dotRow.hidden {
+  display: none;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2E3B45;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.dot.active {
+  background: #EAEEF2;
+}
+
 /* Roboto Light 40px for the reading. */
 #currentTemp {
   font-family: 'Roboto', sans-serif;
