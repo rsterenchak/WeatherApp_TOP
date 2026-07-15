@@ -594,6 +594,56 @@ body {
 }
 
 #footer {
-  grid-area: footer; 
+  grid-area: footer;
   background-color: #ccc;
+}
+
+
+/* Tablet: collapse #main to a single weatherOuter column and shrink the search form */
+@media (max-width: 768px) {
+  #main {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+    "weatherOuter"
+    ;
+  }
+
+  #sideSpace1,
+  #sideSpace2 {
+    display: none;
+  }
+
+  #spaceForm {
+    grid-template-columns: 1fr 1fr 280px 15px 100px 2fr;
+  }
+}
+
+
+/* Mobile: stack the weather panels and the search form into single columns */
+@media (max-width: 480px) {
+  #weatherOuter {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+    "inner1"
+    "innerMain"
+    "inner2"
+    ;
+  }
+
+  #spaceForm {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+    "formInput"
+    "formButton"
+    ;
+    gap: 10px;
+    padding: 0px 15px;
+  }
+
+  #formSpace1,
+  #formSpace2,
+  #formSpace3,
+  #formSpace4 {
+    display: none;
+  }
 }
