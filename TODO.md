@@ -12,13 +12,6 @@
   - Description: Defense-in-depth follow-up to the node_modules untracking fix. Add `with: { submodules: false }` to the `actions/checkout` step in the deploy workflow, since this repo has no real submodules and disabling submodule checkout prevents any stray nested `.git` from being misread as an undeclared submodule. This was split out of the phantom-submodule fix because the automated routine's GitHub App token lacks the `workflows` permission required to modify files under `.github/workflows/`; a human (or a token with `workflows` scope) must apply it. The root-cause fix (untracked node_modules + node_modules/ in .gitignore) already resolves the checkout failure on its own, so this is purely hardening.
   - File: `.github/workflows/deploy.yml`
 
-- [ ] **[HIGH]** Replace Jekyll build in deploy.yml with a Vite build so Pages serves the app
-  - Type: bug
-  - Description: The Pages site returns GitHub's "404 — File not found" because `deploy.yml` uses `actions/jekyll-build-pages@v1`, which builds a Jekyll site (`_site/`) instead of running `vite build`, so no `dist/index.html` is ever published. Replace the Jekyll step with a Node pipeline: checkout, `npm ci` and `npm run build` in `WeatherApp_main`, then `actions/upload-pages-artifact@v3` with `path: WeatherApp_main/dist`, followed by `actions/deploy-pages`. Also confirm `vite.config.js` sets `base: '/WeatherApp_TOP/'` so built asset paths resolve under the project-site subpath. NOTE: this file is under `.github/workflows/`, which the routine's GitHub App token cannot modify — it must be applied by a human or a `workflows`-scoped token.
-  - File: `.github/workflows/deploy.yml`, `WeatherApp_main/vite.config.js`
-  - Completed: YYYY-MM-DD (PR #<number>)
-  <!-- id: 622507bc-438d-4960-976f-c3886acf9b3b -->
-
 - [x] **[HIGH]** Set Webpack publicPath to the GitHub Pages project subpath
   - Type: bug
   - Description: The deployed site returns "404 File not found" on GitHub Pages because the Webpack build emits asset/script paths rooted at `/` instead of the project-site subpath `/WeatherApp_TOP/`, so the browser requests resolve to non-existent URLs. Set `output.publicPath` (and any `homepage`/base path config used by `html-webpack-plugin`) to `/WeatherApp_TOP/` in `webpack.config.js` so built `index.html` and asset references resolve correctly once deployed under `https://rsterenchak.github.io/WeatherApp_TOP/`. Verify after build that `WeatherApp_main/dist/index.html` references `/WeatherApp_TOP/...` paths, not `/...`.
