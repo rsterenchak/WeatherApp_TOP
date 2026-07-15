@@ -35,7 +35,7 @@
   - Completed: 2026-07-15
   <!-- id: 2128a386-aaf8-4d16-83b0-baaf6c848806 -->
 
-- [ ] **[MEDIUM]** Split sky.js into per-condition renderers and give sunny a clear-sky branch
+- [x] **[MEDIUM]** Split sky.js into per-condition renderers and give sunny a clear-sky branch
   - Type: feature
   - Description: `sky.js` currently runs one particle emitter for every condition, so a clear day renders drifting motes — visible on screen right now at 32.6 °C with a 2% chance of rain. Sunny gets its own branch, and that branch renders nothing: the canvas clears, the `rAF` loop cancels, and the sky is the gradient alone. Stillness is the point rather than a saving — motion only reads as weather if it's absent when there's no weather, and a rain field that runs on sunny days is ambient decoration that happens to also appear during rain. The wider change is that the emitter only genuinely fits three of the eight branches, so restructure around renderer kind instead of one emitter with per-condition parameters; otherwise every branch added from here is another knob on a rain machine. Dispatch off the same category `adjustWeather()` already resolves from the `i`-flagged regexes, so the icon, the `.weather-*` theme class and the sky renderer all derive from one resolution — do not introduce a second classifier that can disagree with the first.
   - Behavior:
@@ -49,5 +49,5 @@
     - No new dependencies — vanilla canvas and CSS only.
   - Out of scope: the white strips above and below the sky (`body` has no `background-color`, so the canvas outside `#outerContainer`'s box falls back to white) — that's a separate bug entry, and it needs the gradient moved to `document.documentElement` plus `position: fixed` on the canvas.
   - File: `WeatherApp_main/src/sky.js`, `WeatherApp_main/src/style.css`, `WeatherApp_main/src/indexChanges.js`
-  - Completed: YYYY-MM-DD (PR #<number>)
+  - Completed: 2026-07-15
   <!-- id: 615a0f08-5f21-405e-9153-4a719ff8d928 -->
