@@ -34,3 +34,20 @@
   - File: `WeatherApp_main/src/sky.js`, `WeatherApp_main/src/style.css`, `WeatherApp_main/src/indexChanges.js`, `WeatherApp_main/src/index.js`
   - Completed: 2026-07-15
   <!-- id: 2128a386-aaf8-4d16-83b0-baaf6c848806 -->
+
+- [ ] **[MEDIUM]** Split sky.js into per-condition renderers and give sunny a clear-sky branch
+  - Type: feature
+  - Description: `sky.js` currently runs one particle emitter for every condition, so a clear day renders drifting motes — visible on screen right now at 32.6 °C with a 2% chance of rain. Sunny gets its own branch, and that branch renders nothing: the canvas clears, the `rAF` loop cancels, and the sky is the gradient alone. Stillness is the point rather than a saving — motion only reads as weather if it's absent when there's no weather, and a rain field that runs on sunny days is ambient decoration that happens to also appear during rain. The wider change is that the emitter only genuinely fits three of the eight branches, so restructure around renderer kind instead of one emitter with per-condition parameters; otherwise every branch added from here is another knob on a rain machine. Dispatch off the same category `adjustWeather()` already resolves from the `i`-flagged regexes, so the icon, the `.weather-*` theme class and the sky renderer all derive from one resolution — do not introduce a second classifier that can disagree with the first.
+  - Behavior:
+    1. Kind `particles` — rain, snow, hail. Canvas plus `rAF`. Differs per condition in drop shape, speed, drift and density: streaks falling fast for rain, slow laterally-drifting flakes for snow, short fast pellets for hail.
+    2. Kind `layer` — fog, overcast, partly. CSS drift layers on `#outerContainer`, no canvas involvement at all. A haze band for fog, a slow cloud mass for overcast, a few slow clouds for partly.
+    3. Kind `none` — sunny and the neutral fallback. No renderer. Cancel `rAF`, `clearRect` once, leave the canvas idle.
+  - Acceptance criteria:
+    - Five of the eight branches (sunny, fallback, fog, overcast, partly) never start the `rAF` loop.
+    - Switching to a `none`-kind condition cancels the loop and clears the canvas rather than running it with zero particles; switching away re-seeds cleanly. Verify by searching a sunny location, then a rainy one, then back.
+    - The existing `prefers-reduced-motion` static-frame path, `visibilitychange` pause, `resize` re-seed and `devicePixelRatio` clamp survive the refactor and apply per kind, not just to `particles`.
+    - No new dependencies — vanilla canvas and CSS only.
+  - Out of scope: the white strips above and below the sky (`body` has no `background-color`, so the canvas outside `#outerContainer`'s box falls back to white) — that's a separate bug entry, and it needs the gradient moved to `document.documentElement` plus `position: fixed` on the canvas.
+  - File: `WeatherApp_main/src/sky.js`, `WeatherApp_main/src/style.css`, `WeatherApp_main/src/indexChanges.js`
+  - Completed: YYYY-MM-DD (PR #<number>)
+  <!-- id: 615a0f08-5f21-405e-9153-4a719ff8d928 -->
