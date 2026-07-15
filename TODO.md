@@ -76,7 +76,7 @@
   - Completed: 2026-07-15
   <!-- id: 9a35eab0-0540-4e4e-90fe-91020d61f814 -->
 
-- [ ] **[MEDIUM]** Add saved locations with swipe to rotate
+- [x] **[MEDIUM]** Add saved locations with swipe to rotate
   - Type: feature
   - Description: Depends on the ribbon rewrite — don't start until the curve is the UI. Saved locations persist to `localStorage` under a `weatherapp_` key prefix, matching the convention used in the other repos; no IndexedDB, no cookies, no backend, no new deps. A row of dots under the location name shows how many are saved and which is current — one dot per location, active dot filled `#EAEEF2` against `#2E3B45`. Horizontal swipe anywhere on the screen rotates through them. The existing search form becomes the add path: a successful lookup appends to the list and switches to it; a failed one leaves the list untouched and keeps the current `invalidInput()` red-border treatment.
   - Behavior:
@@ -89,5 +89,5 @@
     - Touch handlers get wired once at bootstrap alongside everything else. Registering them from the render path recreates the doubling bug in a new file.
   - Acceptance criteria: locations survive a reload; swipe never fires on a vertical scroll; removing the active location moves to a neighbour rather than leaving an empty view.
   - File: `WeatherApp_main/src/favourites.js`, `WeatherApp_main/src/ribbon.js`, `WeatherApp_main/src/index.js`, `WeatherApp_main/src/logic.js`, `WeatherApp_main/src/style.css`
-  - Completed: YYYY-MM-DD (PR #<number>)
+  - Completed: 2026-07-15
   <!-- id: 3bca4dc8-462e-4b47-a57a-b829ca53a89f -->
