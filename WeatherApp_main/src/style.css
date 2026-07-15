@@ -164,9 +164,10 @@ body {
 #mainMiddle {
   display: grid;
   border-radius: 8px;
+  background-color: white;
   grid-area: mainMiddle;
   grid-template-rows: 1fr 6fr 1fr;
-  grid-template-columns: 1fr 5fr 1fr 2fr 0.5fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 5fr) minmax(0, 1fr) minmax(0, 2fr) minmax(0, 0.5fr);
   grid-template-areas: 
   "spacer1 spacer1 spacer1 spacer1 spacer1"
   ". weatherSection . weatherData ."
@@ -199,10 +200,11 @@ body {
 
 #weatherUpper {
   display: grid;
-  background-color: white;
+  /* White comes from the #mainMiddle card so the rounded corners frame white,
+     not a hard square edge over the page gradient. */
   grid-area: weatherUpper;
   grid-template-rows: 0.5fr 2fr 0.5fr 1fr;
-  grid-template-columns: 1fr 4fr 1fr 2fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 4fr) minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
   grid-template-areas: 
   ". . . . . "
   ". weatherIcon . weatherTemps . "
@@ -725,10 +727,10 @@ body {
 /* Mobile: keep the arrows flanking the content (rather than stranding them
    above/below), and stack the search form into a single column. */
 @media (max-width: 480px) {
-  /* Narrow the arrow columns so the pair hugs the content instead of eating
-     a full 1fr each. */
+  /* Fixed narrow gutters so the arrow pair flanks the content and never clips
+     against the viewport edges. */
   #weatherOuter {
-    grid-template-columns: 0.7fr 6fr 0.7fr;
+    grid-template-columns: 44px 1fr 44px;
   }
 
   /* Zero the spacer rows so each arrow centres vertically on the content. */
@@ -739,7 +741,33 @@ body {
 
   #arrowLeft,
   #arrowRight {
-    width: 42px;
+    width: 32px;
+  }
+
+  /* Shrink the graphic/temperature so #weatherUpper's tracks fit inside the
+     narrow single column rather than pushing #mainMiddle past the edge. */
+  #weatherIcon {
+    width: 88px;
+  }
+
+  #tempUpper {
+    font-size: 28px;
+  }
+
+  /* Keep the date on one line so it still reads as a rule. */
+  #dateMain {
+    font-size: 18px;
+    white-space: nowrap;
+  }
+
+  /* Collapse the empty vertical spacer rows that otherwise absorb the height
+     freed by the min-height layout and open large gaps around the card. */
+  #mainTop {
+    grid-template-rows: 0fr 1fr 0fr;
+  }
+
+  #innerMain {
+    grid-template-rows: auto auto auto;
   }
 
   #spaceForm {

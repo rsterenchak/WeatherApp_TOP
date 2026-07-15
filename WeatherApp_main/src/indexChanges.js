@@ -23,7 +23,7 @@ export function changeWeatherInfo(dayArray){
   let formValue = document.getElementById('inputInner');
 
   leftArrowIcon.style.pointerEvents = "none";
-  leftArrowIcon.src = '';
+  leftArrowIcon.style.visibility = "hidden";
 
   let weatherIcon = document.getElementById('weatherIcon');
 
@@ -182,29 +182,32 @@ export function changeWeatherInfo(dayArray){
   
   function offLeftArrow(){
 
+    // Hide via visibility (not src='') so the disabled arrow doesn't render a
+    // broken-image placeholder box now that #outerContainer has a background.
+    // index.js sets the src once; we never touch it again.
     leftArrowIcon.style.pointerEvents = "none";
-    leftArrowIcon.src = '';
+    leftArrowIcon.style.visibility = "hidden";
 
   }
 
   function onLeftArrow(){
-    
+
     leftArrowIcon.style.pointerEvents = "auto";
-    leftArrowIcon.src = leftArrow;
+    leftArrowIcon.style.visibility = "visible";
 
   }
 
   function offRightArrow(){
 
     rightArrowIcon.style.pointerEvents = "none";
-    rightArrowIcon.src = '';
+    rightArrowIcon.style.visibility = "hidden";
 
   }
 
   function onRightArrow(){
-    
+
     rightArrowIcon.style.pointerEvents = "auto";
-    rightArrowIcon.src = rightArrow;
+    rightArrowIcon.style.visibility = "visible";
 
   }
 
