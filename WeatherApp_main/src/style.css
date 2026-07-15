@@ -13,9 +13,9 @@ body {
 
 #outerContainer {
   display: grid;
-  height: 110vh;
+  min-height: 110vh;
   grid-template-rows: 10vh 70px 1fr 20px 35px 90px 20vh;
-  grid-template-areas: 
+  grid-template-areas:
   "header"
   "space1"
   "main"
@@ -24,6 +24,7 @@ body {
   "space3"
   "footer"
   ;
+  transition: background 400ms ease;
 
 }
 
@@ -550,6 +551,7 @@ body {
   display: grid;
   grid-area: inputInner;
   border: none;
+  font-size: 16px;
 }
 
 #inputInner:focus {
@@ -599,6 +601,74 @@ body {
 }
 
 
+/* Hover treatments (moved out of index.js so they never persist as inline
+   styles that would override the themed accent). */
+#arrowLeft:hover,
+#arrowRight:hover {
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+  border: 1px solid black;
+}
+
+#formButton:hover {
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+  filter: brightness(0.9);
+}
+
+
+/* Per-weather theming. adjustWeather() in indexChanges.js sets a
+   weather-{...} class on #outerContainer; the class drives a vertical sky
+   gradient plus a matching accent on the two underline rules (#dateMain,
+   #weatherType), #footer and #formButton. The white cards stay white. */
+#outerContainer.weather-neutral  { background: linear-gradient(180deg, #8fa3b0, #c3ced5); }
+#outerContainer.weather-rain     { background: linear-gradient(180deg, #46606e, #8199a4); }
+#outerContainer.weather-snow     { background: linear-gradient(180deg, #8fb0cc, #dce8f2); }
+#outerContainer.weather-hail     { background: linear-gradient(180deg, #566573, #9aa8b5); }
+#outerContainer.weather-partly   { background: linear-gradient(180deg, #5b90c4, #afd0ea); }
+#outerContainer.weather-sunny    { background: linear-gradient(180deg, #4a94dd, #cdeafa); }
+#outerContainer.weather-fog      { background: linear-gradient(180deg, #97a1a9, #d2d8dd); }
+#outerContainer.weather-overcast { background: linear-gradient(180deg, #6b757d, #a7b0b7); }
+
+#outerContainer.weather-neutral #footer,
+#outerContainer.weather-neutral #formButton { background-color: #6b7883; }
+#outerContainer.weather-neutral #dateMain,
+#outerContainer.weather-neutral #weatherType { border-color: #6b7883; }
+
+#outerContainer.weather-rain #footer,
+#outerContainer.weather-rain #formButton { background-color: #3c5561; }
+#outerContainer.weather-rain #dateMain,
+#outerContainer.weather-rain #weatherType { border-color: #3c5561; }
+
+#outerContainer.weather-snow #footer,
+#outerContainer.weather-snow #formButton { background-color: #5f82a6; }
+#outerContainer.weather-snow #dateMain,
+#outerContainer.weather-snow #weatherType { border-color: #5f82a6; }
+
+#outerContainer.weather-hail #footer,
+#outerContainer.weather-hail #formButton { background-color: #495663; }
+#outerContainer.weather-hail #dateMain,
+#outerContainer.weather-hail #weatherType { border-color: #495663; }
+
+#outerContainer.weather-partly #footer,
+#outerContainer.weather-partly #formButton { background-color: #3f79b3; }
+#outerContainer.weather-partly #dateMain,
+#outerContainer.weather-partly #weatherType { border-color: #3f79b3; }
+
+#outerContainer.weather-sunny #footer,
+#outerContainer.weather-sunny #formButton { background-color: #e39a1c; }
+#outerContainer.weather-sunny #dateMain,
+#outerContainer.weather-sunny #weatherType { border-color: #e39a1c; }
+
+#outerContainer.weather-fog #footer,
+#outerContainer.weather-fog #formButton { background-color: #77828a; }
+#outerContainer.weather-fog #dateMain,
+#outerContainer.weather-fog #weatherType { border-color: #77828a; }
+
+#outerContainer.weather-overcast #footer,
+#outerContainer.weather-overcast #formButton { background-color: #5a646b; }
+#outerContainer.weather-overcast #dateMain,
+#outerContainer.weather-overcast #weatherType { border-color: #5a646b; }
+
+
 /* Tablet: collapse #main to a single weatherOuter column and shrink the search form */
 @media (max-width: 768px) {
   #main {
@@ -616,18 +686,60 @@ body {
   #spaceForm {
     grid-template-columns: 1fr 1fr 280px 15px 100px 2fr;
   }
+
+  /* Stack the weather graphic above the stats so #weatherData no longer
+     clips inside the 2fr column. */
+  #mainMiddle {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto auto;
+    grid-template-areas:
+    "spacer1"
+    "weatherSection"
+    "weatherData"
+    "spacer2"
+    ;
+  }
+
+  /* Lay the four stats out as a 2×2 grid. */
+  #weatherData {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+    "block1 block2"
+    "block3 block4"
+    ;
+    gap: 8px;
+    padding: 12px 0;
+  }
+
+  #spaced1,
+  #spaced2,
+  #spaced3,
+  #spaced4,
+  #spaced5 {
+    display: none;
+  }
 }
 
 
-/* Mobile: stack the weather panels and the search form into single columns */
+/* Mobile: keep the arrows flanking the content (rather than stranding them
+   above/below), and stack the search form into a single column. */
 @media (max-width: 480px) {
+  /* Narrow the arrow columns so the pair hugs the content instead of eating
+     a full 1fr each. */
   #weatherOuter {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-    "inner1"
-    "innerMain"
-    "inner2"
-    ;
+    grid-template-columns: 0.7fr 6fr 0.7fr;
+  }
+
+  /* Zero the spacer rows so each arrow centres vertically on the content. */
+  #inner1,
+  #inner2 {
+    grid-template-rows: 0fr 1fr 0fr;
+  }
+
+  #arrowLeft,
+  #arrowRight {
+    width: 42px;
   }
 
   #spaceForm {

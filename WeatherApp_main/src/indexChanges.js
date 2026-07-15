@@ -27,6 +27,8 @@ export function changeWeatherInfo(dayArray){
 
   let weatherIcon = document.getElementById('weatherIcon');
 
+  let outerContainer = document.getElementById('outerContainer');
+
 
 
   let dateMain = document.getElementById('dateMain');
@@ -73,52 +75,71 @@ export function changeWeatherInfo(dayArray){
 
     const currentWeather = weather;
 
-    const rainRegex = /rain/g;
-    const snowRegex = /snow/g;
-    const hailRegex = /hail/g;
-    const partlyRegex = /partly/g;
-    const sunnyRegex = /sunny/g;
-    const fogRegex = /fog/g;
-    const overcastRegex = /overcast/g;
+    // condition text comes back Title Case ("Sunny", "Partly cloudy", "Overcast",
+    // "Fog"), so the match must be case-insensitive or most branches never fire.
+    const rainRegex = /rain/i;
+    const snowRegex = /snow/i;
+    const hailRegex = /hail/i;
+    const partlyRegex = /partly/i;
+    const sunnyRegex = /sunny/i;
+    const fogRegex = /fog/i;
+    const overcastRegex = /overcast/i;
+
+    // theme class follows the matched condition; anything that matches nothing
+    // ("Cloudy", "Mist", "Clear", ...) falls back to the neutral theme.
+    let themeClass = 'weather-neutral';
 
 
     // adjust for rain
     if(currentWeather.match(rainRegex)){
 
       weatherIcon.src = rainCloud;
+      themeClass = 'weather-rain';
     }
 
     // adjust for snow
     if(currentWeather.match(snowRegex)){
       weatherIcon.src = snowing;
-    }    
+      themeClass = 'weather-snow';
+    }
 
     // adjust for hail
     if(currentWeather.match(hailRegex)){
       weatherIcon.src = hail;
-    }    
-    
+      themeClass = 'weather-hail';
+    }
+
     // adjust for partly cloudy
     if(currentWeather.match(partlyRegex)){
       weatherIcon.src = partly;
-    }    
+      themeClass = 'weather-partly';
+    }
 
     // adjust for sunny
     if(currentWeather.match(sunnyRegex)){
       weatherIcon.src = sunny;
-    }    
+      themeClass = 'weather-sunny';
+    }
 
     // adjust for fog
     if(currentWeather.match(fogRegex)){
       weatherIcon.src = foggy;
-    }    
+      themeClass = 'weather-fog';
+    }
 
     // adjust for overcast
     if(currentWeather.match(overcastRegex)){
-      weatherIcon.src = foggy;      
-    }    
+      weatherIcon.src = foggy;
+      themeClass = 'weather-overcast';
+    }
 
-
+    // apply the per-weather theme to the outer container (drives the sky
+    // gradient + accents); this follows the ‹ › day navigation for free.
+    outerContainer.classList.remove(
+      'weather-neutral', 'weather-rain', 'weather-snow', 'weather-hail',
+      'weather-partly', 'weather-sunny', 'weather-fog', 'weather-overcast'
+    );
+    outerContainer.classList.add(themeClass);
 
   }
 
