@@ -18,3 +18,10 @@
   - File: `.github/workflows/deploy.yml`, `WeatherApp_main/vite.config.js`
   - Completed: YYYY-MM-DD (PR #<number>)
   <!-- id: 622507bc-438d-4960-976f-c3886acf9b3b -->
+
+- [ ] **[HIGH]** Set Webpack publicPath to the GitHub Pages project subpath
+  - Type: bug
+  - Description: The deployed site returns "404 File not found" on GitHub Pages because the Webpack build emits asset/script paths rooted at `/` instead of the project-site subpath `/WeatherApp_TOP/`, so the browser requests resolve to non-existent URLs. Set `output.publicPath` (and any `homepage`/base path config used by `html-webpack-plugin`) to `/WeatherApp_TOP/` in `webpack.config.js` so built `index.html` and asset references resolve correctly once deployed under `https://rsterenchak.github.io/WeatherApp_TOP/`. Verify after build that `WeatherApp_main/dist/index.html` references `/WeatherApp_TOP/...` paths, not `/...`.
+  - File: `WeatherApp_main/webpack.config.js`
+  - Completed: YYYY-MM-DD (PR #<number>)
+  <!-- id: 93267aef-2022-4357-a776-4f715cfa1e6e -->
