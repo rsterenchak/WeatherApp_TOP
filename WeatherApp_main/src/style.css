@@ -33,13 +33,101 @@ body {
 
 }
 
-/* Animated per-condition particle field (sky.js). Absolutely positioned so it
-   never becomes a grid item, behind the app content, and click-through. */
+/* Animated per-condition particle field (sky.js, 'particles' kind: rain, snow,
+   hail). Absolutely positioned so it never becomes a grid item, behind the app
+   content, and click-through. */
 #skyCanvas {
   position: absolute;
   inset: 0;
   z-index: -1;
   pointer-events: none;
+}
+
+/* CSS drift surface for sky.js's 'layer' kind (fog, overcast, partly) — no
+   canvas, no rAF. sky.js toggles one sky-* class; the motion lives entirely
+   here. Same absolute/behind/click-through placement as #skyCanvas, and only
+   one of the two is ever live at a time. */
+#skyLayer {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+#skyLayer.sky-fog::before,
+#skyLayer.sky-overcast::before,
+#skyLayer.sky-overcast::after,
+#skyLayer.sky-partly::before,
+#skyLayer.sky-partly::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 200%;
+  background-repeat: repeat-x;
+}
+
+/* Fog: a low haze band drifting slowly along the horizon. */
+#skyLayer.sky-fog::before {
+  background-image: radial-gradient(closest-side at 50% 100%,
+    rgba(230,232,235,0.45), rgba(230,232,235,0) 100%);
+  background-size: 25% 60%;
+  background-position: 0 100%;
+  animation: skyDrift 70s linear infinite;
+}
+
+/* Overcast: a heavy, slow cloud mass covering the sky. Two offset layers at
+   different speeds give the mass depth. */
+#skyLayer.sky-overcast::before {
+  background-image: radial-gradient(closest-side at 50% 40%,
+    rgba(205,210,215,0.55), rgba(205,210,215,0) 100%);
+  background-size: 50% 80%;
+  background-position: 0 20%;
+  animation: skyDrift 90s linear infinite;
+}
+#skyLayer.sky-overcast::after {
+  background-image: radial-gradient(closest-side at 50% 40%,
+    rgba(215,219,223,0.40), rgba(215,219,223,0) 100%);
+  background-size: 50% 70%;
+  background-position: 25% 10%;
+  animation: skyDrift 140s linear infinite;
+}
+
+/* Partly: a few small soft clouds drifting across an otherwise clear sky. */
+#skyLayer.sky-partly::before {
+  background-image: radial-gradient(closest-side at 50% 50%,
+    rgba(255,255,255,0.85), rgba(255,255,255,0) 100%);
+  background-size: 25% 32%;
+  background-position: 0 22%;
+  animation: skyDrift 110s linear infinite;
+}
+#skyLayer.sky-partly::after {
+  background-image: radial-gradient(closest-side at 50% 50%,
+    rgba(255,255,255,0.75), rgba(255,255,255,0) 100%);
+  background-size: 25% 26%;
+  background-position: 12% 34%;
+  animation: skyDrift 165s linear infinite;
+}
+
+@keyframes skyDrift {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* visibilitychange pause: sky.js toggles .sky-paused while the tab is hidden,
+   freezing the CSS layers the same way it cancels the particle rAF loop. */
+#skyLayer.sky-paused::before,
+#skyLayer.sky-paused::after {
+  animation-play-state: paused;
+}
+
+/* Reduced motion: show one static frame of the layer and cancel the drift —
+   mirrors the particle path, which draws a single frame and never loops. */
+@media (prefers-reduced-motion: reduce) {
+  #skyLayer::before,
+  #skyLayer::after {
+    animation: none !important;
+  }
 }
 
 #header {

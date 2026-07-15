@@ -1,36 +1,59 @@
-// sky.js — animated per-condition particle field mounted behind #outerContainer.
+// sky.js — per-condition sky renderer mounted behind #outerContainer.
 //
-// Pure vanilla canvas, no dependencies. A single <canvas> is inserted as the
-// first child of #outerContainer (position:absolute, z-index:-1) so it paints
-// over the container's sky gradient but under the app content, and the frosted
-// #mainMiddle card blurs it via backdrop-filter.
+// Pure vanilla, no dependencies. The renderer is chosen by KIND, not by one
+// emitter with per-condition knobs, so a condition with no weather renders
+// nothing rather than drifting motes on a clear day:
 //
-// The loop runs on every device that loads the page, so the guards are not
-// optional:
-//   - prefers-reduced-motion: reduce -> render ONE static frame, then stop.
-//   - visibilitychange -> pause the rAF loop while the tab is hidden.
-//   - resize -> resize the buffer and re-seed the field.
+//   - kind 'particles' (rain, snow, hail): a <canvas> + rAF particle field.
+//       Differs per condition in drop shape, speed, drift and density.
+//   - kind 'layer' (fog, overcast, partly): CSS drift layers on a <div>, no
+//       canvas and no rAF. A haze band for fog, a slow cloud mass for overcast,
+//       a few slow clouds for partly. Motion lives entirely in style.css.
+//   - kind 'none' (sunny, neutral fallback): no renderer at all. The rAF loop
+//       is cancelled, the canvas cleared once, and the sky is the gradient
+//       alone. Stillness is the point — motion only reads as weather when it's
+//       absent without weather.
+//
+// Both surfaces are inserted as the first children of #outerContainer
+// (position:absolute, z-index:-1) so they paint over the container's sky
+// gradient but under the app content, and the frosted #mainMiddle card blurs
+// them via backdrop-filter.
+//
+// The guards apply to EVERY kind, not just particles:
+//   - prefers-reduced-motion: reduce -> particles draw ONE static frame and
+//       never loop; layers freeze via a CSS media query. No rAF either way.
+//   - visibilitychange -> pause the rAF loop AND the CSS layer animations while
+//       the tab is hidden.
+//   - resize -> resize the buffer and, for particles, re-seed the field.
 //   - devicePixelRatio clamped at 2 so retina phones don't allocate a 3x buffer.
 
-let canvas, ctx, host;
+let canvas, ctx, host, layerEl;
 let particles = [];
 let category = 'neutral';
+let kind = 'none';
 let rafId = null;
 let running = false;
 let width = 0, height = 0, dpr = 1;
 
-// Per-category particle recipe. `rgb` is the colour body; each particle picks
-// its own alpha so the field has depth. `shape` is 'line' (rain streaks),
-// 'dot' (flakes/specks/hail) or 'blob' (soft fog/overcast masses).
+// Which renderer each resolved category maps to. adjustWeather() resolves the
+// category from its i-flagged regexes and hands it here, so the icon, the
+// .weather-* theme class and the sky renderer all derive from one resolution —
+// there is no second classifier that could disagree with the first.
+const KIND = {
+  rain: 'particles', snow: 'particles', hail: 'particles',
+  fog: 'layer', overcast: 'layer', partly: 'layer',
+  sunny: 'none', neutral: 'none',
+};
+
+// Particle recipe for the three 'particles' conditions only. `rgb` is the
+// colour body; each particle picks its own alpha so the field has depth.
+// `shape` is 'line' (rain streaks) or 'dot' (flakes / hail pellets). Rain falls
+// fast in drifting streaks, snow drifts slowly and laterally, hail drops as
+// short fast pellets.
 const CONFIG = {
-  rain:     { count: 140, shape: 'line', rgb: '200,220,235', vx: [-2.2, -1.2], vy: [8, 14],    size: [1, 1.6],   len: [9, 17],  alpha: [0.30, 0.55] },
-  snow:     { count: 90,  shape: 'dot',  rgb: '255,255,255', vx: [-0.6, 0.6],  vy: [0.6, 1.7],  size: [1.5, 3.5],               alpha: [0.55, 0.95] },
-  hail:     { count: 110, shape: 'dot',  rgb: '225,235,245', vx: [-1, 1],      vy: [9, 15],     size: [1.5, 3],                 alpha: [0.45, 0.85] },
-  partly:   { count: 40,  shape: 'dot',  rgb: '255,255,255', vx: [0.2, 0.8],   vy: [-0.4, -0.1], size: [1, 3],                  alpha: [0.18, 0.45] },
-  sunny:    { count: 45,  shape: 'dot',  rgb: '255,248,220', vx: [0.2, 0.9],   vy: [-0.5, -0.1], size: [1, 3],                  alpha: [0.15, 0.42] },
-  fog:      { count: 22,  shape: 'blob', rgb: '230,232,235', vx: [0.2, 0.6],   vy: [-0.15, 0.15], size: [40, 90],               alpha: [0.05, 0.12] },
-  overcast: { count: 22,  shape: 'blob', rgb: '210,214,218', vx: [0.15, 0.5],  vy: [-0.15, 0.15], size: [40, 90],               alpha: [0.05, 0.12] },
-  neutral:  { count: 50,  shape: 'dot',  rgb: '255,255,255', vx: [-0.4, 0.4],  vy: [0.3, 1.0],  size: [1, 2.5],                 alpha: [0.22, 0.5] },
+  rain: { count: 140, shape: 'line', rgb: '200,220,235', vx: [-2.2, -1.2], vy: [8, 14],   size: [1, 1.6],   len: [9, 17], alpha: [0.30, 0.55] },
+  snow: { count: 90,  shape: 'dot',  rgb: '255,255,255', vx: [-0.6, 0.6],  vy: [0.6, 1.7], size: [1.5, 3.5],              alpha: [0.55, 0.95] },
+  hail: { count: 110, shape: 'dot',  rgb: '225,235,245', vx: [-1, 1],      vy: [9, 15],    size: [1.5, 3],                alpha: [0.45, 0.85] },
 };
 
 function rand(min, max) {
@@ -41,9 +64,8 @@ function reduceMotion() {
   return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 }
 
-// Mount the canvas once, size it, seed the field and start (or draw one static
-// frame under reduced-motion). Safe to call before the first weather category
-// arrives — it seeds with whatever category has been set so far.
+// Mount the canvas + layer once, size them, and apply whatever category has
+// been set so far. Safe to call before the first weather category arrives.
 export function initSky(hostEl) {
   if (canvas) { return; } // mount once
   host = hostEl || document.getElementById('outerContainer');
@@ -54,28 +76,61 @@ export function initSky(hostEl) {
   host.insertBefore(canvas, host.firstChild);
   ctx = canvas.getContext('2d');
 
+  // The CSS-driven drift surface for the 'layer' kind. Empty and inert until a
+  // layer category applies a sky-* class; carries no canvas.
+  layerEl = document.createElement('div');
+  layerEl.id = 'skyLayer';
+  host.insertBefore(layerEl, host.firstChild);
+
   resize();
-  seed();
 
   window.addEventListener('resize', onResize);
   document.addEventListener('visibilitychange', onVisibility);
 
-  if (reduceMotion()) {
-    drawFrame(); // one static frame, then stay put
-  } else {
-    start();
-  }
+  applyCategory(); // seed + start, or clear, depending on the current kind
 }
 
 // Called from adjustWeather() with the resolved category (rain, snow, hail,
-// partly, sunny, fog, overcast, neutral). Records it and re-seeds; if the
-// canvas isn't mounted yet, the category is remembered for initSky()'s seed().
+// partly, sunny, fog, overcast, neutral). Records it and switches renderer; if
+// the canvas isn't mounted yet, the category is remembered for initSky().
 export function setSkyCategory(cat) {
   category = cat || 'neutral';
+  kind = KIND[category] || 'none';
   if (!canvas) { return; }
-  seed();
-  if (reduceMotion()) {
-    drawFrame(); // reduced motion never runs the loop, so repaint the new field
+  applyCategory();
+}
+
+// Switch to the renderer for the current kind. Mutually exclusive: only one of
+// the canvas field / CSS layer is ever live, and 'none' runs neither.
+function applyCategory() {
+  if (!canvas) { return; }
+
+  updateLayerClass();
+
+  if (kind === 'particles') {
+    seed();
+    if (reduceMotion()) {
+      stop();
+      drawFrame(); // one static frame, then stay put
+    } else {
+      start();
+    }
+  } else {
+    // 'layer' motion lives in CSS; 'none' has no motion at all. Either way the
+    // canvas field must not run — cancel the loop and clear it once so a
+    // none-kind sky is the gradient alone, not an idle loop over zero particles.
+    stop();
+    clearCanvas();
+  }
+}
+
+// Reflect the current kind onto the layer element: exactly one sky-* class for
+// the 'layer' kind, none otherwise.
+function updateLayerClass() {
+  if (!layerEl) { return; }
+  layerEl.classList.remove('sky-fog', 'sky-overcast', 'sky-partly');
+  if (kind === 'layer') {
+    layerEl.classList.add('sky-' + category);
   }
 }
 
@@ -96,8 +151,10 @@ function spawn(cfg, anywhere) {
 
 function seed() {
   particles = [];
+  if (kind !== 'particles') { return; }
   if (!width || !height) { return; }
-  const cfg = CONFIG[category] || CONFIG.neutral;
+  const cfg = CONFIG[category];
+  if (!cfg) { return; }
   for (let i = 0; i < cfg.count; i++) {
     particles.push(spawn(cfg, true));
   }
@@ -140,6 +197,10 @@ function step() {
   }
 }
 
+function clearCanvas() {
+  if (ctx && width && height) { ctx.clearRect(0, 0, width, height); }
+}
+
 function drawFrame() {
   if (width && height) { step(); }
 }
@@ -151,7 +212,7 @@ function loop() {
 }
 
 function start() {
-  if (running || reduceMotion()) { return; }
+  if (running || kind !== 'particles' || reduceMotion()) { return; }
   running = true;
   rafId = window.requestAnimationFrame(loop);
 }
@@ -175,14 +236,19 @@ function resize() {
 
 function onResize() {
   resize();
-  seed();
-  if (reduceMotion()) { drawFrame(); }
+  if (kind === 'particles') {
+    seed();
+    if (reduceMotion()) { drawFrame(); }
+  }
+  // 'layer' reflows via CSS; 'none' has nothing to redraw.
 }
 
 function onVisibility() {
   if (document.hidden) {
     stop();
-  } else if (!reduceMotion()) {
-    start();
+    if (layerEl) { layerEl.classList.add('sky-paused'); } // freeze CSS layers too
+  } else {
+    if (layerEl) { layerEl.classList.remove('sky-paused'); }
+    if (kind === 'particles' && !reduceMotion()) { start(); }
   }
 }
