@@ -52,7 +52,7 @@
   - Completed: 2026-07-15
   <!-- id: 615a0f08-5f21-405e-9153-4a719ff8d928 -->
 
-- [ ] **[HIGH]** Replace card UI with a 72-hour temperature ribbon
+- [x] **[HIGH]** Replace card UI with a 72-hour temperature ribbon
   - Type: feature
   - Description: Total UI rewrite. The forecast becomes one continuous temperature curve across all three days rather than three card states you navigate between, which removes navigation as a concept — all 72 hours are on screen at once. Colour is a function of the temperature scalar (cold `#3D6FA8` → mild `#6FA8A0` → warm `#D9A441` → hot `#C2452D`) rather than the condition category, so there is no per-condition branch to write and no eighth case to forget. Ground `#12181F`, rules `#26313B`, text `#EAEEF2` / `#8CA0AE`. Roboto Light 40px for the reading, a mono face for every label. This supersedes the weather-theme, frosted-card, animated-sky and `sky.js` dispatch entries — do not implement those; the sky, the card, the icons and the theme classes have no home in this design.
   - Behavior:
@@ -73,7 +73,7 @@
     - One fetch per search; exactly one listener per element for the life of the page.
   - Out of scope: tides. Marine tide data is Pro+ ($25/mo) on a separate `marine.json` endpoint, and returns nothing for inland locations like the default `98052` — so the absent lane is the majority case, not the edge case. Build the lane-optional layout; don't build the fetch.
   - File: `WeatherApp_main/src/ribbon.js`, `WeatherApp_main/src/index.js`, `WeatherApp_main/src/logic.js`, `WeatherApp_main/src/style.css`, `WeatherApp_main/src/indexChanges.js`, `WeatherApp_main/src/day.js`
-  - Completed: YYYY-MM-DD (PR #<number>)
+  - Completed: 2026-07-15
   <!-- id: 9a35eab0-0540-4e4e-90fe-91020d61f814 -->
 
 - [ ] **[MEDIUM]** Add saved locations with swipe to rotate
