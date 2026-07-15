@@ -7,7 +7,6 @@ module.exports = {
     index: './src/index.js',
     changes: './src/indexChanges.js',
     logic: './src/logic.js',
-    day: './src/day.js',
   },
   devtool: 'inline-source-map',
   plugins: [

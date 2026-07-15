@@ -1,961 +1,216 @@
 @font-face {
-  font-family: 'WebFont1';
+  font-family: 'Roboto';
   src: url('./Roboto-Regular.ttf');
+  font-weight: 300 400;
+}
+
+/* Palette:
+   ground  #12181F   rules  #26313B
+   text    #EAEEF2 (primary) / #8CA0AE (muted)
+   The temperature colours live in ribbon.js (the curve is coloured by the
+   temperature scalar, not by CSS). */
+:root {
+  --ground: #12181F;
+  --rule: #26313B;
+  --text: #EAEEF2;
+  --muted: #8CA0AE;
+  --mono: 'SFMono-Regular', 'SF Mono', 'Menlo', 'Consolas', 'Liberation Mono', monospace;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
-  display: grid;
-  margin: 0px;
-  font-family: 'WebFont1';
-  grid-template-columns: 1fr;
-
-}
-
-#outerContainer {
-  display: grid;
-  /* position:relative + z-index:0 makes this a stacking context so the
-     #skyCanvas child (z-index:-1) paints OVER the sky gradient but UNDER the
-     app content. */
-  position: relative;
-  z-index: 0;
-  min-height: 110vh;
-  grid-template-rows: 10vh 70px 1fr 20px 35px 90px 20vh;
-  grid-template-areas:
-  "header"
-  "space1"
-  "main"
-  "space2"
-  "spaceForm"
-  "space3"
-  "footer"
-  ;
-  transition: background 400ms ease;
-
-}
-
-/* Animated per-condition particle field (sky.js, 'particles' kind: rain, snow,
-   hail). Absolutely positioned so it never becomes a grid item, behind the app
-   content, and click-through. */
-#skyCanvas {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-}
-
-/* CSS drift surface for sky.js's 'layer' kind (fog, overcast, partly) — no
-   canvas, no rAF. sky.js toggles one sky-* class; the motion lives entirely
-   here. Same absolute/behind/click-through placement as #skyCanvas, and only
-   one of the two is ever live at a time. */
-#skyLayer {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  overflow: hidden;
-}
-
-#skyLayer.sky-fog::before,
-#skyLayer.sky-overcast::before,
-#skyLayer.sky-overcast::after,
-#skyLayer.sky-partly::before,
-#skyLayer.sky-partly::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  width: 200%;
-  background-repeat: repeat-x;
-}
-
-/* Fog: a low haze band drifting slowly along the horizon. */
-#skyLayer.sky-fog::before {
-  background-image: radial-gradient(closest-side at 50% 100%,
-    rgba(230,232,235,0.45), rgba(230,232,235,0) 100%);
-  background-size: 25% 60%;
-  background-position: 0 100%;
-  animation: skyDrift 70s linear infinite;
-}
-
-/* Overcast: a heavy, slow cloud mass covering the sky. Two offset layers at
-   different speeds give the mass depth. */
-#skyLayer.sky-overcast::before {
-  background-image: radial-gradient(closest-side at 50% 40%,
-    rgba(205,210,215,0.55), rgba(205,210,215,0) 100%);
-  background-size: 50% 80%;
-  background-position: 0 20%;
-  animation: skyDrift 90s linear infinite;
-}
-#skyLayer.sky-overcast::after {
-  background-image: radial-gradient(closest-side at 50% 40%,
-    rgba(215,219,223,0.40), rgba(215,219,223,0) 100%);
-  background-size: 50% 70%;
-  background-position: 25% 10%;
-  animation: skyDrift 140s linear infinite;
-}
-
-/* Partly: a few small soft clouds drifting across an otherwise clear sky. */
-#skyLayer.sky-partly::before {
-  background-image: radial-gradient(closest-side at 50% 50%,
-    rgba(255,255,255,0.85), rgba(255,255,255,0) 100%);
-  background-size: 25% 32%;
-  background-position: 0 22%;
-  animation: skyDrift 110s linear infinite;
-}
-#skyLayer.sky-partly::after {
-  background-image: radial-gradient(closest-side at 50% 50%,
-    rgba(255,255,255,0.75), rgba(255,255,255,0) 100%);
-  background-size: 25% 26%;
-  background-position: 12% 34%;
-  animation: skyDrift 165s linear infinite;
-}
-
-@keyframes skyDrift {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-
-/* visibilitychange pause: sky.js toggles .sky-paused while the tab is hidden,
-   freezing the CSS layers the same way it cancels the particle rAF loop. */
-#skyLayer.sky-paused::before,
-#skyLayer.sky-paused::after {
-  animation-play-state: paused;
-}
-
-/* Reduced motion: show one static frame of the layer and cancel the drift —
-   mirrors the particle path, which draws a single frame and never loops. */
-@media (prefers-reduced-motion: reduce) {
-  #skyLayer::before,
-  #skyLayer::after {
-    animation: none !important;
-  }
-}
-
-#header {
-  grid-area: header;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  
-}
-
-#space1 {
-  grid-area: space1;
-}
-
-#main {
-  display: grid;
-  grid-area: main;
-  grid-template-columns: 1fr 1000px 1fr;
-  grid-template-areas: 
-  "sideSpace1 weatherOuter sideSpace2"
-  ;
-}
-
-#sideSpace1 {
-  grid-area: sideSpace1;
-
-}
-
-#weatherOuter {
-  display: grid;
-  grid-area: weatherOuter;
-  grid-template-columns: 1fr 4fr 1fr;
-  grid-template-areas: 
-  "inner1 innerMain inner2"
-  ;
-  border-radius: 10px;
-}
-
-#inner1 {
-  display: grid;
-  grid-area: inner1;
-  grid-template-rows: 3fr 0.5fr 3fr;
-  grid-template-columns: 1fr 2fr 1fr;
-  grid-template-areas: 
-  ". upperLeft ."
-  ". arrowLeft ."
-  ". lowerLeft ."
-  ;
-}
-
-#upperLeft {
-  grid-area: upperLeft;
-
-}
-
-#arrowLeft {
-  grid-area: arrowLeft;
-  cursor: pointer;
-  width: 65px;
-}
-
-#lowerLeft {
-  grid-area: lowerLeft;
-
-}
-
-#innerMain {
-  display: grid;
-  grid-template-rows: 1fr 4fr 0.5fr;
-  grid-template-areas: 
-  "mainTop"
-  "mainMiddle"
-  "mainBottom"
-  ;
-  grid-area: innerMain;
-}
-
-
-#mainTop {
-  display: grid;
-  grid-area: mainTop;
-  grid-template-columns: 1fr 2fr 1fr;
-  grid-template-rows: 1fr 3fr 2fr;
-  grid-template-areas: 
-  "upperSection upperSection upperSection"
-  ". dateSection ."
-  "lowerSection lowerSection lowerSection"
-  ;
-
-}
-
-#upperSection {
-  grid-area: upperSection;
-
-}
-
-#dateSection {
-  display: grid;
-  grid-area: dateSection;
-  grid-template-rows: 1fr 3fr 1fr;
-  grid-template-areas: 
-  "dateSpace1"
-  "dateMain"
-  "dateSpace2"
-  ;
-  
-}
-
-#dateSpace1 {
-  grid-area: dateSpace1;
-  
-}
-
-#dateMain {
-  grid-area: dateMain;
-  text-align: center;
-  background-color: white;
-  border: 0.5px solid black;
-  border-left: none;
-  
-  border-right: none;
-  
-  font-size: 26px;
-}
-
-#dateSpace2 {
-  grid-area: dateSpace2;
-  
-}
-
-#lowerSection {
-  grid-area: lowerSection;
-
-}
-
-
-
-#mainMiddle {
-  display: grid;
-  border-radius: 8px;
-  /* Frosted card: a translucent white pane blurring the animated sky behind it.
-     #weatherUpper carries no background and #weatherData drops its white below,
-     so they inherit the frost instead of punching opaque holes through it. */
-  background: rgba(255, 255, 255, 0.58);
-  backdrop-filter: blur(11px) saturate(1.15);
-  -webkit-backdrop-filter: blur(11px) saturate(1.15);
-  grid-area: mainMiddle;
-  grid-template-rows: 1fr 6fr 1fr;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 5fr) minmax(0, 1fr) minmax(0, 2fr) minmax(0, 0.5fr);
-  grid-template-areas:
-  "spacer1 spacer1 spacer1 spacer1 spacer1"
-  ". weatherSection . weatherData ."
-  "spacer2 spacer2 spacer2 spacer2 spacer2"
-  ;
-  border: 0.5px solid rgba(255, 255, 255, 0.75);
-  box-shadow: 0px 2px 11px rgba(0, 0, 0, 0.3);
-}
-
-#spacer1 {
-  grid-area: spacer1;
-  
-}
-
-#spacer2 {
-  grid-area: spacer2;
-
-}
-
-#weatherSection {
-  display: grid;
-  grid-template-rows: 3fr 1fr;
-  grid-template-areas: 
-  "weatherUpper"
-  "weatherLower"
-  ;
-  grid-area: weatherSection;
-  
-}
-
-#weatherUpper {
-  display: grid;
-  /* White comes from the #mainMiddle card so the rounded corners frame white,
-     not a hard square edge over the page gradient. */
-  grid-area: weatherUpper;
-  grid-template-rows: 0.5fr 2fr 0.5fr 1fr;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 4fr) minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
-  grid-template-areas: 
-  ". . . . . "
-  ". weatherIcon . weatherTemps . "
-  ". . . . . "
-  ". weatherLocation weatherLocation weatherLocation . "
-  ;
-}
-
-#weatherIcon {
-  grid-area: weatherIcon;
-  justify-self: end;
-  width: 140px;
-}
-
-#weatherTemps {
-  display: grid;
-  grid-area: weatherTemps;
-  grid-template-rows: 1fr 1fr;
-  grid-template-areas:
-  "tempUpper"
-  "tempLower"
-  ;
-}
-
-#weatherLocation {
-  grid-area: weatherLocation;
-  text-align: center;
-  font-size: 24px;
-}
-
-#tempUpper {
-  grid-area: tempUpper;
-  align-self: end;
-  font-size: 36px;
-  
-}
-
-#tempLower {
-  grid-area: tempLower;
-  
-}
-
-
-#weatherLower {
-  display: grid;
-  grid-template-columns: 1fr 5fr 1fr;
-  grid-template-rows: 1fr 2fr 1fr;
-  grid-template-areas: 
-  ". typeUpper ."
-  ". weatherType ."
-  ". typeLower ."
-  ;
-  grid-area: weatherLower;
-}
-
-#typeUpper {
-  grid-area: typeUpper;
-}
-
-#weatherType {
-  grid-area: weatherType;
-  background-color: white;
-  text-align: center;
-  font-size: 24px;
-  border: 1px solid black;
-  border-left: none;
-  border-right: none;
-  border-top: none;
-}
-
-#typeLower {
-  grid-area: typeLower;
-
-}
-
-
-#weatherData {
-  display: grid;
-  /* No background: inherit the frosted #mainMiddle card rather than punching an
-     opaque white block through the frost. */
-  background: transparent;
-  grid-area: weatherData;
-  grid-template-rows: 0.5fr 3fr 0.5fr 3fr 0.5fr 3fr 0.5fr 3fr 0.5fr;
-  grid-template-columns: 1fr;
-  grid-template-areas: 
-  "spaced1"
-  "block1"
-  "spaced2"
-  "block2"
-  "spaced3"
-  "block3"
-  "spaced4"
-  "block4"
-  "spaced5"
-  ;
-}
-
-#spaced1 {
-  grid-area: spaced1;
-
-}
-#block1 {
-  display: grid;
-  grid-area: block1;
-  grid-template-columns: 1fr 1fr;
-  grid-template-areas: 
-  "block1Left block1Right"
-  ;
-}
-
-#block1Left {
-  grid-area: block1Left;
-  justify-self: end;
-  padding-right: 5px;    
-  width: 35px;
-}
-
-#block1Right {
-  display: grid;
-  grid-area: block1Right;
-  grid-template-rows: 1fr 2fr;
-  grid-template-areas: 
-  "block1Top"
-  "block1Bottom"
-  ;
-}
-
-#block1Top {
-  grid-area: block1Top;
-  text-align: start;
-  font-size: 12px;
-}
-
-#block1Bottom {
-  grid-area: block1Bottom;
-  font-size: 18px;
-}
-
-#spaced2 {
-  grid-area: spaced2;
-  
-}
-
-#block2 {
-  display: grid;
-  grid-area: block2;
-  grid-template-columns: 1fr 1fr;
-  grid-template-areas: 
-  "block2Left block2Right"
-  ;
-}
-
-#block2Left {
-  grid-area: block2Left;
-  justify-self: end;
-  padding-right: 5px;  
-  width: 35px;
-
-}
-
-#block2Right {
-  display: grid;
-  grid-area: block2Right;
-  grid-template-rows: 1fr 2fr;
-  grid-template-areas: 
-  "block2Top"
-  "block2Bottom"
-  ;
-}
-
-#block2Top {
-  grid-area: block2Top;
-  text-align: start;
-  font-size: 12px;
-}
-
-#block2Bottom {
-  grid-area: block2Bottom;
-  font-size: 18px;
-}
-
-
-
-#spaced3 {
-  grid-area: spaced3;
-
-}
-
-#block3 {
-  display: grid;
-  grid-area: block3;
-  grid-template-columns: 1fr 1fr;
-  grid-template-areas: 
-  "block3Left block3Right"
-  ;
-}
-
-#block3Left {
-  grid-area: block3Left;
-  justify-self: end;
-  padding-right: 5px;
-  width: 35px;
-}
-
-#block3Right {
-  display: grid;
-  grid-area: block3Right;
-  grid-template-rows: 1fr 2fr;
-  grid-template-areas: 
-  "block3Top"
-  "block3Bottom"
-  ;
-}
-
-#block3Top {
-  grid-area: block3Top;
-  text-align: start;
-  font-size: 12px;
-}
-
-#block3Bottom {
-  grid-area: block3Bottom;
-  font-size: 18px;
-}
-
-
-#spaced4 {
-  grid-area: spaced4;
-
-}
-
-#block4 {
-  display: grid;
-  grid-area: block4;
-  grid-template-columns: 1fr 1fr;
-  grid-template-areas: 
-  "block4Left block4Right"
-  ;
-}
-
-#block4Left {
-  grid-area: block4Left;
-  justify-self: end;
-  padding-right: 5px;
-  width: 35px;
-}
-
-#block4Right {
-  display: grid;
-  grid-area: block4Right;
-  grid-template-rows: 1fr 2fr;
-  grid-template-areas: 
-  "block4Top"
-  "block4Bottom"
-  ;
-}
-
-#block4Top {
-  grid-area: block4Top;
-  text-align: start;
-  font-size: 12px;
-}
-
-#block4Bottom {
-  grid-area: block4Bottom;
-  font-size: 18px;
-}
-
-#spaced5 {
-  grid-area: spaced5;
-
-}
-
-
-#mainBottom {
-  grid-area: mainBottom;
-}
-
-
-#inner2 {
-  display: grid;
-  grid-area: inner2;
-  grid-template-rows: 3fr 0.5fr 3fr;
-  grid-template-columns: 1fr 2fr 1fr;
-  grid-template-areas: 
-  ". upperRight ."
-  ". arrowRight ."
-  ". lowerRight ."
-  ;
-}
-
-#upperRight {
-  grid-area: upperRight;
-
-}
-
-#arrowRight {
-  grid-area: arrowRight;
-  cursor: pointer;
-  width: 65px;
-}
-
-#lowerRight {
-  grid-area: lowerRight;
-
-}
-
-#sideSpace2 {
-  grid-area: sideSpace2;
-
-}
-
-
-#space2 {
-  grid-area: space2;
-
-}
-
-#spaceForm {
-  display: grid;
-  grid-area: spaceForm;
-  grid-template-columns: 1fr 1fr 450px 15px 100px 2fr;
-  grid-template-areas: 
-  "formSpace1 formSpace2 formInput formSpace3 formButton formSpace4"
-  ;
-}
-
-#formSpace1 {
-  grid-area: formSpace1;
-
-}
-#formSpace2 {
-  grid-area: formSpace2;
-
-}
-#formInput {
-  display: grid;
-  grid-area: formInput;
-  grid-template-columns: 1fr 18fr 1fr;
-  grid-template-areas: 
-  ". inputInner ."
-  ;
-  border-radius: 6px;
-  border: 1px solid black;
-}
-
-#inputInner {
-  display: grid;
-  grid-area: inputInner;
-  border: none;
-  font-size: 16px;
-}
-
-#inputInner:focus {
-  outline: none;
-
-}
-
-#formButton {
-  display: grid;
-  grid-area: formButton;
-  grid-template-rows: 5px 1fr 5px;
-  grid-template-areas: 
-  '.'
-  'buttonText'
-  '.'
-  ;
-  text-align: center;
-  text-justify: center;
-  background-color: #ccc;
-  cursor: pointer;
-  border-radius: 6px;
-  font-size: 16px;
-  border: 1px solid black;
-}
-
-#buttonText {
-  grid-area: buttonText;
-}
-
-#formSpace3 {
-  grid-area: formSpace3;
-
-}
-#formSpace4 {
-  grid-area: formSpace4;
-
-}
-
-
-#space3 {
-  grid-area: space3;
-}
-
-#footer {
-  grid-area: footer;
-  background-color: #ccc;
-}
-
-
-/* Hover treatments (moved out of index.js so they never persist as inline
-   styles that would override the themed accent). */
-#arrowLeft:hover,
-#arrowRight:hover {
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
-  border: 1px solid black;
-}
-
-#formButton:hover {
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
-  filter: brightness(0.9);
-}
-
-
-/* Per-weather theming. adjustWeather() in indexChanges.js sets a
-   weather-{...} class on #outerContainer; the class drives a vertical sky
-   gradient plus a matching accent on the two underline rules (#dateMain,
-   #weatherType), #footer and #formButton. The white cards stay white. */
-#outerContainer.weather-neutral  { background: linear-gradient(180deg, #8fa3b0, #c3ced5); }
-#outerContainer.weather-rain     { background: linear-gradient(180deg, #46606e, #8199a4); }
-#outerContainer.weather-snow     { background: linear-gradient(180deg, #8fb0cc, #dce8f2); }
-#outerContainer.weather-hail     { background: linear-gradient(180deg, #566573, #9aa8b5); }
-#outerContainer.weather-partly   { background: linear-gradient(180deg, #5b90c4, #afd0ea); }
-#outerContainer.weather-sunny    { background: linear-gradient(180deg, #4a94dd, #cdeafa); }
-#outerContainer.weather-fog      { background: linear-gradient(180deg, #97a1a9, #d2d8dd); }
-#outerContainer.weather-overcast { background: linear-gradient(180deg, #6b757d, #a7b0b7); }
-
-#outerContainer.weather-neutral #footer,
-#outerContainer.weather-neutral #formButton { background-color: #6b7883; }
-#outerContainer.weather-neutral #dateMain,
-#outerContainer.weather-neutral #weatherType { border-color: #6b7883; }
-
-#outerContainer.weather-rain #footer,
-#outerContainer.weather-rain #formButton { background-color: #3c5561; }
-#outerContainer.weather-rain #dateMain,
-#outerContainer.weather-rain #weatherType { border-color: #3c5561; }
-
-#outerContainer.weather-snow #footer,
-#outerContainer.weather-snow #formButton { background-color: #5f82a6; }
-#outerContainer.weather-snow #dateMain,
-#outerContainer.weather-snow #weatherType { border-color: #5f82a6; }
-
-#outerContainer.weather-hail #footer,
-#outerContainer.weather-hail #formButton { background-color: #495663; }
-#outerContainer.weather-hail #dateMain,
-#outerContainer.weather-hail #weatherType { border-color: #495663; }
-
-#outerContainer.weather-partly #footer,
-#outerContainer.weather-partly #formButton { background-color: #3f79b3; }
-#outerContainer.weather-partly #dateMain,
-#outerContainer.weather-partly #weatherType { border-color: #3f79b3; }
-
-#outerContainer.weather-sunny #footer,
-#outerContainer.weather-sunny #formButton { background-color: #e39a1c; }
-#outerContainer.weather-sunny #dateMain,
-#outerContainer.weather-sunny #weatherType { border-color: #e39a1c; }
-
-#outerContainer.weather-fog #footer,
-#outerContainer.weather-fog #formButton { background-color: #77828a; }
-#outerContainer.weather-fog #dateMain,
-#outerContainer.weather-fog #weatherType { border-color: #77828a; }
-
-#outerContainer.weather-overcast #footer,
-#outerContainer.weather-overcast #formButton { background-color: #5a646b; }
-#outerContainer.weather-overcast #dateMain,
-#outerContainer.weather-overcast #weatherType { border-color: #5a646b; }
-
-
-/* Per-weather accent as a custom property so the active swipe dot can pick it
-   up (var(--accent)). Mirrors the accent colours used on #footer/#formButton. */
-#outerContainer.weather-neutral  { --accent: #6b7883; }
-#outerContainer.weather-rain     { --accent: #3c5561; }
-#outerContainer.weather-snow     { --accent: #5f82a6; }
-#outerContainer.weather-hail     { --accent: #495663; }
-#outerContainer.weather-partly   { --accent: #3f79b3; }
-#outerContainer.weather-sunny    { --accent: #e39a1c; }
-#outerContainer.weather-fog      { --accent: #77828a; }
-#outerContainer.weather-overcast { --accent: #5a646b; }
-
-
-/* Three-dot day indicator. Hidden on desktop (the ‹ › arrows are the
-   affordance there); shown under the card at <=480px where swipe takes over. */
-#dayDots {
-  display: none;
+  margin: 0;
+  background: var(--ground);
+  color: var(--text);
+  font-family: 'Roboto', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* dvh (not vh): on iOS Safari vh resolves to the tall viewport and parks the
+   bottom of the layout under the URL bar. */
+#app {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
   justify-content: center;
+  gap: 28px;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 20px;
+}
+
+/* Ribbon: the SVG scales to the column width via the viewBox, so all 72 hours
+   are on screen at any width down to 380px without scroll or pan. */
+#ribbonWrap {
+  width: 100%;
+}
+
+#ribbonSvg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.ribbon-curve {
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Day boundary hairlines at hours 24 and 48. */
+.ribbon-hairline {
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+
+.ribbon-tick {
+  fill: var(--muted);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.ribbon-nowline {
+  stroke: var(--muted);
+  stroke-width: 1;
+  stroke-dasharray: 2 3;
+  opacity: 0.7;
+}
+
+.ribbon-dot {
+  stroke: var(--ground);
+  stroke-width: 2;
+}
+
+/* Readout beneath the curve. */
+#readout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+
+#locationName {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Roboto Light 40px for the reading. */
+#currentTemp {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+  font-size: 40px;
+  line-height: 1.1;
+}
+
+#currentCondition {
+  font-size: 15px;
+  color: var(--text);
+}
+
+/* Four-up stat row: text labels, no icons. */
+#statRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
-  padding: 10px 0;
+  width: 100%;
+  margin-top: 14px;
 }
 
-#dayDots .dot {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.18);
-  transition: background 200ms ease;
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 6px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
 }
 
-#dayDots .dot.active {
-  background: var(--accent, #6b7883);
+.stat-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--muted);
 }
 
-
-/* Tablet: collapse #main to a single weatherOuter column and shrink the search form */
-@media (max-width: 768px) {
-  #main {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-    "weatherOuter"
-    ;
-  }
-
-  #sideSpace1,
-  #sideSpace2 {
-    display: none;
-  }
-
-  #spaceForm {
-    grid-template-columns: 1fr 1fr 280px 15px 100px 2fr;
-  }
-
-  /* Stack the weather graphic above the stats so #weatherData no longer
-     clips inside the 2fr column. */
-  #mainMiddle {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto auto;
-    grid-template-areas:
-    "spacer1"
-    "weatherSection"
-    "weatherData"
-    "spacer2"
-    ;
-  }
-
-  /* Lay the four stats out as a 2×2 grid. */
-  #weatherData {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
-    grid-template-areas:
-    "block1 block2"
-    "block3 block4"
-    ;
-    gap: 8px;
-    padding: 12px 0;
-  }
-
-  #spaced1,
-  #spaced2,
-  #spaced3,
-  #spaced4,
-  #spaced5 {
-    display: none;
-  }
+.stat-value {
+  font-size: 17px;
+  color: var(--text);
 }
 
+/* Search form. */
+#searchForm {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
 
-/* Mobile: keep the arrows flanking the content (rather than stranding them
-   above/below), and stack the search form into a single column. */
+#searchInput {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 14px;
+  font-family: var(--mono);
+  font-size: 16px; /* 16px so iOS Safari doesn't auto-zoom the input on focus */
+  color: var(--text);
+  background: transparent;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+}
+
+#searchInput::placeholder {
+  color: var(--muted);
+}
+
+#searchInput:focus {
+  outline: none;
+  border-color: var(--muted);
+}
+
+/* Failed lookup: reddened border, current ribbon left in place. */
+#searchForm.invalid #searchInput {
+  border-color: #C2452D;
+}
+
+#searchButton {
+  padding: 12px 20px;
+  font-family: var(--mono);
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: var(--ground);
+  background: var(--text);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+#searchButton:hover {
+  filter: brightness(0.92);
+}
+
 @media (max-width: 480px) {
-  /* Centre the whole layout in the viewport instead of parking it below the
-     top edge. dvh (not vh) so iOS Safari's dynamic URL bar doesn't push the
-     bottom under the toolbar. Header/footer rows and the main row drop to
-     content height so align-content actually has slack to centre. */
-  #outerContainer {
-    min-height: 100dvh;
-    align-content: center;
-    grid-template-rows: auto 70px auto 20px 35px 90px auto;
+  #app {
+    gap: 22px;
+    padding: 24px 16px;
   }
 
-  /* Drop the footer accent fill; it reads as a stray bar on mobile. */
-  #footer {
-    background-color: transparent;
+  #statRow {
+    gap: 8px;
   }
 
-  /* Reveal the three-dot day indicator now that the arrows are swiped away. */
-  #dayDots {
-    display: flex;
+  .stat {
+    padding: 10px 4px;
   }
 
-  /* Fixed narrow gutters so the arrow pair flanks the content and never clips
-     against the viewport edges. */
-  #weatherOuter {
-    grid-template-columns: 44px 1fr 44px;
-  }
-
-  /* Zero the spacer rows so each arrow centres vertically on the content. */
-  #inner1,
-  #inner2 {
-    grid-template-rows: 0fr 1fr 0fr;
-  }
-
-  /* Hide the arrows in favour of swipe. visibility (never src='' or display)
-     so they keep their 44px gutters — that's what the card and Submit align to.
-     !important because updateArrows() toggles visibility inline per day, and an
-     inline style would otherwise re-show them here. */
-  #arrowLeft,
-  #arrowRight {
-    width: 32px;
-    visibility: hidden !important;
-  }
-
-  /* Shrink the graphic/temperature so #weatherUpper's tracks fit inside the
-     narrow single column rather than pushing #mainMiddle past the edge. */
-  #weatherIcon {
-    width: 88px;
-  }
-
-  #tempUpper {
-    font-size: 28px;
-  }
-
-  /* Keep the date on one line so it still reads as a rule. */
-  #dateMain {
-    font-size: 18px;
-    white-space: nowrap;
-  }
-
-  /* Collapse the spacer rows to content height so they stop absorbing the slack
-     that floated the card below the top edge; align-content:center on
-     #outerContainer now handles vertical centring instead. */
-  #mainTop {
-    grid-template-rows: auto auto auto;
-  }
-
-  #innerMain {
-    grid-template-rows: auto auto auto;
-  }
-
-  /* 44px horizontal inset matches #mainMiddle's position inside #weatherOuter's
-     44px | 1fr | 44px gutters, so Submit no longer renders wider than the card
-     above it. */
-  #spaceForm {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-    "formInput"
-    "formButton"
-    ;
-    gap: 10px;
-    padding: 0px 44px;
-  }
-
-  #formSpace1,
-  #formSpace2,
-  #formSpace3,
-  #formSpace4 {
-    display: none;
+  .stat-value {
+    font-size: 15px;
   }
 }
