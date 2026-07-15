@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import './style.css';
 import { forecastLogic } from './logic.js';
+import { setSkyCategory } from './sky.js';
 import rightArrow from './arrowRight.svg';
 import leftArrow from './arrowLeft.svg';
 import snowing from './snowing.svg';
@@ -30,7 +31,8 @@ let eventsWired = false;
 // appended the DOM.
 let leftArrowIcon, rightArrowIcon, submitForm, formValue, weatherIcon,
   outerContainer, dateMain, weatherConditionText, locationText,
-  tempUpper, tempLower, block1Bottom, block2Bottom, block3Bottom, block4Bottom;
+  tempUpper, tempLower, block1Bottom, block2Bottom, block3Bottom, block4Bottom,
+  mainMiddle, dayDots;
 
 
 function cacheDom(){
@@ -63,6 +65,10 @@ function cacheDom(){
   block3Bottom = document.getElementById('block3Bottom');
   block4Bottom = document.getElementById('block4Bottom');
 
+  // Swipe target + the three-dot indicator (mobile day navigation).
+  mainMiddle = document.getElementById('mainMiddle');
+  dayDots = document.querySelectorAll('#dayDots .dot');
+
 }
 
 
@@ -80,6 +86,7 @@ export function renderDay(dayArray, n){
   const info = dayArray['day' + n][0];
 
   updateArrows(n);
+  updateDots(n);
 
   let selHeaderText = createDateHeader(info.dayName, info.dayDate);
   adjustWeather(info.weather);
@@ -110,28 +117,14 @@ export function wireEvents(){
   cacheDom();
   eventsWired = true;
 
+  // Both arrows and (below 480px) swipe funnel through navigate(), so they
+  // drive the single module-scope dayCounter and can never diverge.
   rightArrowIcon.addEventListener("click", function(){
-
-    if(!latestDays){ return; }
-
-    if(dayCounter < 3){
-      dayCounter++;
-    }
-
-    renderDay(latestDays, dayCounter);
-
+    navigate(1);
   });
 
   leftArrowIcon.addEventListener("click", function(){
-
-    if(!latestDays){ return; }
-
-    if(dayCounter > 1){
-      dayCounter--;
-    }
-
-    renderDay(latestDays, dayCounter);
-
+    navigate(-1);
   });
 
   submitForm.addEventListener("click", function(){
@@ -139,6 +132,47 @@ export function wireEvents(){
     forecastLogic.futureAPICalls(formValue.value);
 
   });
+
+  // Swipe navigation. Below 480px the arrows are hidden and a horizontal swipe
+  // across the card pages between days. We commit only past ~50px of travel and
+  // only when the gesture is more horizontal than vertical (|dx| > |dy|), so a
+  // vertical page scroll is never hijacked. The listeners are passive (no
+  // preventDefault) and route through the same navigate() the arrows use.
+  let touchStartX = 0, touchStartY = 0;
+
+  mainMiddle.addEventListener("touchstart", function(e){
+    const t = e.changedTouches[0];
+    touchStartX = t.clientX;
+    touchStartY = t.clientY;
+  }, { passive: true });
+
+  mainMiddle.addEventListener("touchend", function(e){
+    const t = e.changedTouches[0];
+    const dx = t.clientX - touchStartX;
+    const dy = t.clientY - touchStartY;
+
+    if(Math.abs(dx) < 50){ return; }          // not far enough to count
+    if(Math.abs(dx) <= Math.abs(dy)){ return; } // vertical scroll, leave it alone
+
+    navigate(dx < 0 ? 1 : -1); // swipe left -> next day, swipe right -> previous
+  }, { passive: true });
+
+}
+
+// Shared day-change path for the arrows and swipe. Clamps to the loaded 1-3
+// range and re-renders through the pure render path.
+function navigate(delta){
+
+  if(!latestDays){ return; }
+
+  let target = dayCounter + delta;
+
+  if(target < 1){ target = 1; }
+  if(target > 3){ target = 3; }
+
+  if(target === dayCounter){ return; }
+
+  renderDay(latestDays, target);
 
 }
 
@@ -161,6 +195,19 @@ function updateArrows(n){
     offRightArrow();
   } else {
     onRightArrow();
+  }
+
+}
+
+// Mark the dot for the day on screen active (filled with the weather accent via
+// the CSS var(--accent)); the others stay muted. Runs on every render so it
+// tracks arrow + swipe navigation.
+function updateDots(n){
+
+  if(!dayDots){ return; }
+
+  for(let i = 0; i < dayDots.length; i++){
+    dayDots[i].classList.toggle('active', i === (n - 1));
   }
 
 }
@@ -235,6 +282,11 @@ function adjustWeather(weather){
     'weather-partly', 'weather-sunny', 'weather-fog', 'weather-overcast'
   );
   outerContainer.classList.add(themeClass);
+
+  // Drive the animated sky with the same resolved category (strip the
+  // 'weather-' prefix so 'weather-sunny' -> 'sunny'). This follows the ‹ › day
+  // navigation for free, exactly like the gradient theme.
+  setSkyCategory(themeClass.replace('weather-', ''));
 
 }
 
