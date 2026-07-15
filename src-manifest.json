@@ -1,813 +1,185 @@
 {
-  "generatedAt": "2026-07-15T11:37:12.148Z",
-  "sha": "c430d4438d69435f815443cf414816023ecd3bd8",
+  "generatedAt": "2026-07-15T12:17:52.431Z",
+  "sha": "b7839e2943025673f0fd35c168cbde9141d7a11e",
   "files": [
-    "day.js",
     "index.js",
     "indexChanges.js",
     "logic.js",
+    "ribbon.js",
     "sky.js",
     "style.css"
   ],
   "srcRoot": "WeatherApp_main/src",
   "regions": [
     {
-      "selector": "#arrowLeft",
-      "label": "Arrow Left",
+      "selector": "#app",
+      "label": "App",
       "file": "index.js",
-      "line": 161,
+      "line": 31,
       "files": [
         {
           "file": "index.js",
-          "line": 161
+          "line": 31
         },
         {
           "file": "style.css",
-          "line": 184
+          "line": 34
         }
       ]
     },
     {
-      "selector": "#arrowRight",
-      "label": "Arrow Right",
+      "selector": "#currentCondition",
+      "label": "Current Condition",
       "file": "index.js",
-      "line": 165,
+      "line": 50,
       "files": [
         {
           "file": "index.js",
-          "line": 165
+          "line": 50
         },
         {
           "file": "style.css",
-          "line": 611
+          "line": 114
         }
       ]
     },
     {
-      "selector": "#block1",
-      "label": "Block1",
+      "selector": "#currentTemp",
+      "label": "Current Temp",
       "file": "index.js",
-      "line": 197,
+      "line": 46,
       "files": [
         {
           "file": "index.js",
-          "line": 197
+          "line": 46
         },
         {
           "file": "style.css",
-          "line": 416
+          "line": 107
         }
       ]
     },
     {
-      "selector": "#block1Bottom",
-      "label": "Block1 Bottom",
-      "file": "index.js",
-      "line": 214,
+      "selector": "#fillGrad",
+      "label": "Fill Grad",
+      "file": "ribbon.js",
+      "line": 127,
       "files": [
         {
-          "file": "index.js",
-          "line": 214
-        },
-        {
-          "file": "style.css",
-          "line": 448
+          "file": "ribbon.js",
+          "line": 127
         }
       ]
     },
     {
-      "selector": "#block1Left",
-      "label": "Block1 Left",
+      "selector": "#locationName",
+      "label": "Location Name",
       "file": "index.js",
-      "line": 211,
+      "line": 42,
       "files": [
         {
           "file": "index.js",
-          "line": 211
+          "line": 42
         },
         {
           "file": "style.css",
-          "line": 425
+          "line": 98
         }
       ]
     },
     {
-      "selector": "#block1Right",
-      "label": "Block1 Right",
+      "selector": "#readout",
+      "label": "Readout",
       "file": "index.js",
-      "line": 212,
+      "line": 39,
       "files": [
         {
           "file": "index.js",
-          "line": 212
+          "line": 39
         },
         {
           "file": "style.css",
-          "line": 432
+          "line": 90
         }
       ]
     },
     {
-      "selector": "#block1Top",
-      "label": "Block1 Top",
-      "file": "index.js",
-      "line": 213,
+      "selector": "#ribbonSvg",
+      "label": "Ribbon Svg",
+      "file": "ribbon.js",
+      "line": 112,
       "files": [
         {
-          "file": "index.js",
-          "line": 213
+          "file": "ribbon.js",
+          "line": 112
         },
         {
           "file": "style.css",
-          "line": 442
+          "line": 51
         }
       ]
     },
     {
-      "selector": "#block2",
-      "label": "Block2",
+      "selector": "#ribbonWrap",
+      "label": "Ribbon Wrap",
       "file": "index.js",
-      "line": 199,
+      "line": 35,
       "files": [
         {
           "file": "index.js",
-          "line": 199
+          "line": 35
         },
         {
           "file": "style.css",
-          "line": 458
+          "line": 47
         }
       ]
     },
     {
-      "selector": "#block2Bottom",
-      "label": "Block2 Bottom",
+      "selector": "#searchButton",
+      "label": "Search Button",
       "file": "index.js",
-      "line": 219,
+      "line": 77,
       "files": [
         {
           "file": "index.js",
-          "line": 219
+          "line": 77
         },
         {
           "file": "style.css",
-          "line": 491
+          "line": 183
         }
       ]
     },
     {
-      "selector": "#block2Left",
-      "label": "Block2 Left",
+      "selector": "#searchForm",
+      "label": "Search Form",
       "file": "index.js",
-      "line": 216,
+      "line": 68,
       "files": [
         {
           "file": "index.js",
-          "line": 216
+          "line": 68
         },
         {
           "file": "style.css",
-          "line": 467
-        }
-      ]
-    },
-    {
-      "selector": "#block2Right",
-      "label": "Block2 Right",
-      "file": "index.js",
-      "line": 217,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 217
-        },
-        {
-          "file": "style.css",
-          "line": 475
-        }
-      ]
-    },
-    {
-      "selector": "#block2Top",
-      "label": "Block2 Top",
-      "file": "index.js",
-      "line": 218,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 218
-        },
-        {
-          "file": "style.css",
-          "line": 485
-        }
-      ]
-    },
-    {
-      "selector": "#block3",
-      "label": "Block3",
-      "file": "index.js",
-      "line": 201,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 201
-        },
-        {
-          "file": "style.css",
-          "line": 503
-        }
-      ]
-    },
-    {
-      "selector": "#block3Bottom",
-      "label": "Block3 Bottom",
-      "file": "index.js",
-      "line": 224,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 224
-        },
-        {
-          "file": "style.css",
-          "line": 535
-        }
-      ]
-    },
-    {
-      "selector": "#block3Left",
-      "label": "Block3 Left",
-      "file": "index.js",
-      "line": 221,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 221
-        },
-        {
-          "file": "style.css",
-          "line": 512
-        }
-      ]
-    },
-    {
-      "selector": "#block3Right",
-      "label": "Block3 Right",
-      "file": "index.js",
-      "line": 222,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 222
-        },
-        {
-          "file": "style.css",
-          "line": 519
-        }
-      ]
-    },
-    {
-      "selector": "#block3Top",
-      "label": "Block3 Top",
-      "file": "index.js",
-      "line": 223,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 223
-        },
-        {
-          "file": "style.css",
-          "line": 529
-        }
-      ]
-    },
-    {
-      "selector": "#block4",
-      "label": "Block4",
-      "file": "index.js",
-      "line": 203,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 203
-        },
-        {
-          "file": "style.css",
-          "line": 546
-        }
-      ]
-    },
-    {
-      "selector": "#block4Bottom",
-      "label": "Block4 Bottom",
-      "file": "index.js",
-      "line": 229,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 229
-        },
-        {
-          "file": "style.css",
-          "line": 578
-        }
-      ]
-    },
-    {
-      "selector": "#block4Left",
-      "label": "Block4 Left",
-      "file": "index.js",
-      "line": 226,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 226
-        },
-        {
-          "file": "style.css",
-          "line": 555
-        }
-      ]
-    },
-    {
-      "selector": "#block4Right",
-      "label": "Block4 Right",
-      "file": "index.js",
-      "line": 227,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 227
-        },
-        {
-          "file": "style.css",
-          "line": 562
-        }
-      ]
-    },
-    {
-      "selector": "#block4Top",
-      "label": "Block4 Top",
-      "file": "index.js",
-      "line": 228,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 228
-        },
-        {
-          "file": "style.css",
-          "line": 572
-        }
-      ]
-    },
-    {
-      "selector": "#buttonText",
-      "label": "Button Text",
-      "file": "index.js",
-      "line": 152,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 152
-        },
-        {
-          "file": "style.css",
-          "line": 691
-        }
-      ]
-    },
-    {
-      "selector": "#dateMain",
-      "label": "Date Main",
-      "file": "index.js",
-      "line": 207,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 207
-        },
-        {
-          "file": "style.css",
-          "line": 242
-        }
-      ]
-    },
-    {
-      "selector": "#dateSection",
-      "label": "Date Section",
-      "file": "index.js",
-      "line": 173,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 173
-        },
-        {
-          "file": "style.css",
-          "line": 225
-        }
-      ]
-    },
-    {
-      "selector": "#dateSpace1",
-      "label": "Date Space1",
-      "file": "index.js",
-      "line": 206,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 206
-        },
-        {
-          "file": "style.css",
-          "line": 237
-        }
-      ]
-    },
-    {
-      "selector": "#dateSpace2",
-      "label": "Date Space2",
-      "file": "index.js",
-      "line": 208,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 208
-        },
-        {
-          "file": "style.css",
-          "line": 254
-        }
-      ]
-    },
-    {
-      "selector": "#dayDots",
-      "label": "Day Dots",
-      "file": "index.js",
-      "line": 385,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 385
-        },
-        {
-          "file": "style.css",
-          "line": 797
-        }
-      ]
-    },
-    {
-      "selector": "#footer",
-      "label": "Footer",
-      "file": "index.js",
-      "line": 141,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 141
-        },
-        {
-          "file": "style.css",
-          "line": 709
-        }
-      ]
-    },
-    {
-      "selector": "#formButton",
-      "label": "Form Button",
-      "file": "index.js",
-      "line": 151,
-      "files": [
-        {
-          "file": "index.js",
           "line": 151
-        },
-        {
-          "file": "style.css",
-          "line": 673
         }
       ]
     },
     {
-      "selector": "#formInput",
-      "label": "Form Input",
+      "selector": "#searchInput",
+      "label": "Search Input",
       "file": "index.js",
-      "line": 149,
+      "line": 71,
       "files": [
         {
           "file": "index.js",
-          "line": 149
+          "line": 71
         },
         {
           "file": "style.css",
-          "line": 650
-        }
-      ]
-    },
-    {
-      "selector": "#formSpace1",
-      "label": "Form Space1",
-      "file": "index.js",
-      "line": 147,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 147
-        },
-        {
-          "file": "style.css",
-          "line": 642
-        }
-      ]
-    },
-    {
-      "selector": "#formSpace2",
-      "label": "Form Space2",
-      "file": "index.js",
-      "line": 148,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 148
-        },
-        {
-          "file": "style.css",
-          "line": 646
-        }
-      ]
-    },
-    {
-      "selector": "#formSpace3",
-      "label": "Form Space3",
-      "file": "index.js",
-      "line": 153,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 153
-        },
-        {
-          "file": "style.css",
-          "line": 695
-        }
-      ]
-    },
-    {
-      "selector": "#formSpace4",
-      "label": "Form Space4",
-      "file": "index.js",
-      "line": 154,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 154
-        },
-        {
-          "file": "style.css",
-          "line": 699
-        }
-      ]
-    },
-    {
-      "selector": "#header",
-      "label": "Header",
-      "file": "index.js",
-      "line": 135,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 135
-        },
-        {
-          "file": "style.css",
-          "line": 133
-        }
-      ]
-    },
-    {
-      "selector": "#inner1",
-      "label": "Inner1",
-      "file": "index.js",
-      "line": 156,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 156
-        },
-        {
-          "file": "style.css",
-          "line": 167
-        }
-      ]
-    },
-    {
-      "selector": "#inner2",
-      "label": "Inner2",
-      "file": "index.js",
-      "line": 158,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 158
-        },
-        {
-          "file": "style.css",
-          "line": 594
-        }
-      ]
-    },
-    {
-      "selector": "#innerMain",
-      "label": "Inner Main",
-      "file": "index.js",
-      "line": 157,
-      "files": [
-        {
-          "file": "index.js",
           "line": 157
-        },
-        {
-          "file": "style.css",
-          "line": 195
-        }
-      ]
-    },
-    {
-      "selector": "#inputInner",
-      "label": "Input Inner",
-      "file": "index.js",
-      "line": 150,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 150
-        },
-        {
-          "file": "style.css",
-          "line": 661
-        }
-      ]
-    },
-    {
-      "selector": "#lowerLeft",
-      "label": "Lower Left",
-      "file": "index.js",
-      "line": 162,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 162
-        },
-        {
-          "file": "style.css",
-          "line": 190
-        }
-      ]
-    },
-    {
-      "selector": "#lowerRight",
-      "label": "Lower Right",
-      "file": "index.js",
-      "line": 166,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 166
-        },
-        {
-          "file": "style.css",
-          "line": 617
-        }
-      ]
-    },
-    {
-      "selector": "#lowerSection",
-      "label": "Lower Section",
-      "file": "index.js",
-      "line": 174,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 174
-        },
-        {
-          "file": "style.css",
-          "line": 259
-        }
-      ]
-    },
-    {
-      "selector": "#main",
-      "label": "Main",
-      "file": "index.js",
-      "line": 137,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 137
-        },
-        {
-          "file": "style.css",
-          "line": 143
-        }
-      ]
-    },
-    {
-      "selector": "#mainBottom",
-      "label": "Main Bottom",
-      "file": "index.js",
-      "line": 170,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 170
-        },
-        {
-          "file": "style.css",
-          "line": 589
-        }
-      ]
-    },
-    {
-      "selector": "#mainMiddle",
-      "label": "Main Middle",
-      "file": "index.js",
-      "line": 169,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 169
-        },
-        {
-          "file": "style.css",
-          "line": 266
-        }
-      ]
-    },
-    {
-      "selector": "#mainTop",
-      "label": "Main Top",
-      "file": "index.js",
-      "line": 168,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 168
-        },
-        {
-          "file": "style.css",
-          "line": 207
-        }
-      ]
-    },
-    {
-      "selector": "#outerContainer",
-      "label": "Outer Container",
-      "file": "index.js",
-      "line": 134,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 134
-        },
-        {
-          "file": "style.css",
-          "line": 14
-        }
-      ]
-    },
-    {
-      "selector": "#sideSpace1",
-      "label": "Side Space1",
-      "file": "index.js",
-      "line": 143,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 143
-        },
-        {
-          "file": "style.css",
-          "line": 152
-        }
-      ]
-    },
-    {
-      "selector": "#sideSpace2",
-      "label": "Side Space2",
-      "file": "index.js",
-      "line": 145,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 145
-        },
-        {
-          "file": "style.css",
-          "line": 622
         }
       ]
     },
@@ -820,10 +192,6 @@
         {
           "file": "sky.js",
           "line": 75
-        },
-        {
-          "file": "style.css",
-          "line": 17
         }
       ]
     },
@@ -836,458 +204,82 @@
         {
           "file": "sky.js",
           "line": 82
-        },
-        {
-          "file": "style.css",
-          "line": 50
         }
       ]
     },
     {
-      "selector": "#space1",
-      "label": "Space1",
+      "selector": "#statRow",
+      "label": "Stat Row",
       "file": "index.js",
-      "line": 136,
+      "line": 54,
       "files": [
         {
           "file": "index.js",
-          "line": 136
+          "line": 54
         },
         {
           "file": "style.css",
-          "line": 139
+          "line": 120
         }
       ]
     },
     {
-      "selector": "#space2",
-      "label": "Space2",
+      "selector": "#tempGrad",
+      "label": "Temp Grad",
+      "file": "ribbon.js",
+      "line": 122,
+      "files": [
+        {
+          "file": "ribbon.js",
+          "line": 122
+        }
+      ]
+    },
+    {
+      "selector": ".stat",
+      "label": "Stat",
       "file": "index.js",
-      "line": 138,
+      "line": 13,
       "files": [
         {
           "file": "index.js",
+          "line": 13
+        },
+        {
+          "file": "style.css",
+          "line": 128
+        }
+      ]
+    },
+    {
+      "selector": ".stat-label",
+      "label": "Stat Label",
+      "file": "index.js",
+      "line": 16,
+      "files": [
+        {
+          "file": "index.js",
+          "line": 16
+        },
+        {
+          "file": "style.css",
           "line": 138
-        },
-        {
-          "file": "style.css",
-          "line": 628
         }
       ]
     },
     {
-      "selector": "#space3",
-      "label": "Space3",
+      "selector": ".stat-value",
+      "label": "Stat Value",
       "file": "index.js",
-      "line": 140,
+      "line": 20,
       "files": [
         {
           "file": "index.js",
-          "line": 140
+          "line": 20
         },
         {
           "file": "style.css",
-          "line": 705
-        }
-      ]
-    },
-    {
-      "selector": "#spaceForm",
-      "label": "Space Form",
-      "file": "index.js",
-      "line": 139,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 139
-        },
-        {
-          "file": "style.css",
-          "line": 633
-        }
-      ]
-    },
-    {
-      "selector": "#spaced1",
-      "label": "Spaced1",
-      "file": "index.js",
-      "line": 196,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 196
-        },
-        {
-          "file": "style.css",
-          "line": 412
-        }
-      ]
-    },
-    {
-      "selector": "#spaced2",
-      "label": "Spaced2",
-      "file": "index.js",
-      "line": 198,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 198
-        },
-        {
-          "file": "style.css",
-          "line": 453
-        }
-      ]
-    },
-    {
-      "selector": "#spaced3",
-      "label": "Spaced3",
-      "file": "index.js",
-      "line": 200,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 200
-        },
-        {
-          "file": "style.css",
-          "line": 498
-        }
-      ]
-    },
-    {
-      "selector": "#spaced4",
-      "label": "Spaced4",
-      "file": "index.js",
-      "line": 202,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 202
-        },
-        {
-          "file": "style.css",
-          "line": 541
-        }
-      ]
-    },
-    {
-      "selector": "#spaced5",
-      "label": "Spaced5",
-      "file": "index.js",
-      "line": 204,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 204
-        },
-        {
-          "file": "style.css",
-          "line": 583
-        }
-      ]
-    },
-    {
-      "selector": "#spacer1",
-      "label": "Spacer1",
-      "file": "index.js",
-      "line": 179,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 179
-        },
-        {
-          "file": "style.css",
-          "line": 287
-        }
-      ]
-    },
-    {
-      "selector": "#spacer2",
-      "label": "Spacer2",
-      "file": "index.js",
-      "line": 180,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 180
-        },
-        {
-          "file": "style.css",
-          "line": 292
-        }
-      ]
-    },
-    {
-      "selector": "#tempLower",
-      "label": "Temp Lower",
-      "file": "index.js",
-      "line": 188,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 188
-        },
-        {
-          "file": "style.css",
-          "line": 352
-        }
-      ]
-    },
-    {
-      "selector": "#tempUpper",
-      "label": "Temp Upper",
-      "file": "index.js",
-      "line": 187,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 187
-        },
-        {
-          "file": "style.css",
-          "line": 345
-        }
-      ]
-    },
-    {
-      "selector": "#typeLower",
-      "label": "Type Lower",
-      "file": "index.js",
-      "line": 194,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 194
-        },
-        {
-          "file": "style.css",
-          "line": 385
-        }
-      ]
-    },
-    {
-      "selector": "#typeUpper",
-      "label": "Type Upper",
-      "file": "index.js",
-      "line": 192,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 192
-        },
-        {
-          "file": "style.css",
-          "line": 370
-        }
-      ]
-    },
-    {
-      "selector": "#upperLeft",
-      "label": "Upper Left",
-      "file": "index.js",
-      "line": 160,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 160
-        },
-        {
-          "file": "style.css",
-          "line": 179
-        }
-      ]
-    },
-    {
-      "selector": "#upperRight",
-      "label": "Upper Right",
-      "file": "index.js",
-      "line": 164,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 164
-        },
-        {
-          "file": "style.css",
-          "line": 606
-        }
-      ]
-    },
-    {
-      "selector": "#upperSection",
-      "label": "Upper Section",
-      "file": "index.js",
-      "line": 172,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 172
-        },
-        {
-          "file": "style.css",
-          "line": 220
-        }
-      ]
-    },
-    {
-      "selector": "#weatherData",
-      "label": "Weather Data",
-      "file": "index.js",
-      "line": 177,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 177
-        },
-        {
-          "file": "style.css",
-          "line": 270
-        }
-      ]
-    },
-    {
-      "selector": "#weatherIcon",
-      "label": "Weather Icon",
-      "file": "index.js",
-      "line": 183,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 183
-        },
-        {
-          "file": "style.css",
-          "line": 323
-        }
-      ]
-    },
-    {
-      "selector": "#weatherLocation",
-      "label": "Weather Location",
-      "file": "index.js",
-      "line": 185,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 185
-        },
-        {
-          "file": "style.css",
-          "line": 339
-        }
-      ]
-    },
-    {
-      "selector": "#weatherLower",
-      "label": "Weather Lower",
-      "file": "index.js",
-      "line": 190,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 190
-        },
-        {
-          "file": "style.css",
-          "line": 358
-        }
-      ]
-    },
-    {
-      "selector": "#weatherOuter",
-      "label": "Weather Outer",
-      "file": "index.js",
-      "line": 144,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 144
-        },
-        {
-          "file": "style.css",
-          "line": 157
-        }
-      ]
-    },
-    {
-      "selector": "#weatherSection",
-      "label": "Weather Section",
-      "file": "index.js",
-      "line": 176,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 176
-        },
-        {
-          "file": "style.css",
-          "line": 297
-        }
-      ]
-    },
-    {
-      "selector": "#weatherTemps",
-      "label": "Weather Temps",
-      "file": "index.js",
-      "line": 184,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 184
-        },
-        {
-          "file": "style.css",
-          "line": 329
-        }
-      ]
-    },
-    {
-      "selector": "#weatherType",
-      "label": "Weather Type",
-      "file": "index.js",
-      "line": 193,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 193
-        },
-        {
-          "file": "style.css",
-          "line": 374
-        }
-      ]
-    },
-    {
-      "selector": "#weatherUpper",
-      "label": "Weather Upper",
-      "file": "index.js",
-      "line": 182,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 182
-        },
-        {
-          "file": "style.css",
-          "line": 270
-        }
-      ]
-    },
-    {
-      "selector": ".dot",
-      "label": "Dot",
-      "file": "index.js",
-      "line": 388,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 388
-        },
-        {
-          "file": "style.css",
-          "line": 804
+          "line": 145
         }
       ]
     }
