@@ -51,3 +51,27 @@
   - File: `WeatherApp_main/src/sky.js`, `WeatherApp_main/src/style.css`, `WeatherApp_main/src/indexChanges.js`
   - Completed: 2026-07-15
   <!-- id: 615a0f08-5f21-405e-9153-4a719ff8d928 -->
+
+- [ ] **[HIGH]** Replace card UI with a 72-hour temperature ribbon
+  - Type: feature
+  - Description: Total UI rewrite. The forecast becomes one continuous temperature curve across all three days rather than three card states you navigate between, which removes navigation as a concept — all 72 hours are on screen at once. Colour is a function of the temperature scalar (cold `#3D6FA8` → mild `#6FA8A0` → warm `#D9A441` → hot `#C2452D`) rather than the condition category, so there is no per-condition branch to write and no eighth case to forget. Ground `#12181F`, rules `#26313B`, text `#EAEEF2` / `#8CA0AE`. Roboto Light 40px for the reading, a mono face for every label. This supersedes the weather-theme, frosted-card, animated-sky and `sky.js` dispatch entries — do not implement those; the sky, the card, the icons and the theme classes have no home in this design.
+  - Behavior:
+    1. `logic.js` keeps the full `forecastday[].hour[]` arrays — 24 per day, 72 total — instead of extracting scalars from one of them. Each hour carries `time_epoch`, `temp_c` and `condition.text`. This data is already in every response and currently discarded.
+    2. `day.js` is deleted. The `Day` class holds ten scalars and is the wrong shape for a series; replace `alldays` with a flat 72-element array plus a `location` object.
+    3. The curve is an SVG path with a horizontal gradient stroke and a vertical fade fill. Day boundaries are hairlines at hours 24 and 48, with WED / THU / FRI ticks beneath.
+    4. A marker sits on the curve at the current hour. Below: location, current temp, condition text, and a four-up stat row (feels like, humidity, rain, wind) — text labels, no icons.
+    5. The layout must support an optional second lane beneath the curve, rendering at two heights depending on whether the lane exists. See Out of scope.
+  - Implementation notes:
+    - `getCurrentTime()` must not be carried over — it's wrong. It derives the hour from `json.date_epoch`, which is local midnight, then reads the hour out of `toUTCString()`, so it returns the location's UTC offset rather than the current hour. For a PDT location that's a constant 7. This is why "Feels Like" reads 18.7 °C next to a 32.6 °C high — it's 7am's temperature every time, and for other timezones it's a different arbitrary hour. Index "now" off `location.localtime_epoch`.
+    - Wire listeners exactly once at bootstrap from `index.js`, never from the render path. `changeWeatherInfo` currently re-registers on every fetch and doubles the handler count per search; this rewrite is the chance not to reintroduce it, and it supersedes the standalone bug entry for that — provided the rewrite is what lands next. If it slips, fix the doubling separately first; it's burning real API calls on the deployed site today.
+    - The seven condition SVGs and four stat SVGs become unreferenced. The case-sensitivity bug in `adjustWeather` disappears with them, since nothing branches on the condition string any more.
+    - `arrowLeft.svg`, `arrowRight.svg`, `#weatherOuter`, `#innerMain`, `#mainMiddle`, both arrow handlers and `dayCounter` all cease to exist.
+    - No new dependencies. Hand-authored SVG — no charting library.
+  - Acceptance criteria:
+    - All 72 hours legible without scrolling or panning at 380px.
+    - `min-height: 100dvh`, not `100vh` — `vh` resolves to the tall viewport on iOS Safari and parks the bottom of the layout under the URL bar.
+    - One fetch per search; exactly one listener per element for the life of the page.
+  - Out of scope: tides. Marine tide data is Pro+ ($25/mo) on a separate `marine.json` endpoint, and returns nothing for inland locations like the default `98052` — so the absent lane is the majority case, not the edge case. Build the lane-optional layout; don't build the fetch.
+  - File: `WeatherApp_main/src/ribbon.js`, `WeatherApp_main/src/index.js`, `WeatherApp_main/src/logic.js`, `WeatherApp_main/src/style.css`, `WeatherApp_main/src/indexChanges.js`, `WeatherApp_main/src/day.js`
+  - Completed: YYYY-MM-DD (PR #<number>)
+  <!-- id: 9a35eab0-0540-4e4e-90fe-91020d61f814 -->
