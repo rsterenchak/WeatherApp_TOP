@@ -378,42 +378,9 @@ function component() {
 
 
 
-
-  // Event Listeners
-
-  arrowLeft.addEventListener("mouseenter", function() {
-    this.style.boxShadow = "0 6px 8px rgba(0, 0, 0, 0.2)"; 
-    this.style.border = "1px solid black";
-  });
-  
-  arrowLeft.addEventListener("mouseleave", function() {
-    this.style.boxShadow = "none";
-    this.style.border = "none";
-  });  
-
-  arrowRight.addEventListener("mouseenter", function() {
-    this.style.boxShadow = "0 6px 8px rgba(0, 0, 0, 0.2)";
-    this.style.border = "1px solid black"; 
-  });
-  
-  arrowRight.addEventListener("mouseleave", function() {
-    this.style.boxShadow = "none";
-    this.style.border = "none";
-  });   
-
-
-
-  formButton.addEventListener("mouseenter", function() {
-    this.style.boxShadow = "0 6px 8px rgba(0, 0, 0, 0.2)";
-    this.style.background = "#919191"; 
-  });
-  
-  formButton.addEventListener("mouseleave", function() {
-    this.style.boxShadow = "none";
-    this.style.background = "#ccc";  
-  });   
-
-
+  // Hover treatments for the arrows and submit button live in CSS `:hover`
+  // (see style.css) so they never leave a stuck inline style that would
+  // override the per-weather themed accent after the first hover.
 
   return outerContainer;
 }
