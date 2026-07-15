@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { forecastLogic } from './logic.js';
 import { wireEvents } from './indexChanges.js';
+import { initSky } from './sky.js';
 import './style.css';
 import rightArrow from './arrowRight.svg';
 import leftArrow from './arrowLeft.svg';
@@ -376,6 +377,18 @@ function component() {
   block4Right.appendChild(block4Bottom);
 
 
+  // Three-dot day indicator: the mobile swipe affordance. Hidden on desktop via
+  // CSS (#dayDots { display: none }); shown under the card at <=480px where the
+  // ‹ › arrows are hidden and replaced by horizontal swipe. renderDay() marks
+  // the dot for the day on screen active, filled with the weather accent.
+  let dayDots = document.createElement('div');
+  dayDots.id = "dayDots";
+  for (let i = 0; i < 3; i++) {
+    let dot = document.createElement('div');
+    dot.className = "dot";
+    dayDots.appendChild(dot);
+  }
+  mainBottom.appendChild(dayDots);
 
 
 
@@ -388,6 +401,11 @@ function component() {
 
 
 document.body.appendChild(component());
+
+// Mount the animated sky canvas behind #outerContainer now that it exists in
+// the DOM. It seeds a neutral field immediately; adjustWeather() re-seeds it per
+// condition once the first forecast resolves.
+initSky(document.getElementById('outerContainer'));
 
 // Register the arrow + submit listeners exactly once, now that the DOM exists.
 // Keeping this off the render path is what stops handlers multiplying on every

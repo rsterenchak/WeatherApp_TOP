@@ -13,6 +13,11 @@ body {
 
 #outerContainer {
   display: grid;
+  /* position:relative + z-index:0 makes this a stacking context so the
+     #skyCanvas child (z-index:-1) paints OVER the sky gradient but UNDER the
+     app content. */
+  position: relative;
+  z-index: 0;
   min-height: 110vh;
   grid-template-rows: 10vh 70px 1fr 20px 35px 90px 20vh;
   grid-template-areas:
@@ -26,6 +31,15 @@ body {
   ;
   transition: background 400ms ease;
 
+}
+
+/* Animated per-condition particle field (sky.js). Absolutely positioned so it
+   never becomes a grid item, behind the app content, and click-through. */
+#skyCanvas {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
 }
 
 #header {
@@ -164,16 +178,21 @@ body {
 #mainMiddle {
   display: grid;
   border-radius: 8px;
-  background-color: white;
+  /* Frosted card: a translucent white pane blurring the animated sky behind it.
+     #weatherUpper carries no background and #weatherData drops its white below,
+     so they inherit the frost instead of punching opaque holes through it. */
+  background: rgba(255, 255, 255, 0.58);
+  backdrop-filter: blur(11px) saturate(1.15);
+  -webkit-backdrop-filter: blur(11px) saturate(1.15);
   grid-area: mainMiddle;
   grid-template-rows: 1fr 6fr 1fr;
   grid-template-columns: minmax(0, 1fr) minmax(0, 5fr) minmax(0, 1fr) minmax(0, 2fr) minmax(0, 0.5fr);
-  grid-template-areas: 
+  grid-template-areas:
   "spacer1 spacer1 spacer1 spacer1 spacer1"
   ". weatherSection . weatherData ."
   "spacer2 spacer2 spacer2 spacer2 spacer2"
   ;
-  border: 0.5px solid black;
+  border: 0.5px solid rgba(255, 255, 255, 0.75);
   box-shadow: 0px 2px 11px rgba(0, 0, 0, 0.3);
 }
 
@@ -283,7 +302,9 @@ body {
 
 #weatherData {
   display: grid;
-  background-color: white;
+  /* No background: inherit the frosted #mainMiddle card rather than punching an
+     opaque white block through the frost. */
+  background: transparent;
   grid-area: weatherData;
   grid-template-rows: 0.5fr 3fr 0.5fr 3fr 0.5fr 3fr 0.5fr 3fr 0.5fr;
   grid-template-columns: 1fr;
@@ -338,7 +359,7 @@ body {
 
 #block1Bottom {
   grid-area: block1Bottom;
-  font-size: 20px;
+  font-size: 18px;
 }
 
 #spaced2 {
@@ -376,12 +397,12 @@ body {
 #block2Top {
   grid-area: block2Top;
   text-align: start;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 #block2Bottom {
   grid-area: block2Bottom;
-  font-size: 24px;
+  font-size: 18px;
 }
 
 
@@ -420,12 +441,12 @@ body {
 #block3Top {
   grid-area: block3Top;
   text-align: start;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 #block3Bottom {
   grid-area: block3Bottom;
-  font-size: 24px;
+  font-size: 18px;
 }
 
 
@@ -446,8 +467,8 @@ body {
 #block4Left {
   grid-area: block4Left;
   justify-self: end;
-  padding-right: 8px;
-  width: 30px;
+  padding-right: 5px;
+  width: 35px;
 }
 
 #block4Right {
@@ -463,12 +484,12 @@ body {
 #block4Top {
   grid-area: block4Top;
   text-align: start;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 #block4Bottom {
   grid-area: block4Bottom;
-  font-size: 15px;
+  font-size: 18px;
 }
 
 #spaced5 {
@@ -671,6 +692,40 @@ body {
 #outerContainer.weather-overcast #weatherType { border-color: #5a646b; }
 
 
+/* Per-weather accent as a custom property so the active swipe dot can pick it
+   up (var(--accent)). Mirrors the accent colours used on #footer/#formButton. */
+#outerContainer.weather-neutral  { --accent: #6b7883; }
+#outerContainer.weather-rain     { --accent: #3c5561; }
+#outerContainer.weather-snow     { --accent: #5f82a6; }
+#outerContainer.weather-hail     { --accent: #495663; }
+#outerContainer.weather-partly   { --accent: #3f79b3; }
+#outerContainer.weather-sunny    { --accent: #e39a1c; }
+#outerContainer.weather-fog      { --accent: #77828a; }
+#outerContainer.weather-overcast { --accent: #5a646b; }
+
+
+/* Three-dot day indicator. Hidden on desktop (the ‹ › arrows are the
+   affordance there); shown under the card at <=480px where swipe takes over. */
+#dayDots {
+  display: none;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 0;
+}
+
+#dayDots .dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.18);
+  transition: background 200ms ease;
+}
+
+#dayDots .dot.active {
+  background: var(--accent, #6b7883);
+}
+
+
 /* Tablet: collapse #main to a single weatherOuter column and shrink the search form */
 @media (max-width: 768px) {
   #main {
@@ -727,6 +782,26 @@ body {
 /* Mobile: keep the arrows flanking the content (rather than stranding them
    above/below), and stack the search form into a single column. */
 @media (max-width: 480px) {
+  /* Centre the whole layout in the viewport instead of parking it below the
+     top edge. dvh (not vh) so iOS Safari's dynamic URL bar doesn't push the
+     bottom under the toolbar. Header/footer rows and the main row drop to
+     content height so align-content actually has slack to centre. */
+  #outerContainer {
+    min-height: 100dvh;
+    align-content: center;
+    grid-template-rows: auto 70px auto 20px 35px 90px auto;
+  }
+
+  /* Drop the footer accent fill; it reads as a stray bar on mobile. */
+  #footer {
+    background-color: transparent;
+  }
+
+  /* Reveal the three-dot day indicator now that the arrows are swiped away. */
+  #dayDots {
+    display: flex;
+  }
+
   /* Fixed narrow gutters so the arrow pair flanks the content and never clips
      against the viewport edges. */
   #weatherOuter {
@@ -739,9 +814,14 @@ body {
     grid-template-rows: 0fr 1fr 0fr;
   }
 
+  /* Hide the arrows in favour of swipe. visibility (never src='' or display)
+     so they keep their 44px gutters — that's what the card and Submit align to.
+     !important because updateArrows() toggles visibility inline per day, and an
+     inline style would otherwise re-show them here. */
   #arrowLeft,
   #arrowRight {
     width: 32px;
+    visibility: hidden !important;
   }
 
   /* Shrink the graphic/temperature so #weatherUpper's tracks fit inside the
@@ -760,16 +840,20 @@ body {
     white-space: nowrap;
   }
 
-  /* Collapse the empty vertical spacer rows that otherwise absorb the height
-     freed by the min-height layout and open large gaps around the card. */
+  /* Collapse the spacer rows to content height so they stop absorbing the slack
+     that floated the card below the top edge; align-content:center on
+     #outerContainer now handles vertical centring instead. */
   #mainTop {
-    grid-template-rows: 0fr 1fr 0fr;
+    grid-template-rows: auto auto auto;
   }
 
   #innerMain {
     grid-template-rows: auto auto auto;
   }
 
+  /* 44px horizontal inset matches #mainMiddle's position inside #weatherOuter's
+     44px | 1fr | 44px gutters, so Submit no longer renders wider than the card
+     above it. */
   #spaceForm {
     grid-template-columns: 1fr;
     grid-template-areas:
@@ -777,7 +861,7 @@ body {
     "formButton"
     ;
     gap: 10px;
-    padding: 0px 15px;
+    padding: 0px 44px;
   }
 
   #formSpace1,
