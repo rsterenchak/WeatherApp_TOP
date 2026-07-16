@@ -140,3 +140,10 @@
   - File: `WeatherApp_main/src/favourites.js`, `WeatherApp_main/src/ribbon.js`, `WeatherApp_main/src/index.js`, `WeatherApp_main/src/style.css`
   - Completed: 2026-07-16
   <!-- id: af5cc856-3bdc-4ee7-b668-df450216fc08 -->
+
+- [ ] **[MEDIUM]** Add a C/F unit toggle beside locationName that flips displayed temperature units
+  - Type: feature
+  - Description: Add a segmented C/F switch (`#unitSwitch` with `.unitOpt` buttons) inside a new `#locationRow` wrapping `#locationName` in the `#readout` region, matching the mockup's compact pill style using `--rule` border/background and `--muted`/`--text` colors. Store a unit-preference flag (e.g. in module state or localStorage) that renderForecast() in indexChanges.js re-applies to convert stored Celsius values (`now.temp`, `now.feelsLike`) to Fahrenheit for display only, formatting via `Math.round()` and the appropriate `°C`/`°F` suffix. Clicking C or F updates the active button state, re-renders `#currentTemp` and the FEELS LIKE stat in the selected unit, and must NOT alter the raw Celsius values passed to ribbon.js's `tempColour()` or `buildScales()`, which must keep receiving unconverted °C. Wire button creation in index.js's component() and the conversion/render logic in indexChanges.js's renderForecast().
+  - File: `WeatherApp_main/src/index.js`, `WeatherApp_main/src/indexChanges.js`, `WeatherApp_main/src/style.css`
+  - Completed: YYYY-MM-DD (PR #<number>)
+  <!-- id: 87e33d54-d316-474e-9ddb-28f4e68453f3 -->
