@@ -2,6 +2,7 @@ import './style.css';
 import { renderRibbon, currentHourIndex } from './ribbon.js';
 import { forecastLogic } from './logic.js';
 import { addLocation } from './favourites.js';
+import { setWeatherBg } from './sky.js';
 
 // Guard so wireEvents() only ever registers one set of listeners. The old
 // changeWeatherInfo() re-registered on every fetch, doubling the handler count
@@ -69,6 +70,11 @@ export function renderForecast(forecast) {
   lastNow = now;
   locationName.textContent = forecast.location.name;
   currentCondition.textContent = now.condition;
+
+  // Repaint the full-viewport background to match the current condition. Off the
+  // curve's data path — it only swaps a class, and no-ops when the category is
+  // unchanged, so paging locations or flipping the unit doesn't restart it.
+  setWeatherBg(now.condition);
 
   humidityVal.textContent = now.humidity + '%';
   rainVal.textContent = now.rain + '%';

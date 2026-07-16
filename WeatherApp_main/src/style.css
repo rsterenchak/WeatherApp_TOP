@@ -32,7 +32,8 @@ body {
 /* dvh (not vh): on iOS Safari vh resolves to the tall viewport and parks the
    bottom of the layout under the URL bar. */
 #app {
-  position: relative; /* containing block for the .weatherBg drift layer */
+  position: relative; /* stacks the constrained column above the fixed .weatherBg */
+  z-index: 1;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
@@ -43,53 +44,190 @@ body {
   padding: 32px 20px;
 }
 
-/* Drifting-gradient background: two overlapping soft radial glows that slowly
-   move and breathe behind the app, mounted by sky.js as the first child of #app.
-   `.weatherBg` clips its own glow (overflow: hidden) so the drift stays inside
-   the app column — the clip is scoped here rather than on #app so it can't clip
-   the #suggestions dropdown or the mobile #weatherCard slide animation. It sits
-   under the content (z-index: 0 vs the content's z-index: 1). Colours are the
-   cool blue/teal of the temperature ramp at low opacity so the glow reads
-   without competing with the readout. */
+/* Condition-based background. sky.js mounts a single `.weatherBg` as the first
+   child of #app and swaps a `bg-<category>` class onto it per fetch, keyed off
+   the current condition text (categoryFor() in sky.js). It is `fixed` so it
+   spans the whole browser window on desktop while #app stays a constrained
+   centred column above it (z-index). Each category paints a gradient base on the
+   element plus decorative layers (sun, moon + stars, drifting clouds, flakes,
+   haze) on the two pseudo-elements. overflow: hidden clips those layers to the
+   viewport so an oversized cloud can't spill a scrollbar. The gradients cross-
+   fade (transition: background) when the category changes; the decorative
+   motion lives in the per-category keyframes below. */
 .weatherBg {
-  position: absolute;
+  position: fixed;
   inset: 0;
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
+  background: linear-gradient(180deg, #1b2836 0%, #141d29 55%, var(--ground) 100%);
+  transition: background 600ms ease;
 }
 
 .weatherBg::before,
 .weatherBg::after {
   content: '';
   position: absolute;
-  width: 80%;
-  height: 80%;
+  pointer-events: none;
+}
+
+/* SUNNY — warm daytime sky with a soft sun glow that slowly breathes. */
+.weatherBg.bg-sunny {
+  background: linear-gradient(180deg, #2c4c72 0%, #1a2c40 55%, var(--ground) 100%);
+}
+.weatherBg.bg-sunny::before {
+  top: -12%;
+  right: -6%;
+  width: 46vmax;
+  height: 46vmax;
   border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(217, 164, 65, 0.45), rgba(217, 164, 65, 0) 68%);
+  animation: bgSun 14s ease-in-out infinite alternate;
+}
+.weatherBg.bg-sunny::after {
+  bottom: -18%;
+  left: -12%;
+  width: 40vmax;
+  height: 40vmax;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(111, 168, 160, 0.18), rgba(111, 168, 160, 0) 70%);
+  animation: bgSun 18s ease-in-out infinite alternate-reverse;
 }
 
-.weatherBg::before {
-  top: -25%;
+/* CLEAR NIGHT — deep sky, a low moon glow, and a field of twinkling stars. */
+.weatherBg.bg-clear-night {
+  background: linear-gradient(180deg, #101a2c 0%, #0d1420 55%, var(--ground) 100%);
+}
+.weatherBg.bg-clear-night::before {
+  inset: 0;
+  background-image:
+    radial-gradient(1.6px 1.6px at 18% 24%, rgba(234, 238, 242, 0.9), transparent 60%),
+    radial-gradient(1.2px 1.2px at 72% 16%, rgba(234, 238, 242, 0.8), transparent 60%),
+    radial-gradient(1.4px 1.4px at 42% 62%, rgba(234, 238, 242, 0.75), transparent 60%),
+    radial-gradient(1px 1px at 86% 46%, rgba(234, 238, 242, 0.7), transparent 60%),
+    radial-gradient(1.3px 1.3px at 30% 82%, rgba(234, 238, 242, 0.7), transparent 60%),
+    radial-gradient(1px 1px at 60% 74%, rgba(234, 238, 242, 0.6), transparent 60%),
+    radial-gradient(1.5px 1.5px at 8% 54%, rgba(234, 238, 242, 0.8), transparent 60%),
+    radial-gradient(1px 1px at 92% 78%, rgba(234, 238, 242, 0.65), transparent 60%);
+  animation: bgTwinkle 5s ease-in-out infinite alternate;
+}
+.weatherBg.bg-clear-night::after {
+  top: 12%;
+  right: 14%;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 38%, rgba(234, 238, 242, 0.85), rgba(140, 160, 174, 0.35) 62%, rgba(140, 160, 174, 0) 72%);
+}
+
+/* CLOUDY (also overcast, partly, and the neutral fallback) — cool grey-blue with
+   two soft cloud masses drifting laterally. */
+.weatherBg.bg-cloudy {
+  background: linear-gradient(180deg, #23303f 0%, #172230 55%, var(--ground) 100%);
+}
+.weatherBg.bg-cloudy::before {
+  top: 14%;
   left: -20%;
-  background: radial-gradient(circle at center, rgba(61, 111, 168, 0.22), rgba(61, 111, 168, 0) 68%);
-  animation: bgDriftA 26s ease-in-out infinite alternate;
+  width: 55vmax;
+  height: 24vmax;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(140, 160, 174, 0.2), rgba(140, 160, 174, 0) 70%);
+  animation: bgCloud 40s ease-in-out infinite alternate;
+}
+.weatherBg.bg-cloudy::after {
+  bottom: 10%;
+  right: -24%;
+  width: 60vmax;
+  height: 26vmax;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(111, 130, 148, 0.16), rgba(111, 130, 148, 0) 70%);
+  animation: bgCloud 52s ease-in-out infinite alternate-reverse;
 }
 
-.weatherBg::after {
-  bottom: -25%;
-  right: -20%;
-  background: radial-gradient(circle at center, rgba(111, 168, 160, 0.18), rgba(111, 168, 160, 0) 68%);
-  animation: bgDriftB 32s ease-in-out infinite alternate;
+/* RAIN (also drizzle, showers, thunder) — darker sky, a heavy drifting cloud,
+   and a faint diagonal rain sheen sliding down. */
+.weatherBg.bg-rain {
+  background: linear-gradient(180deg, #1c2734 0%, #121b26 55%, var(--ground) 100%);
+}
+.weatherBg.bg-rain::before {
+  top: -8%;
+  left: -18%;
+  width: 62vmax;
+  height: 30vmax;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(120, 140, 158, 0.22), rgba(120, 140, 158, 0) 70%);
+  animation: bgCloud 46s ease-in-out infinite alternate;
+}
+.weatherBg.bg-rain::after {
+  inset: 0;
+  background-image: repeating-linear-gradient(74deg, rgba(160, 190, 214, 0.07) 0 1px, rgba(160, 190, 214, 0) 1px 9px);
+  animation: bgRain 0.9s linear infinite;
 }
 
-@keyframes bgDriftA {
-  0%   { transform: translate(0, 0) scale(1);       opacity: 0.65; }
-  100% { transform: translate(18%, 14%) scale(1.15); opacity: 1; }
+/* SNOW — cool light sky with slowly drifting flakes. */
+.weatherBg.bg-snow {
+  background: linear-gradient(180deg, #2a3949 0%, #1a2634 55%, var(--ground) 100%);
+}
+.weatherBg.bg-snow::before,
+.weatherBg.bg-snow::after {
+  inset: 0;
+  background-image:
+    radial-gradient(2px 2px at 20% 10%, rgba(255, 255, 255, 0.8), transparent 60%),
+    radial-gradient(2.4px 2.4px at 66% 22%, rgba(255, 255, 255, 0.7), transparent 60%),
+    radial-gradient(1.8px 1.8px at 40% 40%, rgba(255, 255, 255, 0.75), transparent 60%),
+    radial-gradient(2px 2px at 84% 54%, rgba(255, 255, 255, 0.7), transparent 60%),
+    radial-gradient(2.2px 2.2px at 12% 70%, rgba(255, 255, 255, 0.7), transparent 60%),
+    radial-gradient(1.8px 1.8px at 54% 86%, rgba(255, 255, 255, 0.65), transparent 60%);
+  background-size: 100% 50%;
+}
+.weatherBg.bg-snow::before {
+  animation: bgSnow 14s linear infinite;
+}
+.weatherBg.bg-snow::after {
+  opacity: 0.6;
+  animation: bgSnow 22s linear infinite;
 }
 
-@keyframes bgDriftB {
-  0%   { transform: translate(0, 0) scale(1.1);      opacity: 1; }
-  100% { transform: translate(-16%, -12%) scale(1);  opacity: 0.6; }
+/* FOG (also mist, haze) — muted sky with slow horizontal haze bands. */
+.weatherBg.bg-fog {
+  background: linear-gradient(180deg, #232c35 0%, #182029 55%, var(--ground) 100%);
+}
+.weatherBg.bg-fog::before {
+  inset: 0;
+  background-image:
+    linear-gradient(0deg, rgba(140, 160, 174, 0) 0%, rgba(140, 160, 174, 0.12) 30%, rgba(140, 160, 174, 0) 46%),
+    linear-gradient(0deg, rgba(140, 160, 174, 0) 54%, rgba(140, 160, 174, 0.1) 72%, rgba(140, 160, 174, 0) 88%);
+  animation: bgFog 24s ease-in-out infinite alternate;
+}
+
+@keyframes bgSun {
+  0%   { transform: translate(0, 0) scale(1);        opacity: 0.7; }
+  100% { transform: translate(-4%, 3%) scale(1.12);  opacity: 1; }
+}
+
+@keyframes bgTwinkle {
+  0%   { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
+@keyframes bgCloud {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(10%); }
+}
+
+@keyframes bgRain {
+  0%   { background-position: 0 0; }
+  100% { background-position: -9px 32px; }
+}
+
+@keyframes bgSnow {
+  0%   { transform: translateY(-50%); }
+  100% { transform: translateY(0); }
+}
+
+@keyframes bgFog {
+  0%   { transform: translateY(-4%); opacity: 0.7; }
+  100% { transform: translateY(4%);  opacity: 1; }
 }
 
 /* Frozen while the tab is hidden (sky.js toggles .paused on visibilitychange). */
@@ -98,7 +236,8 @@ body {
   animation-play-state: paused;
 }
 
-/* Halt the drift entirely under a reduced-motion preference — one static frame. */
+/* Halt every treatment's motion under a reduced-motion preference — one static
+   frame per category. */
 @media (prefers-reduced-motion: reduce) {
   .weatherBg::before,
   .weatherBg::after {
