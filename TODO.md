@@ -91,3 +91,10 @@
   - File: `WeatherApp_main/src/favourites.js`, `WeatherApp_main/src/ribbon.js`, `WeatherApp_main/src/index.js`, `WeatherApp_main/src/logic.js`, `WeatherApp_main/src/style.css`
   - Completed: 2026-07-15
   <!-- id: 3bca4dc8-462e-4b47-a57a-b829ca53a89f -->
+
+- [ ] **[MEDIUM]** Add debounced city-suggestion autocomplete dropdown to search bar
+  - Type: feature
+  - Description: Add a `#suggestions` dropdown beneath `#searchInput` that populates with matching cities as the user types, using a debounced (~300ms) fetch to `api.weatherapi.com/v1/search.json?key=...&q=<value>` (reuse the same API key already used in `pullForecast` in logic.js). Each result renders as a `.suggestion-item` (city + muted country text) with hover and `.selected` states matching the dark theme (`--ground`, `--rule`, `--text`, `--muted` tokens); `#searchInput` gets `border-radius: 8px 8px 0 0` and `#suggestions` gets a matching bottom-rounded border that visually attaches beneath it, hidden/empty when there are no matches or the input is blank. Selecting a suggestion (click or keyboard arrows+Enter) must fill `#searchInput` with the chosen city and submit `#searchForm` exactly the way pressing Enter or clicking `#searchButton` does today via `wireEvents()`. Clicking outside the dropdown or pressing Escape should close it without submitting.
+  - File: `WeatherApp_main/src/indexChanges.js`, `WeatherApp_main/src/index.js`, `WeatherApp_main/src/style.css`, `WeatherApp_main/src/logic.js`
+  - Completed: YYYY-MM-DD (PR #<number>)
+  <!-- id: c337c863-1828-4093-b6cd-38c95c93942d -->
