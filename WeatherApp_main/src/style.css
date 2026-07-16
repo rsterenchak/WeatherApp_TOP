@@ -141,6 +141,7 @@ body {
 
 /* Saved-location dots: one per saved location, the active one filled. */
 #dotRow {
+  position: relative; /* offset parent for the desktop remove popover */
   display: flex;
   gap: 8px;
 }
@@ -156,6 +157,89 @@ body {
 
 .dot.active {
   background: #EAEEF2;
+}
+
+/* Desktop remove-confirmation popover, anchored above the long-pressed dot.
+   Touch keeps the native confirm; this is the mouse/pen path. */
+.removePopover {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--ground);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+  white-space: nowrap;
+}
+
+/* Downward pointer arrow, bordered: outer triangle in the rule colour with an
+   inner ground-filled triangle laid a pixel higher on top of it. */
+.removePopover::before,
+.removePopover::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+.removePopover::before {
+  top: 100%;
+  border-width: 7px 7px 0 7px;
+  border-color: var(--rule) transparent transparent transparent;
+}
+
+.removePopover::after {
+  top: calc(100% - 1px);
+  border-width: 6px 6px 0 6px;
+  border-color: var(--ground) transparent transparent transparent;
+}
+
+.removePopover-name {
+  color: var(--text);
+  font-size: 13px;
+}
+
+.removePopover-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.removePopover-cancel,
+.removePopover-delete {
+  font-family: inherit;
+  font-size: 12px;
+  padding: 5px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.removePopover-cancel {
+  background: none;
+  color: var(--muted);
+}
+
+.removePopover-cancel:hover {
+  color: var(--text);
+}
+
+.removePopover-delete {
+  background: var(--text);
+  color: var(--ground);
+  border-color: var(--text);
+}
+
+.removePopover-delete:hover {
+  filter: brightness(0.92);
 }
 
 /* Roboto Light 40px for the reading. */
