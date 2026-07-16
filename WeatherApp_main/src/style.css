@@ -32,6 +32,7 @@ body {
 /* dvh (not vh): on iOS Safari vh resolves to the tall viewport and parks the
    bottom of the layout under the URL bar. */
 #app {
+  position: relative; /* containing block for the .weatherBg drift layer */
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
@@ -42,10 +43,75 @@ body {
   padding: 32px 20px;
 }
 
+/* Drifting-gradient background: two overlapping soft radial glows that slowly
+   move and breathe behind the app, mounted by sky.js as the first child of #app.
+   `.weatherBg` clips its own glow (overflow: hidden) so the drift stays inside
+   the app column — the clip is scoped here rather than on #app so it can't clip
+   the #suggestions dropdown or the mobile #weatherCard slide animation. It sits
+   under the content (z-index: 0 vs the content's z-index: 1). Colours are the
+   cool blue/teal of the temperature ramp at low opacity so the glow reads
+   without competing with the readout. */
+.weatherBg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.weatherBg::before,
+.weatherBg::after {
+  content: '';
+  position: absolute;
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+}
+
+.weatherBg::before {
+  top: -25%;
+  left: -20%;
+  background: radial-gradient(circle at center, rgba(61, 111, 168, 0.22), rgba(61, 111, 168, 0) 68%);
+  animation: bgDriftA 26s ease-in-out infinite alternate;
+}
+
+.weatherBg::after {
+  bottom: -25%;
+  right: -20%;
+  background: radial-gradient(circle at center, rgba(111, 168, 160, 0.18), rgba(111, 168, 160, 0) 68%);
+  animation: bgDriftB 32s ease-in-out infinite alternate;
+}
+
+@keyframes bgDriftA {
+  0%   { transform: translate(0, 0) scale(1);       opacity: 0.65; }
+  100% { transform: translate(18%, 14%) scale(1.15); opacity: 1; }
+}
+
+@keyframes bgDriftB {
+  0%   { transform: translate(0, 0) scale(1.1);      opacity: 1; }
+  100% { transform: translate(-16%, -12%) scale(1);  opacity: 0.6; }
+}
+
+/* Frozen while the tab is hidden (sky.js toggles .paused on visibilitychange). */
+.weatherBg.paused::before,
+.weatherBg.paused::after {
+  animation-play-state: paused;
+}
+
+/* Halt the drift entirely under a reduced-motion preference — one static frame. */
+@media (prefers-reduced-motion: reduce) {
+  .weatherBg::before,
+  .weatherBg::after {
+    animation: none;
+  }
+}
+
 /* The ribbon and its readout share one flex column so a mobile location rotation
    slides them as a single unit. It carries the same 28px gap #app used to put
    between the ribbon and the readout, so wrapping them is layout-transparent. */
 #weatherCard {
+  position: relative; /* stacks above the .weatherBg drift layer */
+  z-index: 1;
   display: flex;
   flex-direction: column;
   gap: 28px;
@@ -330,6 +396,8 @@ body {
 
 /* Search form. */
 #searchForm {
+  position: relative; /* stacks above the .weatherBg drift layer */
+  z-index: 1;
   display: flex;
   gap: 10px;
   width: 100%;

@@ -3,6 +3,7 @@ import './logic.js'; // defines forecastLogic (no fetch fires at import — see 
 import { wireEvents } from './indexChanges.js';
 import { buildRibbon } from './ribbon.js';
 import { initFavourites } from './favourites.js';
+import { initWeatherBg } from './sky.js';
 
 // The whole UI is built here with document.createElement (there is no HTML source
 // file — html-webpack-plugin generates an empty document). The forecast is one
@@ -174,6 +175,11 @@ function component() {
 }
 
 document.body.appendChild(component());
+
+// Mount the drifting-gradient background behind the app content (first child of
+// #app, under everything via z-index). Off the render path — it never repaints
+// on a fetch.
+initWeatherBg(document.getElementById('app'));
 
 // Build the SVG scaffold now that #ribbonWrap exists, then register listeners
 // exactly once. Both run off the render path, so nothing multiplies across
