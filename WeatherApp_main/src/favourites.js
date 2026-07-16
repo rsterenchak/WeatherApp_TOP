@@ -37,6 +37,10 @@ let touchStartX = null;
 let touchStartY = null;
 let swipeActive = false;
 
+// The single desktop remove-confirmation popover, or null. Only one is open at
+// a time; a new open closes any prior one first.
+let openPopover = null;
+
 function load() {
   try {
     const raw = localStorage.getItem(KEY);
@@ -77,6 +81,7 @@ function showCurrent() {
 // affordance) and when empty (the default fallback is not a saved location).
 function renderDots() {
   if (!dotRow) { return; }
+  closePopover(); // a redraw drops the dot the popover was anchored to
   clear(dotRow);
 
   // Gate the whole .navRow (dots + arrows) together, so the desktop arrows share
@@ -104,20 +109,24 @@ function renderDots() {
 function wireDot(dot, i) {
   let timer = null;
   let longFired = false;
+  let pointerType = 'mouse';
 
   const cancel = () => {
     if (timer) { clearTimeout(timer); timer = null; }
   };
 
-  dot.addEventListener('pointerdown', () => {
+  dot.addEventListener('pointerdown', (e) => {
     // No preventDefault here: it would suppress the follow-up click and break
     // tap-to-select. The long-press branch is disambiguated by the longFired
     // flag instead, and the native long-press menu is stopped via contextmenu.
+    // Record the pointer type from the triggering event: touch keeps the native
+    // confirm, a mouse/pen gets the anchored in-page popover.
     longFired = false;
+    pointerType = e.pointerType || 'mouse';
     timer = setTimeout(() => {
       longFired = true;
       timer = null;
-      confirmRemove(i);
+      confirmRemove(i, dot, pointerType);
     }, LONGPRESS_MS);
   });
   dot.addEventListener('pointerup', cancel);
@@ -130,11 +139,94 @@ function wireDot(dot, i) {
   });
 }
 
-function confirmRemove(i) {
+function confirmRemove(i, dot, pointerType) {
   if (i < 0 || i >= locations.length) { return; }
+  // Desktop (mouse/pen) gets the anchored in-page popover; touch keeps the
+  // native confirm untouched.
+  if (pointerType && pointerType !== 'touch' && dot) {
+    openRemovePopover(i, dot);
+    return;
+  }
   if (window.confirm('Remove ' + locations[i] + '?')) {
     removeLocation(i);
   }
+}
+
+function onPopoverKeydown(e) {
+  if (e.key === 'Escape') {
+    e.preventDefault();
+    closePopover();
+  }
+}
+
+function onOutsidePointer(e) {
+  if (openPopover && !openPopover.contains(e.target)) {
+    closePopover();
+  }
+}
+
+// Tear down the single open popover and its document-level listeners. Safe to
+// call when nothing is open.
+function closePopover() {
+  if (!openPopover) { return; }
+  openPopover.remove();
+  openPopover = null;
+  document.removeEventListener('keydown', onPopoverKeydown, true);
+  document.removeEventListener('pointerdown', onOutsidePointer, true);
+}
+
+// A small confirmation popover anchored above the long-pressed dot, inside
+// #dotRow. Delete removes the location; Cancel, Escape, or an outside click
+// dismisses without changes. Only one is ever open (openRemovePopover closes any
+// prior one first).
+function openRemovePopover(i, dot) {
+  closePopover();
+
+  const pop = document.createElement('div');
+  pop.className = 'removePopover';
+  pop.setAttribute('role', 'dialog');
+  pop.setAttribute('aria-label', 'Remove ' + locations[i]);
+
+  const name = document.createElement('div');
+  name.className = 'removePopover-name';
+  name.textContent = locations[i];
+
+  const actions = document.createElement('div');
+  actions.className = 'removePopover-actions';
+
+  const cancelBtn = document.createElement('button');
+  cancelBtn.type = 'button';
+  cancelBtn.className = 'removePopover-cancel';
+  cancelBtn.textContent = 'Cancel';
+  cancelBtn.addEventListener('click', closePopover);
+
+  const deleteBtn = document.createElement('button');
+  deleteBtn.type = 'button';
+  deleteBtn.className = 'removePopover-delete';
+  deleteBtn.textContent = 'Delete';
+  deleteBtn.addEventListener('click', () => {
+    const idx = i;
+    closePopover();
+    removeLocation(idx);
+  });
+
+  actions.appendChild(cancelBtn);
+  actions.appendChild(deleteBtn);
+  pop.appendChild(name);
+  pop.appendChild(actions);
+
+  dotRow.appendChild(pop);
+  openPopover = pop;
+
+  // Anchor horizontally over the triggering dot's centre (offsetLeft is relative
+  // to #dotRow, which is the offset parent — see its position: relative rule).
+  pop.style.left = (dot.offsetLeft + dot.offsetWidth / 2) + 'px';
+
+  // The pointerdown that started this long-press has already fired, so a capture
+  // listener for the next one closes the popover on an outside click without
+  // immediately swallowing its own opening event.
+  document.addEventListener('keydown', onPopoverKeydown, true);
+  document.addEventListener('pointerdown', onOutsidePointer, true);
 }
 
 function selectIndex(i) {
