@@ -5,8 +5,12 @@
 // the whole browser window on desktop while `#app` stays a constrained centred
 // column above it (z-index). The element carries a `bg-<category>` class that
 // selects a per-condition treatment in style.css — a gradient base plus
-// decorative layers (sun, moon + twinkling stars, drifting clouds, flakes, haze)
-// on the two pseudo-elements. All imagery and motion live in style.css.
+// depth-layered decorative imagery (sun, moon + twinkling stars, drifting
+// clouds, flakes, haze) painted across the two pseudo-elements AND a set of
+// `.bgLayer` child divs mounted below. The children add the far/mid/near depth
+// planes and the ground-lighting accent that two pseudo-elements alone can't
+// hold; every category composes a subset of them (unused ones stay transparent).
+// All imagery and motion live in style.css.
 //
 // The category is resolved from `now.condition` (the WeatherAPI condition text)
 // and re-applied on every fetch via setWeatherBg(), so the background follows
@@ -24,6 +28,13 @@ let currentCategory = null;
 
 // The category applied before the first fetch resolves — a calm, neutral sky.
 const DEFAULT_CATEGORY = 'cloudy';
+
+// The depth planes each category composes from. Mounted once as child divs of
+// `.weatherBg` so a category can stack far/mid/near imagery plus a ground-light
+// accent — more paint surfaces than the two pseudo-elements provide. A category
+// styles only the planes it needs; the rest stay transparent. Order is
+// back-to-front so later planes paint over earlier ones.
+const DEPTH_LAYERS = ['far', 'mid', 'near', 'ground'];
 
 function reduceMotion() {
   return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
@@ -80,6 +91,15 @@ export function initWeatherBg(hostEl) {
   bgEl.setAttribute('aria-hidden', 'true');
   bgEl.classList.add('bg-' + (currentCategory || DEFAULT_CATEGORY));
   if (!currentCategory) { currentCategory = DEFAULT_CATEGORY; }
+
+  // Mount the depth planes once. They are generic and shared across categories;
+  // the active `bg-<category>` class decides what each plane paints in CSS.
+  for (const name of DEPTH_LAYERS) {
+    const layer = document.createElement('div');
+    layer.className = 'bgLayer bgLayer--' + name;
+    bgEl.appendChild(layer);
+  }
+
   host.insertBefore(bgEl, host.firstChild);
 
   // Nothing drifts under reduced motion (the CSS media query disables the
