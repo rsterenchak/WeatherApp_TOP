@@ -105,3 +105,10 @@
   - File: `WeatherApp_main/webpack.config.js`, `WeatherApp_main/src/icon.png`, `WeatherApp_main/src/favicon.svg`
   - Completed: 2026-07-16
   <!-- id: 4d8818cf-00a7-4814-9306-b19cc89b7081 -->
+
+- [ ] **[MEDIUM]** Add desktop-only prev/next arrows flanking #dotRow to navigate saved locations
+  - Type: feature
+  - Description: Wrap #dotRow's dots in a new `.navRow` flex container with a left chevron and right chevron arrow icon flanking #dotRow (matching mockup Option A), each 20x14px inline SVG using stroke="currentColor", idle color var/--muted #8CA0AE, hover color #EAEEF2. Left arrow calls favourites.js's rotate(-1) and right arrow calls rotate(1), the same functions swipe already invokes on mobile. Arrows must share #dotRow's existing visibility gate (hidden when locations.length <= 1, per renderDots()) and must be hidden entirely under the existing `@media (max-width: 480px)` breakpoint in style.css so mobile relies solely on swipe. Likely touched: index.js (build .navRow wrapper around dotRow), favourites.js (renderDots/wireDot-style wiring for the two arrow elements, reusing rotate()), style.css (.navRow, .arrow, .arrow svg rules plus the mobile-hide addition to the existing breakpoint).
+  - File: `WeatherApp_main/src/index.js`, `WeatherApp_main/src/favourites.js`, `WeatherApp_main/src/style.css`
+  - Completed: YYYY-MM-DD (PR #<number>)
+  <!-- id: c17ea242-2f9f-437d-9b3b-21c792bf8fa9 -->
