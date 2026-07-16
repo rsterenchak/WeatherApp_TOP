@@ -127,9 +127,9 @@
   - Completed: 2026-07-16
   <!-- id: a67c0094-ffa3-468d-8430-8dc011c8d42a -->
 
-- [ ] **[LOW]** Change the browser tab title from "Output Management" to "3-Day Weather"
+- [x] **[LOW]** Change the browser tab title from "Output Management" to "3-Day Weather"
   - Type: bug
   - Description: The HTML <title> is set via HtmlWebpackPlugin({ title: 'Output Management' }) in WeatherApp_main/webpack.config.js, a leftover from the webpack scaffold that was never renamed for this project. Change the title value to "3-Day Weather" so the browser tab reflects what the app actually does (a continuous 3-day weather forecast ribbon, per WeatherApp_main/src/index.js and WeatherApp_main/src/ribbon.js).
   - File: `WeatherApp_main/webpack.config.js`
-  - Completed: YYYY-MM-DD (PR #<number>)
+  - Completed: 2026-07-16
   <!-- id: 33f769b8-7a6a-4978-8db4-214bfd667cd3 -->
