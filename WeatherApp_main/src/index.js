@@ -9,6 +9,25 @@ import { initFavourites } from './favourites.js';
 // continuous temperature ribbon across all three days, a readout beneath it, and
 // a search box: no cards, no arrows, no per-condition theme, no day navigation.
 
+// A desktop-only prev/next chevron flanking the saved-location dots. Inline SVG
+// so CSS can recolour the stroke via currentColor (idle muted, brighter on
+// hover). favourites.js wires the clicks to rotate(); the pair is hidden with
+// the dots below two locations, and hidden entirely at ≤480px where swipe rules.
+function navArrow(id, dir, label) {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.id = id;
+  btn.className = 'arrow';
+  btn.setAttribute('aria-label', label);
+  const points = dir < 0 ? '13,3 7,7 13,11' : '7,3 13,7 7,11';
+  btn.innerHTML =
+    '<svg width="20" height="14" viewBox="0 0 20 14" fill="none" ' +
+    'stroke="currentColor" stroke-width="2" stroke-linecap="round" ' +
+    'stroke-linejoin="round" aria-hidden="true">' +
+    '<polyline points="' + points + '"></polyline></svg>';
+  return btn;
+}
+
 function stat(id, label) {
   const cell = document.createElement('div');
   cell.className = 'stat';
@@ -44,10 +63,18 @@ function component() {
   locationName.textContent = '—';
 
   // Saved-location indicator: one dot per saved location, the current one filled.
-  // Populated by favourites.js; hidden until two or more locations are saved.
+  // Populated by favourites.js. The dots sit inside a .navRow between two
+  // desktop-only prev/next arrows; favourites.js gates the whole row's
+  // visibility (hidden until two or more locations are saved).
+  const navRow = document.createElement('div');
+  navRow.className = 'navRow hidden';
+
   const dotRow = document.createElement('div');
   dotRow.id = 'dotRow';
-  dotRow.className = 'hidden';
+
+  navRow.appendChild(navArrow('navPrev', -1, 'Previous location'));
+  navRow.appendChild(dotRow);
+  navRow.appendChild(navArrow('navNext', 1, 'Next location'));
 
   const currentTemp = document.createElement('div');
   currentTemp.id = 'currentTemp';
@@ -65,7 +92,7 @@ function component() {
   statRow.appendChild(stat('windVal', 'WIND'));
 
   readout.appendChild(locationName);
-  readout.appendChild(dotRow);
+  readout.appendChild(navRow);
   readout.appendChild(currentTemp);
   readout.appendChild(currentCondition);
   readout.appendChild(statRow);
