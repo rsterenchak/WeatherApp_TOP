@@ -5,8 +5,8 @@
 // (logic.js's invalidInput() has already reddened the input). A row of dots
 // under the location name shows how many locations are saved and which is
 // current. A horizontal swipe anywhere on the screen rotates through them
-// (wrapping at both ends); tapping a dot jumps to it; long-pressing a dot
-// removes it after a naming confirmation.
+// (wrapping at both ends), as do the desktop prev/next arrows; clicking a dot
+// opens a confirmation to remove that location.
 //
 // State persists to localStorage under a `weatherapp_` key, matching the
 // convention used across the other repos — no IndexedDB, no cookies, no backend,
@@ -23,7 +23,6 @@ import { forecastLogic } from './logic.js';
 const KEY = 'weatherapp_savedLocations';
 const DEFAULT_QUERY = '98052';
 const SWIPE_THRESHOLD = 50; // px of horizontal travel to commit a rotation
-const LONGPRESS_MS = 500;   // hold to remove a dot
 
 // Saved location query strings, in order. currentIndex points at the active one.
 let locations = [];
@@ -104,38 +103,15 @@ function renderDots() {
   }
 }
 
-// Tap a dot to jump to it; long-press (~500ms) to remove it after a
-// confirmation that names the location.
+// A single click on a dot opens the delete confirmation for that location:
+// the native confirm on touch, the anchored in-page popover on desktop/mouse
+// (confirmRemove branches on pointerType). Tap-to-select is intentionally
+// dropped — rotate(), driven by the swipe gesture and the desktop prev/next
+// arrows, is the only way to change the active location. The click event is a
+// PointerEvent, so its pointerType picks the touch vs desktop branch directly.
 function wireDot(dot, i) {
-  let timer = null;
-  let longFired = false;
-  let pointerType = 'mouse';
-
-  const cancel = () => {
-    if (timer) { clearTimeout(timer); timer = null; }
-  };
-
-  dot.addEventListener('pointerdown', (e) => {
-    // No preventDefault here: it would suppress the follow-up click and break
-    // tap-to-select. The long-press branch is disambiguated by the longFired
-    // flag instead, and the native long-press menu is stopped via contextmenu.
-    // Record the pointer type from the triggering event: touch keeps the native
-    // confirm, a mouse/pen gets the anchored in-page popover.
-    longFired = false;
-    pointerType = e.pointerType || 'mouse';
-    timer = setTimeout(() => {
-      longFired = true;
-      timer = null;
-      confirmRemove(i, dot, pointerType);
-    }, LONGPRESS_MS);
-  });
-  dot.addEventListener('pointerup', cancel);
-  dot.addEventListener('pointerleave', cancel);
-  dot.addEventListener('pointercancel', cancel);
-  dot.addEventListener('contextmenu', (e) => e.preventDefault());
-  dot.addEventListener('click', () => {
-    if (longFired) { longFired = false; return; } // the long-press already acted
-    selectIndex(i);
+  dot.addEventListener('click', (e) => {
+    confirmRemove(i, dot, e.pointerType || 'mouse');
   });
 }
 
@@ -175,7 +151,7 @@ function closePopover() {
   document.removeEventListener('pointerdown', onOutsidePointer, true);
 }
 
-// A small confirmation popover anchored above the long-pressed dot, inside
+// A small confirmation popover anchored above the clicked dot, inside
 // #dotRow. Delete removes the location; Cancel, Escape, or an outside click
 // dismisses without changes. Only one is ever open (openRemovePopover closes any
 // prior one first).
@@ -222,18 +198,11 @@ function openRemovePopover(i, dot) {
   // to #dotRow, which is the offset parent — see its position: relative rule).
   pop.style.left = (dot.offsetLeft + dot.offsetWidth / 2) + 'px';
 
-  // The pointerdown that started this long-press has already fired, so a capture
-  // listener for the next one closes the popover on an outside click without
-  // immediately swallowing its own opening event.
+  // The click (and its pointerdown) that opened this popover has already fired,
+  // so a capture listener for the next pointerdown closes the popover on an
+  // outside click without immediately swallowing its own opening event.
   document.addEventListener('keydown', onPopoverKeydown, true);
   document.addEventListener('pointerdown', onOutsidePointer, true);
-}
-
-function selectIndex(i) {
-  if (i < 0 || i >= locations.length || i === currentIndex) { return; }
-  currentIndex = i;
-  renderDots();
-  showCurrent();
 }
 
 // Rotate through the saved list with wrap. No-op below two locations.
