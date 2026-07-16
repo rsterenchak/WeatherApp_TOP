@@ -30,6 +30,7 @@ let locations = [];
 let currentIndex = 0;
 
 let dotRow; // #dotRow, cached once by initFavourites()
+let navRow; // .navRow wrapping the dots and the prev/next arrows
 
 // Swipe tracking.
 let touchStartX = null;
@@ -78,12 +79,15 @@ function renderDots() {
   if (!dotRow) { return; }
   clear(dotRow);
 
+  // Gate the whole .navRow (dots + arrows) together, so the desktop arrows share
+  // the dots' visibility rule and never dangle beside an empty row.
+  const gate = navRow || dotRow;
   const n = locations.length;
   if (n <= 1) {
-    dotRow.classList.add('hidden');
+    gate.classList.add('hidden');
     return;
   }
-  dotRow.classList.remove('hidden');
+  gate.classList.remove('hidden');
 
   for (let i = 0; i < n; i++) {
     const dot = document.createElement('div');
@@ -210,6 +214,15 @@ function wireGestures() {
   document.addEventListener('touchend', onTouchEnd, { passive: true });
 }
 
+// Desktop prev/next arrows drive the same rotate() the swipe gesture does, so
+// both paths share one counter. Wired once from initFavourites().
+function wireArrows() {
+  const prev = document.getElementById('navPrev');
+  const next = document.getElementById('navNext');
+  if (prev) { prev.addEventListener('click', () => rotate(-1)); }
+  if (next) { next.addEventListener('click', () => rotate(1)); }
+}
+
 // Append a successfully looked-up location and switch to it. Called from the
 // search submit handler AFTER the fetch resolves, so the forecast is already
 // rendered — this only updates the saved list and the dots, never re-fetches.
@@ -235,7 +248,9 @@ export function addLocation(query) {
 export function initFavourites() {
   load();
   dotRow = document.getElementById('dotRow');
+  navRow = dotRow ? dotRow.parentElement : null;
   wireGestures();
+  wireArrows();
   currentIndex = 0;
   renderDots();
   showCurrent();

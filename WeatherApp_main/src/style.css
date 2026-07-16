@@ -103,16 +103,46 @@ body {
   color: var(--muted);
 }
 
-/* Saved-location dots: one per saved location, the active one filled. Hidden at
-   a count of one (a single location needs no affordance). */
-#dotRow {
+/* Saved-location navigation: prev/next chevrons flanking the dot row. The whole
+   row is hidden at a count of one (a single location needs no affordance); the
+   arrows are desktop-only and drop out at ≤480px where swipe takes over. */
+.navRow {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   margin: 4px 0 2px;
 }
 
-#dotRow.hidden {
+.navRow.hidden {
   display: none;
+}
+
+.arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.arrow:hover {
+  color: #EAEEF2;
+}
+
+.arrow svg {
+  display: block;
+  width: 20px;
+  height: 14px;
+}
+
+/* Saved-location dots: one per saved location, the active one filled. */
+#dotRow {
+  display: flex;
+  gap: 8px;
 }
 
 .dot {
@@ -284,6 +314,11 @@ body {
   #app {
     gap: 22px;
     padding: 24px 16px;
+  }
+
+  /* Mobile navigates by swipe; drop the arrows but keep the dots. */
+  .arrow {
+    display: none;
   }
 
   #statRow {
