@@ -75,18 +75,34 @@ function component() {
   const searchForm = document.createElement('form');
   searchForm.id = 'searchForm';
 
+  // The input and its autocomplete dropdown share a relatively-positioned wrapper
+  // so #suggestions can hang beneath #searchInput (top: 100%) and align to its
+  // edges, instead of becoming a third flex child of the row.
+  const searchInputWrap = document.createElement('div');
+  searchInputWrap.id = 'searchInputWrap';
+
   const searchInput = document.createElement('input');
   searchInput.id = 'searchInput';
   searchInput.type = 'text';
   searchInput.placeholder = 'Search location';
   searchInput.setAttribute('autocomplete', 'off');
 
+  // City-suggestion dropdown. Populated by a debounced lookup wired once in
+  // wireEvents(); hidden until there are matches to show.
+  const suggestions = document.createElement('div');
+  suggestions.id = 'suggestions';
+  suggestions.className = 'hidden';
+  suggestions.setAttribute('role', 'listbox');
+
   const searchButton = document.createElement('button');
   searchButton.id = 'searchButton';
   searchButton.type = 'submit';
   searchButton.textContent = 'Submit';
 
-  searchForm.appendChild(searchInput);
+  searchInputWrap.appendChild(searchInput);
+  searchInputWrap.appendChild(suggestions);
+
+  searchForm.appendChild(searchInputWrap);
   searchForm.appendChild(searchButton);
 
   app.appendChild(ribbonWrap);

@@ -99,9 +99,38 @@ export const forecastLogic = (function () {
     }
   }
 
+  // Typeahead lookup for the search box. Hits WeatherAPI's search/autocomplete
+  // endpoint (reusing the same key as pullForecast) and resolves to the raw
+  // results array — [{ name, region, country, ... }, ...] — or [] on an empty
+  // query, no matches, or any network/parse error. Never throws: the dropdown
+  // just shows nothing on failure.
+  async function searchCities(value) {
+    const q = String(value).trim();
+    if (!q) { return []; }
+
+    const url = 'https://api.weatherapi.com/v1/search.json?key=39c28f85ab034521b9921705232710&q=' + encodeURIComponent(q);
+
+    try {
+      const response = await fetch(url, { mode: 'cors' });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const results = await response.json();
+
+      return Array.isArray(results) ? results : [];
+    } catch (err) {
+      console.log(err);
+
+      return [];
+    }
+  }
+
   return {
     pullForecast,
     futureAPICalls,
+    searchCities,
   };
 
 })(); // ends forecastLogic function
