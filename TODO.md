@@ -133,3 +133,10 @@
   - File: `WeatherApp_main/webpack.config.js`
   - Completed: 2026-07-16
   <!-- id: 33f769b8-7a6a-4978-8db4-214bfd667cd3 -->
+
+- [ ] **[MEDIUM]** Add swipe-direction-aware slide animation to ribbon+readout on mobile location rotation
+  - Type: feature
+  - Description: On mobile (<=480px) swiping to rotate locations currently snaps instantly with no transition. Wrap #readout and #ribbonWrap in a shared column container that slides as one unit: on a committed swipe, the outgoing card (temp, place, ribbon curve) translates out in the swipe direction while the incoming card slides in from the opposite side, using a CSS transition/keyframe (~250-300ms ease-out) added to style.css since none currently exist. Wire favourites.js's rotate()/onTouchEnd() to trigger the animation class before calling renderDots()/showCurrent(), and ensure ribbon.js's renderRibbon() SVG rebuild happens on the incoming card so it doesn't visibly snap mid-transition.
+  - File: `WeatherApp_main/src/favourites.js`, `WeatherApp_main/src/ribbon.js`, `WeatherApp_main/src/index.js`, `WeatherApp_main/src/style.css`
+  - Completed: YYYY-MM-DD (PR #<number>)
+  <!-- id: af5cc856-3bdc-4ee7-b668-df450216fc08 -->
