@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-07-15T12:29:01.057Z",
-  "sha": "2f57c1a7a4651bcbe3c87fee49bc20fd130e957d",
+  "generatedAt": "2026-07-16T05:51:45.565Z",
+  "sha": "b0dbc8cbe7df1c28a31aff31386544ef4ecf649a",
   "files": [
     "favourites.js",
     "index.js",
@@ -156,15 +156,15 @@
       "selector": "#searchButton",
       "label": "Search Button",
       "file": "index.js",
-      "line": 85,
+      "line": 98,
       "files": [
         {
           "file": "index.js",
-          "line": 85
+          "line": 98
         },
         {
           "file": "style.css",
-          "line": 208
+          "line": 267
         }
       ]
     },
@@ -188,15 +188,31 @@
       "selector": "#searchInput",
       "label": "Search Input",
       "file": "index.js",
-      "line": 79,
+      "line": 85,
       "files": [
         {
           "file": "index.js",
-          "line": 79
+          "line": 85
         },
         {
           "file": "style.css",
-          "line": 182
+          "line": 191
+        }
+      ]
+    },
+    {
+      "selector": "#searchInputWrap",
+      "label": "Search Input Wrap",
+      "file": "index.js",
+      "line": 82,
+      "files": [
+        {
+          "file": "index.js",
+          "line": 82
+        },
+        {
+          "file": "style.css",
+          "line": 185
         }
       ]
     },
@@ -237,6 +253,22 @@
         {
           "file": "style.css",
           "line": 145
+        }
+      ]
+    },
+    {
+      "selector": "#suggestions",
+      "label": "Suggestions",
+      "file": "index.js",
+      "line": 93,
+      "files": [
+        {
+          "file": "index.js",
+          "line": 93
+        },
+        {
+          "file": "style.css",
+          "line": 183
         }
       ]
     },
@@ -329,6 +361,54 @@
         {
           "file": "style.css",
           "line": 170
+        }
+      ]
+    },
+    {
+      "selector": ".suggestion-city",
+      "label": "Suggestion City",
+      "file": "indexChanges.js",
+      "line": 167,
+      "files": [
+        {
+          "file": "indexChanges.js",
+          "line": 167
+        },
+        {
+          "file": "style.css",
+          "line": 257
+        }
+      ]
+    },
+    {
+      "selector": ".suggestion-country",
+      "label": "Suggestion Country",
+      "file": "indexChanges.js",
+      "line": 171,
+      "files": [
+        {
+          "file": "indexChanges.js",
+          "line": 171
+        },
+        {
+          "file": "style.css",
+          "line": 262
+        }
+      ]
+    },
+    {
+      "selector": ".suggestion-item",
+      "label": "Suggestion Item",
+      "file": "indexChanges.js",
+      "line": 163,
+      "files": [
+        {
+          "file": "indexChanges.js",
+          "line": 163
+        },
+        {
+          "file": "style.css",
+          "line": 243
         }
       ]
     }
