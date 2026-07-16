@@ -119,3 +119,9 @@
   - File: `WeatherApp_main/src/favourites.js`, `WeatherApp_main/src/index.js`, `WeatherApp_main/src/style.css`
   - Completed: 2026-07-16
   <!-- id: f33da242-bf0f-4951-a0f7-ef8cd7b8f0ef -->
+
+- [ ] **[MEDIUM]** Make a single click on a favourites dot open the delete confirmation instead of selecting the location
+  - Type: feature
+  - Description: In `wireDot()` (favourites.js), a plain click currently calls `selectIndex(i)` to jump to that saved location, while only a ~500ms long-press (via the `pointerdown` timer) calls `confirmRemove(i, dot, pointerType)` to show the delete confirmation (native `confirm()` on touch, the anchored in-page popover via `openRemovePopover()` on desktop/mouse). Per Robert's decision, direct tap-to-select on a dot is being dropped since `rotate()` (driven by both the swipe handlers and the desktop prev/next arrow buttons) already moves one saved location at a time and stays as the only way to navigate. Change the dot's `click` listener to call `confirmRemove(i, dot, pointerType)` directly instead of `selectIndex(i)`, and remove the now-redundant long-press timer and its `pointerdown`/`pointerup`/`pointerleave`/`pointercancel`/`contextmenu` wiring in `wireDot()` since a single click alone will fire the delete confirmation. Keep `confirmRemove()`'s existing touch-vs-desktop branching (native confirm vs in-page popover) unchanged.
+  - File: `WeatherApp_main/src/favourites.js`
+  <!-- id: a67c0094-ffa3-468d-8430-8dc011c8d42a -->
