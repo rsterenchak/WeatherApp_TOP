@@ -11,7 +11,7 @@ module.exports = {
   devtool: 'inline-source-map',
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Output Management',
+      title: '3-Day Weather',
       favicon: './src/favicon.svg',
     }),
   ],
