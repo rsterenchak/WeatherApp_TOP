@@ -155,9 +155,9 @@
   - Completed: 2026-07-16
   <!-- id: e952532d-439a-400b-a959-c8fc029f9008 -->
 
-- [ ] **[MEDIUM]** Replace abstract gradient-drift background with condition-based imagery spanning the full viewport
+- [x] **[MEDIUM]** Replace abstract gradient-drift background with condition-based imagery spanning the full viewport
   - Type: feature
   - Description: Replace the current two-blob radial-gradient drift in `.weatherBg` (sky.js/style.css) with condition-specific imagery (e.g. clear-night stars+moon, cloudy, rainy, sunny variants) selected from `now.condition` (set in indexChanges.js:71 from logic.js:57's `h.condition.text`). Map condition text to a small set of background treatments (gradient base + decorative elements like stars/moon/clouds), with subtle CSS animation (e.g. twinkle) replacing the current bgDriftA/bgDriftB keyframes. Change `.weatherBg` positioning from `position:absolute; inset:0` (clipped to `#app`'s max-width:720px containing block) to `position:fixed; inset:0` so it spans the full browser window on desktop, while `#app` remains the constrained centered column with `position:relative; z-index:1` above it. Check git history for the prior per-condition sky implementation sky.js references as removed prior art.
   - File: `WeatherApp_main/src/sky.js`, `WeatherApp_main/src/style.css`, `WeatherApp_main/src/indexChanges.js`, `WeatherApp_main/src/logic.js`
-  - Completed: YYYY-MM-DD (PR #<number>)
+  - Completed: 2026-07-16
   <!-- id: 556267e0-aea8-46a8-bcf3-d43ff5d846a7 -->
