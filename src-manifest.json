@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-07-16T08:18:44.719Z",
-  "sha": "7dd912f120c3850e9e2258a20b367eff856268b9",
+  "generatedAt": "2026-07-16T08:43:01.923Z",
+  "sha": "5b758f90386f6a7aefd8b9ece9d8f2c1b0fd1d98",
   "files": [
     "favourites.js",
     "index.js",
@@ -16,11 +16,11 @@
       "selector": "#app",
       "label": "App",
       "file": "index.js",
-      "line": 51,
+      "line": 63,
       "files": [
         {
           "file": "index.js",
-          "line": 51
+          "line": 63
         },
         {
           "file": "style.css",
@@ -32,15 +32,15 @@
       "selector": "#currentCondition",
       "label": "Current Condition",
       "file": "index.js",
-      "line": 84,
+      "line": 110,
       "files": [
         {
           "file": "index.js",
-          "line": 84
+          "line": 110
         },
         {
           "file": "style.css",
-          "line": 262
+          "line": 295
         }
       ]
     },
@@ -48,15 +48,15 @@
       "selector": "#currentTemp",
       "label": "Current Temp",
       "file": "index.js",
-      "line": 80,
+      "line": 106,
       "files": [
         {
           "file": "index.js",
-          "line": 80
+          "line": 106
         },
         {
           "file": "style.css",
-          "line": 255
+          "line": 288
         }
       ]
     },
@@ -64,15 +64,15 @@
       "selector": "#dotRow",
       "label": "Dot Row",
       "file": "index.js",
-      "line": 73,
+      "line": 99,
       "files": [
         {
           "file": "index.js",
-          "line": 73
+          "line": 99
         },
         {
           "file": "style.css",
-          "line": 152
+          "line": 185
         }
       ]
     },
@@ -92,15 +92,31 @@
       "selector": "#locationName",
       "label": "Location Name",
       "file": "index.js",
-      "line": 62,
+      "line": 80,
       "files": [
         {
           "file": "index.js",
-          "line": 62
+          "line": 80
         },
         {
           "file": "style.css",
-          "line": 107
+          "line": 115
+        }
+      ]
+    },
+    {
+      "selector": "#locationRow",
+      "label": "Location Row",
+      "file": "index.js",
+      "line": 77,
+      "files": [
+        {
+          "file": "index.js",
+          "line": 77
+        },
+        {
+          "file": "style.css",
+          "line": 108
         }
       ]
     },
@@ -108,11 +124,11 @@
       "selector": "#readout",
       "label": "Readout",
       "file": "index.js",
-      "line": 59,
+      "line": 71,
       "files": [
         {
           "file": "index.js",
-          "line": 59
+          "line": 71
         },
         {
           "file": "style.css",
@@ -140,11 +156,11 @@
       "selector": "#ribbonWrap",
       "label": "Ribbon Wrap",
       "file": "index.js",
-      "line": 55,
+      "line": 67,
       "files": [
         {
           "file": "index.js",
-          "line": 55
+          "line": 67
         },
         {
           "file": "style.css",
@@ -156,15 +172,15 @@
       "selector": "#searchButton",
       "label": "Search Button",
       "file": "index.js",
-      "line": 134,
+      "line": 160,
       "files": [
         {
           "file": "index.js",
-          "line": 134
+          "line": 160
         },
         {
           "file": "style.css",
-          "line": 390
+          "line": 423
         }
       ]
     },
@@ -172,15 +188,15 @@
       "selector": "#searchForm",
       "label": "Search Form",
       "file": "index.js",
-      "line": 112,
+      "line": 138,
       "files": [
         {
           "file": "index.js",
-          "line": 112
+          "line": 138
         },
         {
           "file": "style.css",
-          "line": 299
+          "line": 332
         }
       ]
     },
@@ -188,15 +204,15 @@
       "selector": "#searchInput",
       "label": "Search Input",
       "file": "index.js",
-      "line": 121,
+      "line": 147,
       "files": [
         {
           "file": "index.js",
-          "line": 121
+          "line": 147
         },
         {
           "file": "style.css",
-          "line": 314
+          "line": 347
         }
       ]
     },
@@ -204,15 +220,15 @@
       "selector": "#searchInputWrap",
       "label": "Search Input Wrap",
       "file": "index.js",
-      "line": 118,
+      "line": 144,
       "files": [
         {
           "file": "index.js",
-          "line": 118
+          "line": 144
         },
         {
           "file": "style.css",
-          "line": 308
+          "line": 341
         }
       ]
     },
@@ -244,15 +260,15 @@
       "selector": "#statRow",
       "label": "Stat Row",
       "file": "index.js",
-      "line": 88,
+      "line": 114,
       "files": [
         {
           "file": "index.js",
-          "line": 88
+          "line": 114
         },
         {
           "file": "style.css",
-          "line": 268
+          "line": 301
         }
       ]
     },
@@ -260,15 +276,15 @@
       "selector": "#suggestions",
       "label": "Suggestions",
       "file": "index.js",
-      "line": 129,
+      "line": 155,
       "files": [
         {
           "file": "index.js",
-          "line": 129
+          "line": 155
         },
         {
           "file": "style.css",
-          "line": 306
+          "line": 339
         }
       ]
     },
@@ -285,14 +301,30 @@
       ]
     },
     {
-      "selector": "#weatherCard",
-      "label": "Weather Card",
+      "selector": "#unitSwitch",
+      "label": "Unit Switch",
       "file": "index.js",
-      "line": 105,
+      "line": 84,
       "files": [
         {
           "file": "index.js",
-          "line": 105
+          "line": 84
+        },
+        {
+          "file": "style.css",
+          "line": 125
+        }
+      ]
+    },
+    {
+      "selector": "#weatherCard",
+      "label": "Weather Card",
+      "file": "index.js",
+      "line": 131,
+      "files": [
+        {
+          "file": "index.js",
+          "line": 131
         },
         {
           "file": "style.css",
@@ -312,7 +344,7 @@
         },
         {
           "file": "style.css",
-          "line": 130
+          "line": 163
         }
       ]
     },
@@ -328,7 +360,7 @@
         },
         {
           "file": "style.css",
-          "line": 158
+          "line": 191
         }
       ]
     },
@@ -336,15 +368,15 @@
       "selector": ".hidden",
       "label": "Hidden",
       "file": "index.js",
-      "line": 130,
+      "line": 156,
       "files": [
         {
           "file": "index.js",
-          "line": 130
+          "line": 156
         },
         {
           "file": "style.css",
-          "line": 126
+          "line": 159
         }
       ]
     },
@@ -352,15 +384,15 @@
       "selector": ".navRow",
       "label": "Nav Row",
       "file": "index.js",
-      "line": 70,
+      "line": 96,
       "files": [
         {
           "file": "index.js",
-          "line": 70
+          "line": 96
         },
         {
           "file": "style.css",
-          "line": 118
+          "line": 151
         }
       ]
     },
@@ -376,7 +408,7 @@
         },
         {
           "file": "style.css",
-          "line": 173
+          "line": 206
         }
       ]
     },
@@ -392,7 +424,7 @@
         },
         {
           "file": "style.css",
-          "line": 220
+          "line": 253
         }
       ]
     },
@@ -408,7 +440,7 @@
         },
         {
           "file": "style.css",
-          "line": 225
+          "line": 258
         }
       ]
     },
@@ -424,7 +456,7 @@
         },
         {
           "file": "style.css",
-          "line": 226
+          "line": 259
         }
       ]
     },
@@ -440,7 +472,7 @@
         },
         {
           "file": "style.css",
-          "line": 215
+          "line": 248
         }
       ]
     },
@@ -448,15 +480,15 @@
       "selector": ".stat",
       "label": "Stat",
       "file": "index.js",
-      "line": 33,
+      "line": 45,
       "files": [
         {
           "file": "index.js",
-          "line": 33
+          "line": 45
         },
         {
           "file": "style.css",
-          "line": 276
+          "line": 309
         }
       ]
     },
@@ -464,15 +496,15 @@
       "selector": ".stat-label",
       "label": "Stat Label",
       "file": "index.js",
-      "line": 36,
+      "line": 48,
       "files": [
         {
           "file": "index.js",
-          "line": 36
+          "line": 48
         },
         {
           "file": "style.css",
-          "line": 286
+          "line": 319
         }
       ]
     },
@@ -480,15 +512,15 @@
       "selector": ".stat-value",
       "label": "Stat Value",
       "file": "index.js",
-      "line": 40,
+      "line": 52,
       "files": [
         {
           "file": "index.js",
-          "line": 40
+          "line": 52
         },
         {
           "file": "style.css",
-          "line": 293
+          "line": 326
         }
       ]
     },
@@ -496,15 +528,15 @@
       "selector": ".suggestion-city",
       "label": "Suggestion City",
       "file": "indexChanges.js",
-      "line": 167,
+      "line": 237,
       "files": [
         {
           "file": "indexChanges.js",
-          "line": 167
+          "line": 237
         },
         {
           "file": "style.css",
-          "line": 380
+          "line": 413
         }
       ]
     },
@@ -512,15 +544,15 @@
       "selector": ".suggestion-country",
       "label": "Suggestion Country",
       "file": "indexChanges.js",
-      "line": 171,
+      "line": 241,
       "files": [
         {
           "file": "indexChanges.js",
-          "line": 171
+          "line": 241
         },
         {
           "file": "style.css",
-          "line": 385
+          "line": 418
         }
       ]
     },
@@ -528,15 +560,31 @@
       "selector": ".suggestion-item",
       "label": "Suggestion Item",
       "file": "indexChanges.js",
-      "line": 163,
+      "line": 233,
       "files": [
         {
           "file": "indexChanges.js",
-          "line": 163
+          "line": 233
         },
         {
           "file": "style.css",
-          "line": 366
+          "line": 399
+        }
+      ]
+    },
+    {
+      "selector": ".unitOpt",
+      "label": "Unit Opt",
+      "file": "index.js",
+      "line": 37,
+      "files": [
+        {
+          "file": "index.js",
+          "line": 37
+        },
+        {
+          "file": "style.css",
+          "line": 132
         }
       ]
     }
