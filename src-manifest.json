@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-07-16T06:11:05.844Z",
-  "sha": "16a4861177a7e087568526ef056658f5a2033cc0",
+  "generatedAt": "2026-07-16T06:36:46.056Z",
+  "sha": "90f560223fac05494c4d2df12c7c1dd85e36bdd2",
   "files": [
     "favourites.js",
     "index.js",
@@ -16,11 +16,11 @@
       "selector": "#app",
       "label": "App",
       "file": "index.js",
-      "line": 32,
+      "line": 51,
       "files": [
         {
           "file": "index.js",
-          "line": 32
+          "line": 51
         },
         {
           "file": "style.css",
@@ -32,15 +32,15 @@
       "selector": "#currentCondition",
       "label": "Current Condition",
       "file": "index.js",
-      "line": 57,
+      "line": 84,
       "files": [
         {
           "file": "index.js",
-          "line": 57
+          "line": 84
         },
         {
           "file": "style.css",
-          "line": 139
+          "line": 169
         }
       ]
     },
@@ -48,15 +48,15 @@
       "selector": "#currentTemp",
       "label": "Current Temp",
       "file": "index.js",
-      "line": 53,
+      "line": 80,
       "files": [
         {
           "file": "index.js",
-          "line": 53
+          "line": 80
         },
         {
           "file": "style.css",
-          "line": 132
+          "line": 162
         }
       ]
     },
@@ -64,15 +64,15 @@
       "selector": "#dotRow",
       "label": "Dot Row",
       "file": "index.js",
-      "line": 49,
+      "line": 73,
       "files": [
         {
           "file": "index.js",
-          "line": 49
+          "line": 73
         },
         {
           "file": "style.css",
-          "line": 108
+          "line": 143
         }
       ]
     },
@@ -92,11 +92,11 @@
       "selector": "#locationName",
       "label": "Location Name",
       "file": "index.js",
-      "line": 43,
+      "line": 62,
       "files": [
         {
           "file": "index.js",
-          "line": 43
+          "line": 62
         },
         {
           "file": "style.css",
@@ -108,11 +108,11 @@
       "selector": "#readout",
       "label": "Readout",
       "file": "index.js",
-      "line": 40,
+      "line": 59,
       "files": [
         {
           "file": "index.js",
-          "line": 40
+          "line": 59
         },
         {
           "file": "style.css",
@@ -140,11 +140,11 @@
       "selector": "#ribbonWrap",
       "label": "Ribbon Wrap",
       "file": "index.js",
-      "line": 36,
+      "line": 55,
       "files": [
         {
           "file": "index.js",
-          "line": 36
+          "line": 55
         },
         {
           "file": "style.css",
@@ -156,15 +156,15 @@
       "selector": "#searchButton",
       "label": "Search Button",
       "file": "index.js",
-      "line": 98,
+      "line": 125,
       "files": [
         {
           "file": "index.js",
-          "line": 98
+          "line": 125
         },
         {
           "file": "style.css",
-          "line": 267
+          "line": 297
         }
       ]
     },
@@ -172,15 +172,15 @@
       "selector": "#searchForm",
       "label": "Search Form",
       "file": "index.js",
-      "line": 76,
+      "line": 103,
       "files": [
         {
           "file": "index.js",
-          "line": 76
+          "line": 103
         },
         {
           "file": "style.css",
-          "line": 176
+          "line": 206
         }
       ]
     },
@@ -188,15 +188,15 @@
       "selector": "#searchInput",
       "label": "Search Input",
       "file": "index.js",
-      "line": 85,
+      "line": 112,
       "files": [
         {
           "file": "index.js",
-          "line": 85
+          "line": 112
         },
         {
           "file": "style.css",
-          "line": 191
+          "line": 221
         }
       ]
     },
@@ -204,15 +204,15 @@
       "selector": "#searchInputWrap",
       "label": "Search Input Wrap",
       "file": "index.js",
-      "line": 82,
+      "line": 109,
       "files": [
         {
           "file": "index.js",
-          "line": 82
+          "line": 109
         },
         {
           "file": "style.css",
-          "line": 185
+          "line": 215
         }
       ]
     },
@@ -244,15 +244,15 @@
       "selector": "#statRow",
       "label": "Stat Row",
       "file": "index.js",
-      "line": 61,
+      "line": 88,
       "files": [
         {
           "file": "index.js",
-          "line": 61
+          "line": 88
         },
         {
           "file": "style.css",
-          "line": 145
+          "line": 175
         }
       ]
     },
@@ -260,15 +260,15 @@
       "selector": "#suggestions",
       "label": "Suggestions",
       "file": "index.js",
-      "line": 93,
+      "line": 120,
       "files": [
         {
           "file": "index.js",
-          "line": 93
+          "line": 120
         },
         {
           "file": "style.css",
-          "line": 183
+          "line": 213
         }
       ]
     },
@@ -285,18 +285,34 @@
       ]
     },
     {
-      "selector": ".dot",
-      "label": "Dot",
-      "file": "favourites.js",
-      "line": 90,
+      "selector": ".arrow",
+      "label": "Arrow",
+      "file": "index.js",
+      "line": 20,
       "files": [
         {
-          "file": "favourites.js",
-          "line": 90
+          "file": "index.js",
+          "line": 20
         },
         {
           "file": "style.css",
-          "line": 118
+          "line": 121
+        }
+      ]
+    },
+    {
+      "selector": ".dot",
+      "label": "Dot",
+      "file": "favourites.js",
+      "line": 94,
+      "files": [
+        {
+          "file": "favourites.js",
+          "line": 94
+        },
+        {
+          "file": "style.css",
+          "line": 148
         }
       ]
     },
@@ -304,15 +320,31 @@
       "selector": ".hidden",
       "label": "Hidden",
       "file": "index.js",
-      "line": 50,
+      "line": 121,
       "files": [
         {
           "file": "index.js",
-          "line": 50
+          "line": 121
         },
         {
           "file": "style.css",
-          "line": 114
+          "line": 117
+        }
+      ]
+    },
+    {
+      "selector": ".navRow",
+      "label": "Nav Row",
+      "file": "index.js",
+      "line": 70,
+      "files": [
+        {
+          "file": "index.js",
+          "line": 70
+        },
+        {
+          "file": "style.css",
+          "line": 109
         }
       ]
     },
@@ -320,15 +352,15 @@
       "selector": ".stat",
       "label": "Stat",
       "file": "index.js",
-      "line": 14,
+      "line": 33,
       "files": [
         {
           "file": "index.js",
-          "line": 14
+          "line": 33
         },
         {
           "file": "style.css",
-          "line": 153
+          "line": 183
         }
       ]
     },
@@ -336,15 +368,15 @@
       "selector": ".stat-label",
       "label": "Stat Label",
       "file": "index.js",
-      "line": 17,
+      "line": 36,
       "files": [
         {
           "file": "index.js",
-          "line": 17
+          "line": 36
         },
         {
           "file": "style.css",
-          "line": 163
+          "line": 193
         }
       ]
     },
@@ -352,15 +384,15 @@
       "selector": ".stat-value",
       "label": "Stat Value",
       "file": "index.js",
-      "line": 21,
+      "line": 40,
       "files": [
         {
           "file": "index.js",
-          "line": 21
+          "line": 40
         },
         {
           "file": "style.css",
-          "line": 170
+          "line": 200
         }
       ]
     },
@@ -376,7 +408,7 @@
         },
         {
           "file": "style.css",
-          "line": 257
+          "line": 287
         }
       ]
     },
@@ -392,7 +424,7 @@
         },
         {
           "file": "style.css",
-          "line": 262
+          "line": 292
         }
       ]
     },
@@ -408,7 +440,7 @@
         },
         {
           "file": "style.css",
-          "line": 243
+          "line": 273
         }
       ]
     }
