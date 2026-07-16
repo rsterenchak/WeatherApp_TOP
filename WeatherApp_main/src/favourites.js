@@ -23,6 +23,7 @@ import { forecastLogic } from './logic.js';
 const KEY = 'weatherapp_savedLocations';
 const DEFAULT_QUERY = '98052';
 const SWIPE_THRESHOLD = 50; // px of horizontal travel to commit a rotation
+const SLIDE_MS = 280; // card slide duration — mirror of the CSS keyframe
 
 // Saved location query strings, in order. currentIndex points at the active one.
 let locations = [];
@@ -30,6 +31,8 @@ let currentIndex = 0;
 
 let dotRow; // #dotRow, cached once by initFavourites()
 let navRow; // .navRow wrapping the dots and the prev/next arrows
+let card; // #weatherCard — the ribbon+readout unit that slides on rotation
+let slideTimeout = null;
 
 // Swipe tracking.
 let touchStartX = null;
@@ -205,11 +208,48 @@ function openRemovePopover(i, dot) {
   document.addEventListener('pointerdown', onOutsidePointer, true);
 }
 
-// Rotate through the saved list with wrap. No-op below two locations.
+// Slide the ribbon+readout card in the swipe direction on a committed rotation.
+// Mobile only — the desktop prev/next arrows update instantly, so the class is
+// added only when the ≤480px breakpoint is active. The keyframe fades the card
+// to nothing at its midpoint (see #weatherCard.slide-* in style.css), which
+// masks the forecast swap: showCurrent()'s fetch resolves and renderRibbon()
+// rebuilds into this same card, so the new curve slides back in rather than
+// snapping. Direction-aware: outgoing content leaves toward the swipe, incoming
+// enters from the opposite edge.
+function playSlide(dir) {
+  if (!card) { return; }
+  if (!window.matchMedia || !window.matchMedia('(max-width: 480px)').matches) {
+    return; // desktop rotates via the arrows, without the slide
+  }
+  card.classList.remove('slide-next', 'slide-prev');
+  void card.offsetWidth; // reflow so a rapid second swipe restarts the animation
+  card.classList.add(dir < 0 ? 'slide-prev' : 'slide-next');
+
+  // onCardAnimEnd strips the class when the keyframe finishes; this is the
+  // fallback for the reduced-motion path, where the animation is suppressed and
+  // animationend never fires.
+  if (slideTimeout) { clearTimeout(slideTimeout); }
+  slideTimeout = setTimeout(clearSlide, SLIDE_MS + 80);
+}
+
+function clearSlide() {
+  if (slideTimeout) { clearTimeout(slideTimeout); slideTimeout = null; }
+  if (card) { card.classList.remove('slide-next', 'slide-prev'); }
+}
+
+function onCardAnimEnd(e) {
+  if (e.target !== card) { return; } // ignore any bubbled descendant animation
+  clearSlide();
+}
+
+// Rotate through the saved list with wrap. No-op below two locations. The slide
+// class goes on before the redraw/fetch so the outgoing content is already
+// moving as the new forecast is requested (playSlide is a no-op off mobile).
 function rotate(dir) {
   const n = locations.length;
   if (n <= 1) { return; }
   currentIndex = (currentIndex + dir + n) % n;
+  playSlide(dir);
   renderDots();
   showCurrent();
 }
@@ -310,6 +350,8 @@ export function initFavourites() {
   load();
   dotRow = document.getElementById('dotRow');
   navRow = dotRow ? dotRow.parentElement : null;
+  card = document.getElementById('weatherCard');
+  if (card) { card.addEventListener('animationend', onCardAnimEnd); }
   wireGestures();
   wireArrows();
   currentIndex = 0;

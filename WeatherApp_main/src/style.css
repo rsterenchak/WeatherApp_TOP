@@ -42,6 +42,15 @@ body {
   padding: 32px 20px;
 }
 
+/* The ribbon and its readout share one flex column so a mobile location rotation
+   slides them as a single unit. It carries the same 28px gap #app used to put
+   between the ribbon and the readout, so wrapping them is layout-transparent. */
+#weatherCard {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
 /* Ribbon: the SVG scales to the column width via the viewBox, so all 72 hours
    are on screen at any width down to 380px without scroll or pan. */
 #ribbonWrap {
@@ -400,6 +409,38 @@ body {
     padding: 24px 16px;
   }
 
+  #weatherCard {
+    gap: 22px;
+  }
+
+  /* Swipe-direction-aware slide on a committed location rotation. favourites.js
+     adds .slide-next (swipe left -> next) or .slide-prev (swipe right -> prev)
+     to #weatherCard, then rotates. The card fades to nothing at the keyframe's
+     midpoint, which masks the forecast swap: renderRibbon() rebuilds into this
+     same card while it's invisible, so the new curve slides in rather than
+     snapping. Desktop rotates via the arrows and never gets the class. */
+  #weatherCard.slide-next {
+    animation: cardSlideNext 280ms ease-out;
+  }
+
+  #weatherCard.slide-prev {
+    animation: cardSlidePrev 280ms ease-out;
+  }
+
+  @keyframes cardSlideNext {
+    0% { transform: translateX(0); opacity: 1; }
+    40% { transform: translateX(-42px); opacity: 0; }
+    60% { transform: translateX(42px); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+  }
+
+  @keyframes cardSlidePrev {
+    0% { transform: translateX(0); opacity: 1; }
+    40% { transform: translateX(42px); opacity: 0; }
+    60% { transform: translateX(-42px); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+  }
+
   /* Mobile navigates by swipe; drop the arrows but keep the dots. */
   .arrow {
     display: none;
@@ -415,5 +456,15 @@ body {
 
   .stat-value {
     font-size: 15px;
+  }
+}
+
+/* Respect a reduced-motion preference: rotate instantly, no slide. favourites.js
+   still adds the class, but with the animation suppressed animationend never
+   fires, so its setTimeout fallback is what strips the class back off. */
+@media (prefers-reduced-motion: reduce) {
+  #weatherCard.slide-next,
+  #weatherCard.slide-prev {
+    animation: none;
   }
 }
