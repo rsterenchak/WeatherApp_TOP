@@ -28,6 +28,18 @@ function navArrow(id, dir, label) {
   return btn;
 }
 
+// One option in the segmented C/F unit switch. The buttons carry no logic here —
+// indexChanges.js wires the clicks once in wireEvents() and owns both the active
+// state and the display-only Celsius→Fahrenheit conversion.
+function unitOpt(unit) {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'unitOpt';
+  btn.dataset.unit = unit;
+  btn.textContent = '°' + unit;
+  return btn;
+}
+
 function stat(id, label) {
   const cell = document.createElement('div');
   cell.className = 'stat';
@@ -58,9 +70,23 @@ function component() {
   const readout = document.createElement('div');
   readout.id = 'readout';
 
+  // Location name paired with a compact C/F unit switch on one row. The switch
+  // flips the temperature readouts (current + feels like) between °C and °F for
+  // display only; the raw Celsius still flows to ribbon.js unchanged.
+  const locationRow = document.createElement('div');
+  locationRow.id = 'locationRow';
+
   const locationName = document.createElement('div');
   locationName.id = 'locationName';
   locationName.textContent = '—';
+
+  const unitSwitch = document.createElement('div');
+  unitSwitch.id = 'unitSwitch';
+  unitSwitch.appendChild(unitOpt('C'));
+  unitSwitch.appendChild(unitOpt('F'));
+
+  locationRow.appendChild(locationName);
+  locationRow.appendChild(unitSwitch);
 
   // Saved-location indicator: one dot per saved location, the current one filled.
   // Populated by favourites.js. The dots sit inside a .navRow between two
@@ -91,7 +117,7 @@ function component() {
   statRow.appendChild(stat('rainVal', 'RAIN'));
   statRow.appendChild(stat('windVal', 'WIND'));
 
-  readout.appendChild(locationName);
+  readout.appendChild(locationRow);
   readout.appendChild(navRow);
   readout.appendChild(currentTemp);
   readout.appendChild(currentCondition);
