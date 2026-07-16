@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-07-16T07:13:53.104Z",
-  "sha": "c2314b5c3b0994ca338ac31f64978ebfb66b2bc0",
+  "generatedAt": "2026-07-16T07:47:54.884Z",
+  "sha": "a1d14731f3a028f7c1d9ba07f6476802a7df7f8b",
   "files": [
     "favourites.js",
     "index.js",
@@ -304,11 +304,11 @@
       "selector": ".dot",
       "label": "Dot",
       "file": "favourites.js",
-      "line": 99,
+      "line": 98,
       "files": [
         {
           "file": "favourites.js",
-          "line": 99
+          "line": 98
         },
         {
           "file": "style.css",
@@ -352,11 +352,11 @@
       "selector": ".removePopover",
       "label": "Remove Popover",
       "file": "favourites.js",
-      "line": 186,
+      "line": 162,
       "files": [
         {
           "file": "favourites.js",
-          "line": 186
+          "line": 162
         },
         {
           "file": "style.css",
@@ -368,11 +368,11 @@
       "selector": ".removePopover-actions",
       "label": "Remove Popover Actions",
       "file": "favourites.js",
-      "line": 195,
+      "line": 171,
       "files": [
         {
           "file": "favourites.js",
-          "line": 195
+          "line": 171
         },
         {
           "file": "style.css",
@@ -384,11 +384,11 @@
       "selector": ".removePopover-cancel",
       "label": "Remove Popover Cancel",
       "file": "favourites.js",
-      "line": 199,
+      "line": 175,
       "files": [
         {
           "file": "favourites.js",
-          "line": 199
+          "line": 175
         },
         {
           "file": "style.css",
@@ -400,11 +400,11 @@
       "selector": ".removePopover-delete",
       "label": "Remove Popover Delete",
       "file": "favourites.js",
-      "line": 205,
+      "line": 181,
       "files": [
         {
           "file": "favourites.js",
-          "line": 205
+          "line": 181
         },
         {
           "file": "style.css",
@@ -416,11 +416,11 @@
       "selector": ".removePopover-name",
       "label": "Remove Popover Name",
       "file": "favourites.js",
-      "line": 191,
+      "line": 167,
       "files": [
         {
           "file": "favourites.js",
-          "line": 191
+          "line": 167
         },
         {
           "file": "style.css",
