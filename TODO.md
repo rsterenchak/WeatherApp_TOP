@@ -162,11 +162,11 @@
   - Completed: 2026-07-16
   <!-- id: 556267e0-aea8-46a8-bcf3-d43ff5d846a7 -->
 
-- [ ] **[MEDIUM]** Add depth-layered, realistic imagery to weather background animations
+- [x] **[MEDIUM]** Add depth-layered, realistic imagery to weather background animations
   - Type: feature
   - Description: Replace the current flat single-layer radial-gradient/pseudo-element treatments in each `.weatherBg.bg-*` category with richer, multi-depth layered visuals (e.g. far/mid/near depth layers with varying blur, size, and opacity as in the snow mockup, plus glow and ground-lighting accents) to make sun, clouds, rain, snow, fog, and stars feel more active and realistic. Snow should use three depth layers (far blurred, mid, near with drop-shadow glow) plus a lit snow-ground accent at the bottom of the scene; apply analogous layered treatments (added gradient layers, extra pseudo-element-driven divs if needed, or additional background-image layers) to sunny, clear-night, cloudy, rain, and fog. Existing timing/easing tokens (bgSun, bgTwinkle, bgCloud, bgRain, bgSnow, bgFog) and the class-swap mechanism in `WeatherApp_main/src/sky.js` must be preserved — only the visual treatment per category changes, not the mount/swap logic. All new layers must remain within `.weatherBg`'s existing ::before/::after/z-index/overflow structure or use additional child elements inserted by `sky.js` if pseudo-elements are insufficient for the added depth layers.
   - File: `WeatherApp_main/src/style.css`, `WeatherApp_main/src/sky.js`
-  - Completed: YYYY-MM-DD (PR #<number>)
+  - Completed: 2026-07-16
   <!-- id: f4a9386f-300a-445a-aaaf-995ec3fa9118 -->
 
 - [ ] **[MEDIUM]** Add depth-layered, realistic imagery to weather background animations
