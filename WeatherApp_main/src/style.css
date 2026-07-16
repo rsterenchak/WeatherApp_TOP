@@ -179,9 +179,17 @@ body {
   width: 100%;
 }
 
-#searchInput {
+/* Holds the input and its autocomplete dropdown; position: relative anchors
+   #suggestions beneath the input. flex: 1 so the pair fills the row the way the
+   bare input used to. */
+#searchInputWrap {
+  position: relative;
   flex: 1;
   min-width: 0;
+}
+
+#searchInput {
+  width: 100%;
   padding: 12px 14px;
   font-family: var(--mono);
   font-size: 16px; /* 16px so iOS Safari doesn't auto-zoom the input on focus */
@@ -200,9 +208,60 @@ body {
   border-color: var(--muted);
 }
 
+/* While the dropdown is open the input's bottom corners square off and its
+   bottom edge drops out, so it reads as one attached surface with #suggestions. */
+#searchForm.suggesting #searchInput {
+  border-radius: 8px 8px 0 0;
+  border-bottom-color: transparent;
+}
+
 /* Failed lookup: reddened border, current ribbon left in place. */
 #searchForm.invalid #searchInput {
   border-color: #C2452D;
+}
+
+/* Autocomplete dropdown: hangs off the bottom of the input, matching its width
+   and continuing its focused border into a bottom-rounded panel. */
+#suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  max-height: 240px;
+  overflow-y: auto;
+  background: var(--ground);
+  border: 1px solid var(--muted);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+}
+
+#suggestions.hidden {
+  display: none;
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 10px 14px;
+  font-family: var(--mono);
+  cursor: pointer;
+}
+
+.suggestion-item:hover,
+.suggestion-item.selected {
+  background: var(--rule);
+}
+
+.suggestion-city {
+  font-size: 14px;
+  color: var(--text);
+}
+
+.suggestion-country {
+  font-size: 12px;
+  color: var(--muted);
 }
 
 #searchButton {

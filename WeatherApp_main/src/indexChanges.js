@@ -9,16 +9,30 @@ import { addLocation } from './favourites.js';
 // are split precisely so that can never happen again.
 let eventsWired = false;
 
+// Debounce window for the city-suggestion lookup — long enough that a run of
+// keystrokes fires one request, short enough to feel live.
+const SUGGEST_DEBOUNCE_MS = 300;
+
 // Cached DOM references, populated once by cacheDom() after index.js has built
 // and appended the DOM.
-let searchForm, searchInput, locationName, currentTemp, currentCondition,
-  feelsVal, humidityVal, rainVal, windVal;
+let searchForm, searchInput, suggestions, locationName, currentTemp,
+  currentCondition, feelsVal, humidityVal, rainVal, windVal;
+
+// Autocomplete state. currentSuggestions holds the results backing the visible
+// dropdown; selectedIndex is the keyboard-highlighted row (-1 = none). requestSeq
+// discards stale async results — only the latest lookup renders — and is bumped
+// on close so an in-flight request can't reopen the dropdown after selection.
+let currentSuggestions = [];
+let selectedIndex = -1;
+let suggestDebounce = null;
+let requestSeq = 0;
 
 function cacheDom() {
   if (locationName) { return; } // already cached
 
   searchForm = document.getElementById('searchForm');
   searchInput = document.getElementById('searchInput');
+  suggestions = document.getElementById('suggestions');
   locationName = document.getElementById('locationName');
   currentTemp = document.getElementById('currentTemp');
   currentCondition = document.getElementById('currentCondition');
@@ -68,6 +82,7 @@ export function wireEvents() {
   // leaves the list untouched (invalidInput has already reddened the input).
   searchForm.addEventListener('submit', function (e) {
     e.preventDefault();
+    closeSuggestions();
     const query = searchInput.value;
     forecastLogic.futureAPICalls(query).then(function (forecast) {
       if (forecast) {
@@ -76,6 +91,137 @@ export function wireEvents() {
       }
     });
   });
+
+  wireAutocomplete();
+}
+
+// Wires the debounced city-suggestion dropdown. Called once from wireEvents(),
+// so — like every other listener in the app — nothing multiplies across fetches.
+function wireAutocomplete() {
+  // Each keystroke schedules one debounced lookup; an empty box closes the
+  // dropdown outright. Setting searchInput.value programmatically (on select or
+  // on a successful submit) does not fire 'input', so there is no refetch loop.
+  searchInput.addEventListener('input', function () {
+    const value = searchInput.value.trim();
+    if (suggestDebounce) { clearTimeout(suggestDebounce); suggestDebounce = null; }
+    if (!value) { closeSuggestions(); return; }
+
+    suggestDebounce = setTimeout(function () {
+      const seq = ++requestSeq;
+      forecastLogic.searchCities(value).then(function (results) {
+        if (seq !== requestSeq) { return; } // a newer keystroke superseded this
+        renderSuggestions(results);
+      });
+    }, SUGGEST_DEBOUNCE_MS);
+  });
+
+  // Arrow keys move the highlight; Enter on a highlighted row selects it (and is
+  // stopped from also submitting the raw text); Escape closes without submitting.
+  // With no dropdown open, Enter submits the typed text exactly as before.
+  searchInput.addEventListener('keydown', function (e) {
+    if (suggestions.classList.contains('hidden') || !currentSuggestions.length) {
+      return;
+    }
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      moveSelection(1);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      moveSelection(-1);
+    } else if (e.key === 'Enter') {
+      if (selectedIndex >= 0) {
+        e.preventDefault();
+        chooseSuggestion(selectedIndex);
+      }
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      closeSuggestions();
+    }
+  });
+
+  // A click anywhere outside the search form closes the dropdown. Clicks inside
+  // the form (the input, a suggestion row, the button) are handled by their own
+  // listeners and must not close it here first.
+  document.addEventListener('click', function (e) {
+    if (e.target && e.target.closest && e.target.closest('#searchForm')) { return; }
+    closeSuggestions();
+  });
+}
+
+// Rebuild the dropdown from a results array. Empty results close it. Each row is
+// the city name plus a muted region/country line; clicking one selects it.
+function renderSuggestions(results) {
+  while (suggestions.firstChild) { suggestions.removeChild(suggestions.firstChild); }
+
+  currentSuggestions = results;
+  selectedIndex = -1;
+
+  if (!results.length) { closeSuggestions(); return; }
+
+  results.forEach(function (r, idx) {
+    const item = document.createElement('div');
+    item.className = 'suggestion-item';
+    item.setAttribute('role', 'option');
+
+    const city = document.createElement('span');
+    city.className = 'suggestion-city';
+    city.textContent = r.name;
+
+    const place = document.createElement('span');
+    place.className = 'suggestion-country';
+    place.textContent = [r.region, r.country].filter(Boolean).join(', ');
+
+    item.appendChild(city);
+    item.appendChild(place);
+    item.addEventListener('click', function () { chooseSuggestion(idx); });
+
+    suggestions.appendChild(item);
+  });
+
+  openSuggestions();
+}
+
+// Move the keyboard highlight, wrapping at both ends, and mirror it onto the DOM.
+function moveSelection(dir) {
+  const n = currentSuggestions.length;
+  if (!n) { return; }
+  selectedIndex = (selectedIndex + dir + n) % n;
+
+  const items = suggestions.children;
+  for (let i = 0; i < items.length; i++) {
+    items[i].classList.toggle('selected', i === selectedIndex);
+  }
+}
+
+// Fill the input with the chosen city and submit the form the same way pressing
+// Enter or clicking Submit does, so the fetch + save-location path is unchanged.
+function chooseSuggestion(idx) {
+  const r = currentSuggestions[idx];
+  if (!r) { return; }
+  searchInput.value = r.name;
+  closeSuggestions();
+  if (searchForm.requestSubmit) {
+    searchForm.requestSubmit();
+  } else {
+    searchForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+  }
+}
+
+function openSuggestions() {
+  suggestions.classList.remove('hidden');
+  searchForm.classList.add('suggesting'); // flattens the input's bottom corners
+}
+
+// Close and reset. Bumping requestSeq invalidates any in-flight lookup so it
+// can't reopen the dropdown after a selection or submit.
+function closeSuggestions() {
+  if (!suggestions) { return; }
+  if (suggestDebounce) { clearTimeout(suggestDebounce); suggestDebounce = null; }
+  requestSeq++;
+  currentSuggestions = [];
+  selectedIndex = -1;
+  suggestions.classList.add('hidden');
+  searchForm.classList.remove('suggesting');
 }
 
 // A successful lookup clears the invalid state; a failed one keeps the current
