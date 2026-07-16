@@ -12,6 +12,7 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       title: 'Output Management',
+      favicon: './src/favicon.svg',
     }),
   ],
   output: {
