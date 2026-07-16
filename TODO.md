@@ -99,9 +99,9 @@
   - Completed: 2026-07-16
   <!-- id: c337c863-1828-4093-b6cd-38c95c93942d -->
 
-- [ ] **[LOW]** Add a multi-colour weather-themed favicon to replace the default browser tab icon
+- [x] **[LOW]** Add a multi-colour weather-themed favicon to replace the default browser tab icon
   - Type: feature
   - Description: The browser tab currently shows the default icon since no `<link rel="icon">` or `favicon` key exists anywhere in the project. Create a new SVG/ICO favicon depicting a rain cloud using a cool teal cloud body (#6fa8a0) with muted blue rain streaks (#3d6fa8), matching the app's existing temperature-ramp colour precedent from ribbon.js. Wire it in by adding a `favicon` key to the HtmlWebpackPlugin config in webpack.config.js pointing at the new asset (do not reuse the empty WeatherApp_main/src/icon.png). Verify the icon renders correctly in the built HTML's `<head>` and displays in the browser tab.
   - File: `WeatherApp_main/webpack.config.js`, `WeatherApp_main/src/icon.png`, `WeatherApp_main/src/favicon.svg`
-  - Completed: YYYY-MM-DD (PR #<number>)
+  - Completed: 2026-07-16
   <!-- id: 4d8818cf-00a7-4814-9306-b19cc89b7081 -->
