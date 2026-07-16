@@ -147,3 +147,10 @@
   - File: `WeatherApp_main/src/index.js`, `WeatherApp_main/src/indexChanges.js`, `WeatherApp_main/src/style.css`
   - Completed: 2026-07-16
   <!-- id: 87e33d54-d316-474e-9ddb-28f4e68453f3 -->
+
+- [ ] **[MEDIUM]** Add subtle animated gradient-drift background behind #weatherCard/#readout
+  - Type: feature
+  - Description: Mount a new absolutely-positioned `.weatherBg` element as the first child of `#app`, painting a slow-drifting soft radial-gradient glow (two overlapping radial gradients, gently animating position/opacity over ~20-30s) so it reads through `#app`'s transparent background without competing with readout/ribbon legibility. Give `#app` `position: relative; overflow: hidden;` and `#weatherCard`/`#searchForm` `position: relative; z-index: 1;` so content stacks above the new layer, matching the mockup's stacking approach. Do not reuse `WeatherApp_main/src/sky.js` as-is (it targets nonexistent `#outerContainer`/`#mainMiddle` ids and has no matching CSS); either rewrite it against the real `#app`/`#weatherCard` ids or replace it with new code, wired into `index.js`'s DOM build. The animation must halt/skip entirely under `prefers-reduced-motion: reduce` and must pause via a `visibilitychange` listener when the tab is hidden, resuming when visible again, following the guard pattern already sketched in `sky.js`.
+  - File: `WeatherApp_main/src/index.js`, `WeatherApp_main/src/sky.js`, `WeatherApp_main/src/style.css`
+  - Completed: YYYY-MM-DD (PR #<number>)
+  <!-- id: e952532d-439a-400b-a959-c8fc029f9008 -->
