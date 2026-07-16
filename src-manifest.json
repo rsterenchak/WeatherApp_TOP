@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-07-16T06:36:46.056Z",
-  "sha": "90f560223fac05494c4d2df12c7c1dd85e36bdd2",
+  "generatedAt": "2026-07-16T07:13:53.104Z",
+  "sha": "c2314b5c3b0994ca338ac31f64978ebfb66b2bc0",
   "files": [
     "favourites.js",
     "index.js",
@@ -40,7 +40,7 @@
         },
         {
           "file": "style.css",
-          "line": 169
+          "line": 253
         }
       ]
     },
@@ -56,7 +56,7 @@
         },
         {
           "file": "style.css",
-          "line": 162
+          "line": 246
         }
       ]
     },
@@ -164,7 +164,7 @@
         },
         {
           "file": "style.css",
-          "line": 297
+          "line": 381
         }
       ]
     },
@@ -180,7 +180,7 @@
         },
         {
           "file": "style.css",
-          "line": 206
+          "line": 290
         }
       ]
     },
@@ -196,7 +196,7 @@
         },
         {
           "file": "style.css",
-          "line": 221
+          "line": 305
         }
       ]
     },
@@ -212,7 +212,7 @@
         },
         {
           "file": "style.css",
-          "line": 215
+          "line": 299
         }
       ]
     },
@@ -252,7 +252,7 @@
         },
         {
           "file": "style.css",
-          "line": 175
+          "line": 259
         }
       ]
     },
@@ -268,7 +268,7 @@
         },
         {
           "file": "style.css",
-          "line": 213
+          "line": 297
         }
       ]
     },
@@ -304,15 +304,15 @@
       "selector": ".dot",
       "label": "Dot",
       "file": "favourites.js",
-      "line": 94,
+      "line": 99,
       "files": [
         {
           "file": "favourites.js",
-          "line": 94
+          "line": 99
         },
         {
           "file": "style.css",
-          "line": 148
+          "line": 149
         }
       ]
     },
@@ -349,6 +349,86 @@
       ]
     },
     {
+      "selector": ".removePopover",
+      "label": "Remove Popover",
+      "file": "favourites.js",
+      "line": 186,
+      "files": [
+        {
+          "file": "favourites.js",
+          "line": 186
+        },
+        {
+          "file": "style.css",
+          "line": 164
+        }
+      ]
+    },
+    {
+      "selector": ".removePopover-actions",
+      "label": "Remove Popover Actions",
+      "file": "favourites.js",
+      "line": 195,
+      "files": [
+        {
+          "file": "favourites.js",
+          "line": 195
+        },
+        {
+          "file": "style.css",
+          "line": 211
+        }
+      ]
+    },
+    {
+      "selector": ".removePopover-cancel",
+      "label": "Remove Popover Cancel",
+      "file": "favourites.js",
+      "line": 199,
+      "files": [
+        {
+          "file": "favourites.js",
+          "line": 199
+        },
+        {
+          "file": "style.css",
+          "line": 216
+        }
+      ]
+    },
+    {
+      "selector": ".removePopover-delete",
+      "label": "Remove Popover Delete",
+      "file": "favourites.js",
+      "line": 205,
+      "files": [
+        {
+          "file": "favourites.js",
+          "line": 205
+        },
+        {
+          "file": "style.css",
+          "line": 217
+        }
+      ]
+    },
+    {
+      "selector": ".removePopover-name",
+      "label": "Remove Popover Name",
+      "file": "favourites.js",
+      "line": 191,
+      "files": [
+        {
+          "file": "favourites.js",
+          "line": 191
+        },
+        {
+          "file": "style.css",
+          "line": 206
+        }
+      ]
+    },
+    {
       "selector": ".stat",
       "label": "Stat",
       "file": "index.js",
@@ -360,7 +440,7 @@
         },
         {
           "file": "style.css",
-          "line": 183
+          "line": 267
         }
       ]
     },
@@ -376,7 +456,7 @@
         },
         {
           "file": "style.css",
-          "line": 193
+          "line": 277
         }
       ]
     },
@@ -392,7 +472,7 @@
         },
         {
           "file": "style.css",
-          "line": 200
+          "line": 284
         }
       ]
     },
@@ -408,7 +488,7 @@
         },
         {
           "file": "style.css",
-          "line": 287
+          "line": 371
         }
       ]
     },
@@ -424,7 +504,7 @@
         },
         {
           "file": "style.css",
-          "line": 292
+          "line": 376
         }
       ]
     },
@@ -440,7 +520,7 @@
         },
         {
           "file": "style.css",
-          "line": 273
+          "line": 357
         }
       ]
     }
