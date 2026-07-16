@@ -97,6 +97,15 @@ function component() {
   readout.appendChild(currentCondition);
   readout.appendChild(statRow);
 
+  // The ribbon and its readout are wrapped in one card so they slide together as
+  // a single unit on a committed mobile swipe (favourites.js drives the
+  // direction-aware slide via #weatherCard.slide-* in style.css). It's a plain
+  // flex column at every width — the wrapping is transparent to the layout.
+  const weatherCard = document.createElement('div');
+  weatherCard.id = 'weatherCard';
+  weatherCard.appendChild(ribbonWrap);
+  weatherCard.appendChild(readout);
+
   // Search form. A real <form> + submit button so Enter and click share one
   // submit event (wired once in wireEvents()).
   const searchForm = document.createElement('form');
@@ -132,8 +141,7 @@ function component() {
   searchForm.appendChild(searchInputWrap);
   searchForm.appendChild(searchButton);
 
-  app.appendChild(ribbonWrap);
-  app.appendChild(readout);
+  app.appendChild(weatherCard);
   app.appendChild(searchForm);
 
   return app;
