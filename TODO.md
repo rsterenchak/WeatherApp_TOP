@@ -113,9 +113,9 @@
   - Completed: 2026-07-16
   <!-- id: c17ea242-2f9f-437d-9b3b-21c792bf8fa9 -->
 
-- [ ] **[MEDIUM]** Replace window.confirm() with an in-page popover for desktop favorite deletion
+- [x] **[MEDIUM]** Replace window.confirm() with an in-page popover for desktop favorite deletion
   - Type: feature
   - Description: On desktop, replace the window.confirm() call inside confirmRemove() (favourites.js) with a small anchored popover matching the app's dark 8px-radius surfaces, showing the location name with Cancel/Delete buttons; Delete calls removeLocation(i), Cancel dismisses without changes. Keep the existing mobile long-press + window.confirm() flow in confirmRemove() completely untouched. Detect desktop via the triggering pointer event's pointerType !== 'touch' (checked in the pointerdown/pointerup handlers in wireDot()) rather than a media query, since long-press already originates from a pointer event. Position the popover absolutely above the triggering dot inside #dotRow, styled with --text/--muted tokens, 8px radius, and a small pointer arrow as in the mockup; only one popover should be open at a time, and clicking outside or pressing Escape should dismiss it without deleting.
   - File: `WeatherApp_main/src/favourites.js`, `WeatherApp_main/src/index.js`, `WeatherApp_main/src/style.css`
-  - Completed: YYYY-MM-DD (PR #<number>)
+  - Completed: 2026-07-16
   <!-- id: f33da242-bf0f-4951-a0f7-ef8cd7b8f0ef -->
