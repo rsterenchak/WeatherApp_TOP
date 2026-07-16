@@ -104,12 +104,45 @@ body {
   text-align: center;
 }
 
+/* Location name paired with the C/F unit switch on one centered row. */
+#locationRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
 #locationName {
   font-family: var(--mono);
   font-size: 13px;
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--muted);
+}
+
+/* Segmented C/F toggle: a compact pill, the active option filled with the rule
+   colour. Display-only — flips the temperature readouts between °C and °F. */
+#unitSwitch {
+  display: flex;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.unitOpt {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  padding: 3px 9px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.unitOpt.active {
+  background: var(--rule);
+  color: var(--text);
 }
 
 /* Saved-location navigation: prev/next chevrons flanking the dot row. The whole

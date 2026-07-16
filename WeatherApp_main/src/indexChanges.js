@@ -13,9 +13,19 @@ let eventsWired = false;
 // keystrokes fires one request, short enough to feel live.
 const SUGGEST_DEBOUNCE_MS = 300;
 
+// C/F display unit, persisted under the shared weatherapp_ localStorage prefix.
+// This is display-only: renderRibbon() still receives raw Celsius, so the curve
+// colours (tempColour) and the y-scale never shift when the readout unit flips.
+const UNIT_KEY = 'weatherapp_unit';
+let currentUnit = loadUnit();
+
+// The last rendered "now", kept in Celsius so the unit toggle can re-render the
+// temperature readouts without waiting for another fetch.
+let lastNow = null;
+
 // Cached DOM references, populated once by cacheDom() after index.js has built
 // and appended the DOM.
-let searchForm, searchInput, suggestions, locationName, currentTemp,
+let searchForm, searchInput, suggestions, locationName, unitSwitch, currentTemp,
   currentCondition, feelsVal, humidityVal, rainVal, windVal;
 
 // Autocomplete state. currentSuggestions holds the results backing the visible
@@ -34,6 +44,7 @@ function cacheDom() {
   searchInput = document.getElementById('searchInput');
   suggestions = document.getElementById('suggestions');
   locationName = document.getElementById('locationName');
+  unitSwitch = document.getElementById('unitSwitch');
   currentTemp = document.getElementById('currentTemp');
   currentCondition = document.getElementById('currentCondition');
   feelsVal = document.getElementById('feelsVal');
@@ -55,14 +66,58 @@ export function renderForecast(forecast) {
   const now = forecast.hours[i];
   if (!now) { return; }
 
+  lastNow = now;
   locationName.textContent = forecast.location.name;
-  currentTemp.textContent = Math.round(now.temp) + '°';
   currentCondition.textContent = now.condition;
 
-  feelsVal.textContent = Math.round(now.feelsLike) + '°';
   humidityVal.textContent = now.humidity + '%';
   rainVal.textContent = now.rain + '%';
   windVal.textContent = Math.round(now.wind) + ' km/h';
+
+  // Temperature readouts and the active button state both come from renderTemps,
+  // so a fetch and a unit toggle can never format the two temperatures differently.
+  renderTemps();
+}
+
+// Read the persisted unit, defaulting to Celsius. Guarded so a locked-down
+// localStorage (private mode, disabled storage) falls back rather than throwing.
+function loadUnit() {
+  try {
+    return localStorage.getItem(UNIT_KEY) === 'F' ? 'F' : 'C';
+  } catch (e) {
+    return 'C';
+  }
+}
+
+// Format a Celsius scalar in the active display unit — rounded, with the matching
+// °C/°F suffix. Conversion is display-only; callers always pass raw Celsius.
+function formatTemp(celsius) {
+  const value = currentUnit === 'F' ? celsius * 9 / 5 + 32 : celsius;
+  return Math.round(value) + '°' + currentUnit;
+}
+
+// Re-render the two temperature readouts from the cached Celsius "now" and sync
+// the active state on the C/F buttons. Called on every fetch and every toggle.
+function renderTemps() {
+  if (unitSwitch) {
+    const opts = unitSwitch.querySelectorAll('.unitOpt');
+    for (let i = 0; i < opts.length; i++) {
+      opts[i].classList.toggle('active', opts[i].dataset.unit === currentUnit);
+    }
+  }
+  if (!lastNow) { return; }
+  currentTemp.textContent = formatTemp(lastNow.temp);
+  feelsVal.textContent = formatTemp(lastNow.feelsLike);
+}
+
+// Switch the display unit, persist it, and re-render — no refetch, the stored
+// Celsius is converted in place.
+function setUnit(unit) {
+  currentUnit = unit === 'F' ? 'F' : 'C';
+  try {
+    localStorage.setItem(UNIT_KEY, currentUnit);
+  } catch (e) { /* storage unavailable — the in-memory unit still applies */ }
+  renderTemps();
 }
 
 // Registers listeners EXACTLY ONCE for the life of the page. index.js calls this
@@ -93,6 +148,21 @@ export function wireEvents() {
   });
 
   wireAutocomplete();
+  wireUnitToggle();
+}
+
+// One delegated click listener on the switch drives both buttons. Wired once from
+// wireEvents(), so — like every other listener — nothing multiplies across fetches.
+// renderTemps() runs immediately to reflect the persisted unit on the buttons
+// before the first fetch resolves.
+function wireUnitToggle() {
+  if (!unitSwitch) { return; }
+  unitSwitch.addEventListener('click', function (e) {
+    const btn = e.target && e.target.closest ? e.target.closest('.unitOpt') : null;
+    if (!btn || !unitSwitch.contains(btn)) { return; }
+    setUnit(btn.dataset.unit);
+  });
+  renderTemps();
 }
 
 // Wires the debounced city-suggestion dropdown. Called once from wireEvents(),
