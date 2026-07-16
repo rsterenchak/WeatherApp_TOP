@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-07-16T07:57:34.068Z",
-  "sha": "edd87b11e67570fa258d3f77cc9e5f3e47e74e8a",
+  "generatedAt": "2026-07-16T08:18:44.719Z",
+  "sha": "7dd912f120c3850e9e2258a20b367eff856268b9",
   "files": [
     "favourites.js",
     "index.js",
@@ -40,7 +40,7 @@
         },
         {
           "file": "style.css",
-          "line": 253
+          "line": 262
         }
       ]
     },
@@ -56,7 +56,7 @@
         },
         {
           "file": "style.css",
-          "line": 246
+          "line": 255
         }
       ]
     },
@@ -72,7 +72,7 @@
         },
         {
           "file": "style.css",
-          "line": 143
+          "line": 152
         }
       ]
     },
@@ -100,7 +100,7 @@
         },
         {
           "file": "style.css",
-          "line": 98
+          "line": 107
         }
       ]
     },
@@ -116,7 +116,7 @@
         },
         {
           "file": "style.css",
-          "line": 90
+          "line": 99
         }
       ]
     },
@@ -132,7 +132,7 @@
         },
         {
           "file": "style.css",
-          "line": 51
+          "line": 60
         }
       ]
     },
@@ -148,7 +148,7 @@
         },
         {
           "file": "style.css",
-          "line": 47
+          "line": 56
         }
       ]
     },
@@ -156,37 +156,21 @@
       "selector": "#searchButton",
       "label": "Search Button",
       "file": "index.js",
-      "line": 125,
+      "line": 134,
       "files": [
         {
           "file": "index.js",
-          "line": 125
+          "line": 134
         },
         {
           "file": "style.css",
-          "line": 381
+          "line": 390
         }
       ]
     },
     {
       "selector": "#searchForm",
       "label": "Search Form",
-      "file": "index.js",
-      "line": 103,
-      "files": [
-        {
-          "file": "index.js",
-          "line": 103
-        },
-        {
-          "file": "style.css",
-          "line": 290
-        }
-      ]
-    },
-    {
-      "selector": "#searchInput",
-      "label": "Search Input",
       "file": "index.js",
       "line": 112,
       "files": [
@@ -196,7 +180,23 @@
         },
         {
           "file": "style.css",
-          "line": 305
+          "line": 299
+        }
+      ]
+    },
+    {
+      "selector": "#searchInput",
+      "label": "Search Input",
+      "file": "index.js",
+      "line": 121,
+      "files": [
+        {
+          "file": "index.js",
+          "line": 121
+        },
+        {
+          "file": "style.css",
+          "line": 314
         }
       ]
     },
@@ -204,15 +204,15 @@
       "selector": "#searchInputWrap",
       "label": "Search Input Wrap",
       "file": "index.js",
-      "line": 109,
+      "line": 118,
       "files": [
         {
           "file": "index.js",
-          "line": 109
+          "line": 118
         },
         {
           "file": "style.css",
-          "line": 299
+          "line": 308
         }
       ]
     },
@@ -252,7 +252,7 @@
         },
         {
           "file": "style.css",
-          "line": 259
+          "line": 268
         }
       ]
     },
@@ -260,15 +260,15 @@
       "selector": "#suggestions",
       "label": "Suggestions",
       "file": "index.js",
-      "line": 120,
+      "line": 129,
       "files": [
         {
           "file": "index.js",
-          "line": 120
+          "line": 129
         },
         {
           "file": "style.css",
-          "line": 297
+          "line": 306
         }
       ]
     },
@@ -285,6 +285,22 @@
       ]
     },
     {
+      "selector": "#weatherCard",
+      "label": "Weather Card",
+      "file": "index.js",
+      "line": 105,
+      "files": [
+        {
+          "file": "index.js",
+          "line": 105
+        },
+        {
+          "file": "style.css",
+          "line": 48
+        }
+      ]
+    },
+    {
       "selector": ".arrow",
       "label": "Arrow",
       "file": "index.js",
@@ -296,7 +312,7 @@
         },
         {
           "file": "style.css",
-          "line": 121
+          "line": 130
         }
       ]
     },
@@ -304,15 +320,15 @@
       "selector": ".dot",
       "label": "Dot",
       "file": "favourites.js",
-      "line": 98,
+      "line": 101,
       "files": [
         {
           "file": "favourites.js",
-          "line": 98
+          "line": 101
         },
         {
           "file": "style.css",
-          "line": 149
+          "line": 158
         }
       ]
     },
@@ -320,15 +336,15 @@
       "selector": ".hidden",
       "label": "Hidden",
       "file": "index.js",
-      "line": 121,
+      "line": 130,
       "files": [
         {
           "file": "index.js",
-          "line": 121
+          "line": 130
         },
         {
           "file": "style.css",
-          "line": 117
+          "line": 126
         }
       ]
     },
@@ -344,7 +360,7 @@
         },
         {
           "file": "style.css",
-          "line": 109
+          "line": 118
         }
       ]
     },
@@ -352,15 +368,15 @@
       "selector": ".removePopover",
       "label": "Remove Popover",
       "file": "favourites.js",
-      "line": 162,
+      "line": 165,
       "files": [
         {
           "file": "favourites.js",
-          "line": 162
+          "line": 165
         },
         {
           "file": "style.css",
-          "line": 164
+          "line": 173
         }
       ]
     },
@@ -368,15 +384,15 @@
       "selector": ".removePopover-actions",
       "label": "Remove Popover Actions",
       "file": "favourites.js",
-      "line": 171,
+      "line": 174,
       "files": [
         {
           "file": "favourites.js",
-          "line": 171
+          "line": 174
         },
         {
           "file": "style.css",
-          "line": 211
+          "line": 220
         }
       ]
     },
@@ -384,15 +400,15 @@
       "selector": ".removePopover-cancel",
       "label": "Remove Popover Cancel",
       "file": "favourites.js",
-      "line": 175,
+      "line": 178,
       "files": [
         {
           "file": "favourites.js",
-          "line": 175
+          "line": 178
         },
         {
           "file": "style.css",
-          "line": 216
+          "line": 225
         }
       ]
     },
@@ -400,15 +416,15 @@
       "selector": ".removePopover-delete",
       "label": "Remove Popover Delete",
       "file": "favourites.js",
-      "line": 181,
+      "line": 184,
       "files": [
         {
           "file": "favourites.js",
-          "line": 181
+          "line": 184
         },
         {
           "file": "style.css",
-          "line": 217
+          "line": 226
         }
       ]
     },
@@ -416,15 +432,15 @@
       "selector": ".removePopover-name",
       "label": "Remove Popover Name",
       "file": "favourites.js",
-      "line": 167,
+      "line": 170,
       "files": [
         {
           "file": "favourites.js",
-          "line": 167
+          "line": 170
         },
         {
           "file": "style.css",
-          "line": 206
+          "line": 215
         }
       ]
     },
@@ -440,7 +456,7 @@
         },
         {
           "file": "style.css",
-          "line": 267
+          "line": 276
         }
       ]
     },
@@ -456,7 +472,7 @@
         },
         {
           "file": "style.css",
-          "line": 277
+          "line": 286
         }
       ]
     },
@@ -472,7 +488,7 @@
         },
         {
           "file": "style.css",
-          "line": 284
+          "line": 293
         }
       ]
     },
@@ -488,7 +504,7 @@
         },
         {
           "file": "style.css",
-          "line": 371
+          "line": 380
         }
       ]
     },
@@ -504,7 +520,7 @@
         },
         {
           "file": "style.css",
-          "line": 376
+          "line": 385
         }
       ]
     },
@@ -520,7 +536,7 @@
         },
         {
           "file": "style.css",
-          "line": 357
+          "line": 366
         }
       ]
     }
