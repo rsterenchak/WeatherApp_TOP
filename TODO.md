@@ -182,3 +182,10 @@
   - File: `src/style.css`
   - Completed: 2026-07-17
   <!-- id: f177b5c5-713a-4054-95a5-dd6a59e7838e -->
+
+- [ ] **[HIGH]** Fix unreadable text over the weather backgrounds
+  - Type: bug
+  - Description: Text over the new `.weatherBg` treatments falls below the 4.5:1 WCAG AA floor across most of the UI — measured against the shipped build, the `THU`/`FRI`/`SAT` graph labels sit at 1.34:1, the search placeholder at 2.45:1, the stat-card labels at 2.99:1 and `BOTHELL` at 3.95:1, while `15°C` and `Partly Cloudy` pass at 8.3:1 only because no cloud happens to be behind them at that instant; the backdrop swings 6.1:1 under the content (luminance 0.017 on open sky against 0.357 on a cloud core) and the clouds drift on 17–60s loops, so contrast is currently animated rather than fixed and cannot be repaired by recolouring text alone. Cap the cloud lighting ramp from `rgb(var(--t)/.90)`, `.62`, `.28`, `.10` down to `.28`, `.19`, `.09`, `.03`, which drops the worst-case backdrop to luminance 0.075 and puts white text at 8.4:1 anywhere on screen regardless of cloud position. Give the graph, the four stat cards and the search field their own surface — `rgba(13,20,28,.65)` with `backdrop-filter: blur(14px)` — and lift the label ink from `#8b9bb0` (luminance 0.321) to `#c2ccda` (0.597); the ink change is required independently, since no backdrop treatment rescues that grey and even a 70% scrim only reaches 3.96:1. Together these land white text at 10.3:1 and labels at 6.4:1 with the guarantee local to each element rather than dependent on cloud drift; verify against `bg-snow`, whose `--t: 216 230 244` is the brightest tint and therefore the true worst case, and check the `THU`/`FRI`/`SAT` labels specifically as they are small enough that the panel behind them may not be sufficient on its own.
+  - File: `src/style.css`
+  - Completed: YYYY-MM-DD (PR #<number>)
+  <!-- id: f9e672a5-dda5-4256-8b0c-f3058458f323 -->
