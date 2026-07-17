@@ -60,7 +60,7 @@ body {
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
-  background: linear-gradient(180deg, #10161f 0%, #172230 45%, #263647 82%, #1c2836 100%);
+  background: linear-gradient(180deg, #1b2836 0%, #141d29 55%, var(--ground) 100%);
   transition: background 600ms ease;
 }
 
@@ -93,247 +93,207 @@ body {
   bottom: 0;
 }
 
-/* Reusable imagery, defined once on .weatherBg and inherited by every plane and
-   pseudo-element (custom properties cascade), so the category blocks below just
-   reference them. All are self-contained data-URI SVGs — nothing else ships:
-     --ridge      two overlapping ridge silhouettes; the horizon scale reference
-                  painted on every category's .bgLayer--ground.
-     --cloud-*    a lumpy cloud silhouette (light for fair skies, dark for storm)
-                  replacing the old single soft radial circles — real edges now.
-     --stars-*    feTurbulence fractal-noise star fields at two scales (far dense
-                  and tiny, near sparse and larger), stitched so they tile.
-     --fog-*      feTurbulence haze banks at two scales (far soft and broad, near
-                  fine), stitched so they tile.
-   The turbulence filter is defined AND applied inside each SVG, so no <defs> or
-   inline <svg> is needed in the document and it stays cross-browser. */
-.weatherBg {
-  --ridge: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 260' preserveAspectRatio='none'%3E%3Cpath d='M0,150 L110,96 L250,140 L430,70 L620,124 L800,66 L980,132 L1120,92 L1200,120 L1200,260 L0,260 Z' fill='%230c131c'/%3E%3Cpath d='M0,196 L150,150 L340,188 L520,138 L720,182 L900,140 L1070,186 L1200,150 L1200,260 L0,260 Z' fill='%23070b11'/%3E%3C/svg%3E");
-  --cloud-light: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 420 150'%3E%3Cg fill='%23c4d0dc'%3E%3Cellipse cx='96' cy='96' rx='66' ry='32'/%3E%3Cellipse cx='150' cy='72' rx='58' ry='42'/%3E%3Cellipse cx='210' cy='98' rx='62' ry='30'/%3E%3Crect x='52' y='94' width='190' height='28' rx='14'/%3E%3C/g%3E%3C/svg%3E");
-  --cloud-dark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 420 150'%3E%3Cg fill='%238493a3'%3E%3Cellipse cx='96' cy='96' rx='66' ry='32'/%3E%3Cellipse cx='150' cy='72' rx='58' ry='42'/%3E%3Cellipse cx='210' cy='98' rx='62' ry='30'/%3E%3Crect x='52' y='94' width='190' height='28' rx='14'/%3E%3C/g%3E%3C/svg%3E");
-  --stars-far: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='1' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0.7 0.7 0.7 0 -0.62'/%3E%3C/filter%3E%3Crect width='320' height='320' filter='url(%23s)'/%3E%3C/svg%3E");
-  --stars-near: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='480' height='480'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='1' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0.75 0.75 0.75 0 -0.62'/%3E%3C/filter%3E%3Crect width='480' height='480' filter='url(%23s)'/%3E%3C/svg%3E");
-  --fog-far: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='300'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.008 0.014' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.74 0 0 0 0 0.78 0 0 0 0 0.83 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='600' height='300' filter='url(%23f)'/%3E%3C/svg%3E");
-  --fog-near: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='260'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.02 0.03' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.8 0 0 0 0 0.84 0 0 0 0 0.88 0 0 0 0.6 0'/%3E%3C/filter%3E%3Crect width='400' height='260' filter='url(%23f)'/%3E%3C/svg%3E");
-}
-
-/* SUNNY — warm daytime sky. The gradient now lightens toward the horizon (real
-   skies scatter more light low), with a warm horizon band on ::after, a soft sun
-   high on ::before, faint parallaxing cloud wisps, and a ridge horizon. */
+/* SUNNY — warm daytime sky with a soft sun glow that slowly breathes. */
 .weatherBg.bg-sunny {
-  background: linear-gradient(180deg, #172a41 0%, #274a6e 50%, #3f6d97 84%, #34597f 100%);
+  background: linear-gradient(180deg, #2c4c72 0%, #1a2c40 55%, var(--ground) 100%);
 }
 .weatherBg.bg-sunny::before {
-  top: -10%;
-  right: -4%;
-  width: 44vmax;
-  height: 44vmax;
+  top: -12%;
+  right: -6%;
+  width: 46vmax;
+  height: 46vmax;
   border-radius: 50%;
-  background: radial-gradient(circle at center, rgba(255, 214, 140, 0.5), rgba(255, 196, 96, 0) 66%);
-  animation: bgSun 16s ease-in-out infinite alternate;
+  background: radial-gradient(circle at center, rgba(217, 164, 65, 0.45), rgba(217, 164, 65, 0) 68%);
+  animation: bgSun 14s ease-in-out infinite alternate;
 }
-/* Horizon band: warm light lifting off the bottom edge. */
 .weatherBg.bg-sunny::after {
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 52%;
-  background: linear-gradient(0deg, rgba(255, 196, 120, 0.16) 0%, rgba(255, 196, 120, 0.05) 30%, rgba(255, 196, 120, 0) 60%);
-  animation: bgGround 12s ease-in-out infinite alternate;
+  bottom: -18%;
+  left: -12%;
+  width: 40vmax;
+  height: 40vmax;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(111, 168, 160, 0.18), rgba(111, 168, 160, 0) 70%);
+  animation: bgSun 18s ease-in-out infinite alternate-reverse;
 }
-/* far: high, blurred, desaturated cloud wisps drifting slowly (aerial depth). */
+/* far: a high, blurred warm haze band that slowly breathes behind the sun. */
 .weatherBg.bg-sunny > .bgLayer--far {
-  background: var(--cloud-light) repeat-x;
-  background-size: 560px auto;
-  background-position: 0 18%;
-  filter: blur(6px) saturate(0.6);
-  opacity: 0.4;
-  animation: bgFlowFar 60s linear infinite;
+  background: radial-gradient(120% 60% at 78% 4%, rgba(217, 164, 65, 0.22), rgba(217, 164, 65, 0) 60%);
+  filter: blur(6px);
+  animation: bgSun 22s ease-in-out infinite alternate;
 }
-/* mid: sharper wisps a little lower, drifting at a middling pace. */
+/* mid: faint diagonal light shafts spilling from the sun. */
 .weatherBg.bg-sunny > .bgLayer--mid {
-  background: var(--cloud-light) repeat-x;
-  background-size: 420px auto;
-  background-position: 0 30%;
-  filter: blur(2px) saturate(0.85);
-  opacity: 0.5;
-  animation: bgFlowMid 34s linear infinite;
-}
-/* near: faint diagonal light shafts spilling from the sun. */
-.weatherBg.bg-sunny > .bgLayer--near {
-  background: repeating-linear-gradient(64deg, rgba(255, 214, 140, 0.05) 0 2px, rgba(255, 214, 140, 0) 2px 26px);
-  opacity: 0.6;
+  background: repeating-linear-gradient(64deg, rgba(217, 164, 65, 0.05) 0 2px, rgba(217, 164, 65, 0) 2px 26px);
+  opacity: 0.7;
   animation: bgSun 16s ease-in-out infinite alternate-reverse;
 }
-/* ground: a two-ridge horizon silhouette over warm light pooling at the base. */
+/* ground: warm light pooling along the bottom of the scene. */
 .weatherBg.bg-sunny > .bgLayer--ground {
-  background: var(--ridge) center bottom / 100% 100% no-repeat,
-    linear-gradient(0deg, rgba(255, 196, 120, 0.18), rgba(255, 196, 120, 0) 100%);
+  background: linear-gradient(0deg, rgba(217, 164, 65, 0.16), rgba(217, 164, 65, 0) 100%);
   animation: bgGround 12s ease-in-out infinite alternate;
 }
 
-/* CLEAR NIGHT — deep sky lightening to a low horizon glow, a moon, and two
-   feTurbulence star fields at different scales plus a few hero stars. */
+/* CLEAR NIGHT — deep sky, a low moon glow, and a field of twinkling stars. */
 .weatherBg.bg-clear-night {
-  background: linear-gradient(180deg, #0b1220 0%, #101d31 50%, #1c3049 86%, #16273c 100%);
+  background: linear-gradient(180deg, #101a2c 0%, #0d1420 55%, var(--ground) 100%);
 }
-/* A faint sky-glow swelling from below the horizon (lightens toward the base). */
 .weatherBg.bg-clear-night::before {
   inset: 0;
-  background: radial-gradient(120% 80% at 50% 120%, rgba(60, 90, 130, 0.28), rgba(60, 90, 130, 0) 60%);
+  background-image:
+    radial-gradient(1.6px 1.6px at 18% 24%, rgba(234, 238, 242, 0.9), transparent 60%),
+    radial-gradient(1.2px 1.2px at 72% 16%, rgba(234, 238, 242, 0.8), transparent 60%),
+    radial-gradient(1.4px 1.4px at 42% 62%, rgba(234, 238, 242, 0.75), transparent 60%),
+    radial-gradient(1px 1px at 86% 46%, rgba(234, 238, 242, 0.7), transparent 60%),
+    radial-gradient(1.3px 1.3px at 30% 82%, rgba(234, 238, 242, 0.7), transparent 60%),
+    radial-gradient(1px 1px at 60% 74%, rgba(234, 238, 242, 0.6), transparent 60%),
+    radial-gradient(1.5px 1.5px at 8% 54%, rgba(234, 238, 242, 0.8), transparent 60%),
+    radial-gradient(1px 1px at 92% 78%, rgba(234, 238, 242, 0.65), transparent 60%);
+  animation: bgTwinkle 5s ease-in-out infinite alternate;
 }
 .weatherBg.bg-clear-night::after {
   top: 12%;
   right: 14%;
-  width: 88px;
-  height: 88px;
+  width: 92px;
+  height: 92px;
   border-radius: 50%;
-  background: radial-gradient(circle at 38% 38%, rgba(240, 244, 248, 0.9), rgba(150, 170, 186, 0.35) 60%, rgba(150, 170, 186, 0) 72%);
-  box-shadow: 0 0 60px 10px rgba(210, 224, 238, 0.12);
+  background: radial-gradient(circle at 38% 38%, rgba(234, 238, 242, 0.85), rgba(140, 160, 174, 0.35) 62%, rgba(140, 160, 174, 0) 72%);
 }
-/* far: a dense field of tiny stars from fractal noise, slightly blurred, drifting
-   very slowly and twinkling — the deep sky. */
+/* far: a dense field of tiny, dim, slightly blurred stars — the deep sky. */
 .weatherBg.bg-clear-night > .bgLayer--far {
-  background: var(--stars-far) repeat;
-  background-size: 560px 560px;
-  filter: blur(0.3px);
-  opacity: 0.75;
-  animation: bgFlowFar 120s linear infinite, bgTwinkle 7s ease-in-out infinite alternate-reverse;
+  background-image:
+    radial-gradient(0.8px 0.8px at 12% 30%, rgba(234, 238, 242, 0.5), transparent 60%),
+    radial-gradient(0.7px 0.7px at 34% 12%, rgba(234, 238, 242, 0.45), transparent 60%),
+    radial-gradient(0.8px 0.8px at 52% 40%, rgba(234, 238, 242, 0.5), transparent 60%),
+    radial-gradient(0.6px 0.6px at 68% 26%, rgba(234, 238, 242, 0.4), transparent 60%),
+    radial-gradient(0.8px 0.8px at 80% 52%, rgba(234, 238, 242, 0.45), transparent 60%),
+    radial-gradient(0.7px 0.7px at 24% 66%, rgba(234, 238, 242, 0.4), transparent 60%),
+    radial-gradient(0.8px 0.8px at 46% 84%, rgba(234, 238, 242, 0.45), transparent 60%),
+    radial-gradient(0.6px 0.6px at 74% 78%, rgba(234, 238, 242, 0.4), transparent 60%);
+  filter: blur(0.5px);
+  opacity: 0.7;
+  animation: bgTwinkle 7s ease-in-out infinite alternate-reverse;
 }
-/* mid: a sparser, larger star field from noise at a second scale, twinkling on
-   its own offset so the planes shimmer independently. */
+/* mid: a moderate field of stars — brighter than the far plane, no glow yet,
+   twinkling on its own offset so the three star planes shimmer independently. */
 .weatherBg.bg-clear-night > .bgLayer--mid {
-  background: var(--stars-near) repeat;
-  background-size: 480px 480px;
-  opacity: 0.9;
-  animation: bgTwinkle 4.5s ease-in-out infinite alternate;
+  background-image:
+    radial-gradient(1.4px 1.4px at 16% 22%, rgba(234, 238, 242, 0.7), transparent 60%),
+    radial-gradient(1.2px 1.2px at 40% 34%, rgba(234, 238, 242, 0.65), transparent 60%),
+    radial-gradient(1.5px 1.5px at 58% 18%, rgba(234, 238, 242, 0.7), transparent 60%),
+    radial-gradient(1.2px 1.2px at 76% 44%, rgba(234, 238, 242, 0.6), transparent 60%),
+    radial-gradient(1.4px 1.4px at 34% 70%, rgba(234, 238, 242, 0.62), transparent 60%),
+    radial-gradient(1.2px 1.2px at 88% 66%, rgba(234, 238, 242, 0.6), transparent 60%);
+  opacity: 0.85;
+  animation: bgTwinkle 6s ease-in-out infinite alternate;
 }
 /* near: a few large foreground stars, each with a soft drop-shadow glow. */
 .weatherBg.bg-clear-night > .bgLayer--near {
   background-image:
     radial-gradient(2.4px 2.4px at 22% 20%, rgba(234, 238, 242, 1), transparent 62%),
     radial-gradient(2px 2px at 64% 58%, rgba(234, 238, 242, 0.95), transparent 62%),
-    radial-gradient(2.6px 2.6px at 84% 30%, rgba(234, 238, 242, 1), transparent 62%);
+    radial-gradient(2.6px 2.6px at 84% 32%, rgba(234, 238, 242, 1), transparent 62%);
   filter: drop-shadow(0 0 4px rgba(234, 238, 242, 0.7));
   animation: bgTwinkle 3.4s ease-in-out infinite alternate;
 }
-/* ground: a two-ridge horizon under cool moonlight pooling along the base. */
+/* ground: cool moonlight pooling faintly along the horizon. */
 .weatherBg.bg-clear-night > .bgLayer--ground {
-  background: var(--ridge) center bottom / 100% 100% no-repeat,
-    linear-gradient(0deg, rgba(150, 170, 190, 0.16), rgba(150, 170, 190, 0) 100%);
+  background: linear-gradient(0deg, rgba(140, 160, 174, 0.14), rgba(140, 160, 174, 0) 100%);
   animation: bgGround 14s ease-in-out infinite alternate;
 }
 
-/* CLOUDY (also overcast, partly, and the neutral fallback) — cool grey-blue
-   lightening to the horizon, with cloud SILHOUETTES stacked across four depth
-   planes at genuinely different rates, blurs and opacities for aerial parallax. */
+/* CLOUDY (also overcast, partly, and the neutral fallback) — cool grey-blue with
+   two soft cloud masses drifting laterally. */
 .weatherBg.bg-cloudy {
-  background: linear-gradient(180deg, #1a2735 0%, #2c4256 50%, #47607a 86%, #394f66 100%);
+  background: linear-gradient(180deg, #23303f 0%, #172230 55%, var(--ground) 100%);
 }
-/* An extra, deepest cloud band drifting the other way, barely visible. */
 .weatherBg.bg-cloudy::before {
-  inset: 0;
-  background: var(--cloud-light) repeat-x;
-  background-size: 560px auto;
-  background-position: 0 8%;
-  filter: blur(12px) saturate(0.45);
-  opacity: 0.36;
-  animation: bgFlowFar 74s linear infinite reverse;
+  top: 14%;
+  left: -20%;
+  width: 55vmax;
+  height: 24vmax;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(140, 160, 174, 0.2), rgba(140, 160, 174, 0) 70%);
+  animation: bgCloud 40s ease-in-out infinite alternate;
 }
-/* Horizon band: cool light lifting off the base. */
 .weatherBg.bg-cloudy::after {
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 46%;
-  background: linear-gradient(0deg, rgba(150, 168, 182, 0.14), rgba(150, 168, 182, 0) 62%);
+  bottom: 10%;
+  right: -24%;
+  width: 60vmax;
+  height: 26vmax;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(111, 130, 148, 0.16), rgba(111, 130, 148, 0) 70%);
+  animation: bgCloud 52s ease-in-out infinite alternate-reverse;
 }
-/* far: a wide, heavily blurred, desaturated cloud band high up, barely moving. */
+/* far: a wide, heavily blurred cloud band high in the scene, barely moving. */
 .weatherBg.bg-cloudy > .bgLayer--far {
-  background: var(--cloud-light) repeat-x;
-  background-size: 560px auto;
-  background-position: 0 18%;
-  filter: blur(9px) saturate(0.6);
-  opacity: 0.5;
-  animation: bgFlowFar 60s linear infinite;
+  background: radial-gradient(80% 40% at 30% 22%, rgba(140, 160, 174, 0.16), rgba(140, 160, 174, 0) 70%);
+  filter: blur(10px);
+  animation: bgCloud 70s ease-in-out infinite alternate-reverse;
 }
-/* mid: a moderate cloud mass, middling blur and pace. */
+/* mid: a moderate cloud mass drifting at a middling pace and blur, sitting
+   between the far haze and the sharp near cloud. */
 .weatherBg.bg-cloudy > .bgLayer--mid {
-  background: var(--cloud-light) repeat-x;
-  background-size: 420px auto;
-  background-position: 0 34%;
-  filter: blur(4px) saturate(0.85);
-  opacity: 0.7;
-  animation: bgFlowMid 34s linear infinite;
+  background: radial-gradient(52% 30% at 46% 32%, rgba(158, 176, 190, 0.18), rgba(158, 176, 190, 0) 70%);
+  filter: blur(5px);
+  animation: bgCloud 48s ease-in-out infinite alternate;
 }
-/* near: a smaller, sharp, saturated cloud drifting fastest across the front. */
+/* near: a smaller, sharper cloud drifting faster across the foreground. */
 .weatherBg.bg-cloudy > .bgLayer--near {
-  background: var(--cloud-light) repeat-x;
-  background-size: 300px auto;
-  background-position: 0 52%;
-  filter: blur(1px);
-  opacity: 0.85;
-  animation: bgFlowNear 17s linear infinite;
+  background: radial-gradient(34% 26% at 62% 40%, rgba(176, 192, 204, 0.2), rgba(176, 192, 204, 0) 68%);
+  filter: blur(2px);
+  animation: bgCloud 30s ease-in-out infinite alternate;
 }
-/* ground: a two-ridge horizon under dim overcast light. */
+/* ground: dim horizon light under the overcast. */
 .weatherBg.bg-cloudy > .bgLayer--ground {
-  background: var(--ridge) center bottom / 100% 100% no-repeat,
-    linear-gradient(0deg, rgba(150, 168, 182, 0.12), rgba(150, 168, 182, 0) 100%);
+  background: linear-gradient(0deg, rgba(140, 160, 174, 0.12), rgba(140, 160, 174, 0) 100%);
   animation: bgGround 16s ease-in-out infinite alternate;
 }
 
-/* RAIN (also drizzle, showers, thunder) — darker sky lightening to the horizon,
-   storm-cloud silhouettes overhead, and diagonal rain streaks at three depths. */
+/* RAIN (also drizzle, showers, thunder) — darker sky, a heavy drifting cloud,
+   and a faint diagonal rain sheen sliding down. */
 .weatherBg.bg-rain {
-  background: linear-gradient(180deg, #141d29 0%, #223440 52%, #3b5262 86%, #2e4250 100%);
+  background: linear-gradient(180deg, #1c2734 0%, #121b26 55%, var(--ground) 100%);
 }
-/* A dark storm cloud front drifting across the top of the scene. */
 .weatherBg.bg-rain::before {
-  top: -6%;
-  left: 0;
-  right: 0;
-  height: 44%;
-  background: var(--cloud-dark) repeat-x;
-  background-size: 420px auto;
-  background-position: 0 40%;
-  filter: blur(3px);
-  opacity: 0.75;
-  animation: bgFlowMid 40s linear infinite;
+  top: -8%;
+  left: -18%;
+  width: 62vmax;
+  height: 30vmax;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(120, 140, 158, 0.22), rgba(120, 140, 158, 0) 70%);
+  animation: bgCloud 46s ease-in-out infinite alternate;
 }
 .weatherBg.bg-rain::after {
   inset: 0;
-  background-image: repeating-linear-gradient(74deg, rgba(170, 198, 220, 0.08) 0 1px, rgba(170, 198, 220, 0) 1px 9px);
+  background-image: repeating-linear-gradient(74deg, rgba(160, 190, 214, 0.07) 0 1px, rgba(160, 190, 214, 0) 1px 9px);
   animation: bgRain 0.9s linear infinite;
 }
-/* far: a broad, blurred, desaturated storm cloud drifting slowly high overhead. */
+/* far: a broad, blurred storm cloud drifting slowly high overhead. */
 .weatherBg.bg-rain > .bgLayer--far {
-  background: var(--cloud-dark) repeat-x;
-  background-size: 560px auto;
-  background-position: 0 14%;
-  filter: blur(8px) saturate(0.55);
-  opacity: 0.55;
-  animation: bgFlowFar 58s linear infinite;
+  background: radial-gradient(90% 44% at 66% 12%, rgba(120, 140, 158, 0.2), rgba(120, 140, 158, 0) 70%);
+  filter: blur(9px);
+  animation: bgCloud 60s ease-in-out infinite alternate-reverse;
 }
-/* mid: a middle sheet of rain streaks — moderate angle, gauge and speed. */
+/* mid: a middle sheet of rain streaks between the base ::after sheen and the
+   coarse near streaks — moderate angle, gauge and speed. */
 .weatherBg.bg-rain > .bgLayer--mid {
-  background-image: repeating-linear-gradient(76deg, rgba(180, 206, 226, 0.09) 0 1px, rgba(180, 206, 226, 0) 1px 12px);
+  background-image: repeating-linear-gradient(76deg, rgba(170, 198, 220, 0.09) 0 1px, rgba(170, 198, 220, 0) 1px 12px);
   animation: bgRain 0.72s linear infinite;
 }
 /* near: coarser, faster rain streaks at a steeper angle for foreground depth. */
 .weatherBg.bg-rain > .bgLayer--near {
-  background-image: repeating-linear-gradient(78deg, rgba(190, 214, 232, 0.12) 0 2px, rgba(190, 214, 232, 0) 2px 15px);
+  background-image: repeating-linear-gradient(78deg, rgba(180, 206, 226, 0.11) 0 2px, rgba(180, 206, 226, 0) 2px 15px);
   animation: bgRainNear 0.55s linear infinite;
 }
-/* ground: a two-ridge horizon over a wet sheen catching the light at the base. */
+/* ground: a wet sheen catching the light at the bottom of the scene. */
 .weatherBg.bg-rain > .bgLayer--ground {
-  background: var(--ridge) center bottom / 100% 100% no-repeat,
-    linear-gradient(0deg, rgba(150, 180, 200, 0.2), rgba(150, 180, 200, 0) 100%);
+  background: linear-gradient(0deg, rgba(120, 140, 158, 0.18), rgba(120, 140, 158, 0) 100%);
   animation: bgGround 9s ease-in-out infinite alternate;
 }
 
-/* SNOW — cool sky lightening to the horizon, with slowly drifting flakes at
-   three depths and a lit snow ground below a two-ridge horizon. */
+/* SNOW — cool light sky with slowly drifting flakes. */
 .weatherBg.bg-snow {
-  background: linear-gradient(180deg, #1c2b3a 0%, #33495e 50%, #52708c 84%, #3e5670 100%);
+  background: linear-gradient(180deg, #2a3949 0%, #1a2634 55%, var(--ground) 100%);
 }
 .weatherBg.bg-snow::before,
 .weatherBg.bg-snow::after {
@@ -397,54 +357,49 @@ body {
   filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.7));
   animation: bgSnow 8s linear infinite;
 }
-/* ground: a two-ridge horizon over a lit band of settled snow at the base. */
+/* ground: a lit band of settled snow glowing at the bottom of the scene. */
 .weatherBg.bg-snow > .bgLayer--ground {
-  height: 34%;
-  background: var(--ridge) center bottom / 100% 100% no-repeat,
-    linear-gradient(0deg, rgba(234, 240, 246, 0.32), rgba(234, 240, 246, 0.06) 55%, rgba(234, 240, 246, 0) 100%);
+  height: 30%;
+  background: linear-gradient(0deg, rgba(234, 240, 246, 0.28), rgba(234, 240, 246, 0.05) 60%, rgba(234, 240, 246, 0) 100%);
   animation: bgGround 11s ease-in-out infinite alternate;
 }
 
-/* FOG (also mist, haze) — muted sky lightening to the horizon, with fractal-noise
-   haze banks at two scales drifting horizontally across the depth planes. */
+/* FOG (also mist, haze) — muted sky with slow horizontal haze bands. */
 .weatherBg.bg-fog {
-  background: linear-gradient(180deg, #1c242e 0%, #2c3b49 52%, #47596a 86%, #334a5c 100%);
+  background: linear-gradient(180deg, #232c35 0%, #182029 55%, var(--ground) 100%);
 }
-/* A fine haze wash over the whole scene, drifting slowly. */
 .weatherBg.bg-fog::before {
   inset: 0;
-  background: var(--fog-near) repeat;
-  background-size: 420px auto;
-  opacity: 0.7;
-  animation: bgFlowMid 46s linear infinite;
+  background-image:
+    linear-gradient(0deg, rgba(140, 160, 174, 0) 0%, rgba(140, 160, 174, 0.12) 30%, rgba(140, 160, 174, 0) 46%),
+    linear-gradient(0deg, rgba(140, 160, 174, 0) 54%, rgba(140, 160, 174, 0.1) 72%, rgba(140, 160, 174, 0) 88%);
+  animation: bgFog 24s ease-in-out infinite alternate;
 }
-/* far: broad, soft, blurred haze masses drifting slowly (aerial depth). */
+/* far: a thin, high haze band drifting the other way, slower. */
 .weatherBg.bg-fog > .bgLayer--far {
-  background: var(--fog-far) repeat;
-  background-size: 560px auto;
+  background-image: linear-gradient(0deg, rgba(140, 160, 174, 0) 8%, rgba(140, 160, 174, 0.08) 22%, rgba(140, 160, 174, 0) 38%);
   filter: blur(3px);
-  opacity: 0.7;
-  animation: bgFlowFar 70s linear infinite;
-}
-/* mid: a middle bank of finer haze drifting the other way. */
-.weatherBg.bg-fog > .bgLayer--mid {
-  background: var(--fog-near) repeat;
-  background-size: 420px auto;
   opacity: 0.8;
-  animation: bgFlowMid 40s linear infinite reverse;
+  animation: bgFog 34s ease-in-out infinite alternate-reverse;
 }
-/* near: the sharpest, fastest haze in the foreground. */
+/* mid: a middle haze band drifting between the thin far band and the low near
+   mass, moderately blurred. */
+.weatherBg.bg-fog > .bgLayer--mid {
+  background-image: linear-gradient(0deg, rgba(150, 168, 182, 0) 24%, rgba(150, 168, 182, 0.1) 44%, rgba(150, 168, 182, 0) 62%);
+  filter: blur(5px);
+  opacity: 0.85;
+  animation: bgFog 26s ease-in-out infinite alternate;
+}
+/* near: a soft, heavily blurred haze mass low in the scene. */
 .weatherBg.bg-fog > .bgLayer--near {
-  background: var(--fog-near) repeat;
-  background-size: 300px auto;
-  opacity: 0.9;
-  animation: bgFlowNear 22s linear infinite;
+  background-image: linear-gradient(0deg, rgba(176, 192, 204, 0.14) 0%, rgba(176, 192, 204, 0.06) 40%, rgba(176, 192, 204, 0) 68%);
+  filter: blur(8px);
+  animation: bgFog 18s ease-in-out infinite alternate;
 }
-/* ground: a two-ridge horizon barely showing through a dense fog pool. */
+/* ground: a dense fog pool settling along the bottom. */
 .weatherBg.bg-fog > .bgLayer--ground {
-  height: 44%;
-  background: var(--ridge) center bottom / 100% 100% no-repeat,
-    linear-gradient(0deg, rgba(176, 192, 204, 0.26), rgba(176, 192, 204, 0) 100%);
+  height: 42%;
+  background: linear-gradient(0deg, rgba(176, 192, 204, 0.22), rgba(176, 192, 204, 0) 100%);
   animation: bgGround 15s ease-in-out infinite alternate;
 }
 
@@ -458,21 +413,9 @@ body {
   100% { opacity: 1; }
 }
 
-/* Continuous horizontal drift for the silhouette / noise planes. The shift equals
-   each plane's background-size width (far 560, mid 420, near 300), so the tile
-   wraps seamlessly. Distinct durations per plane are what read as parallax: the
-   far plane crawls, the near plane races. */
-@keyframes bgFlowFar {
-  from { background-position-x: 0; }
-  to   { background-position-x: -560px; }
-}
-@keyframes bgFlowMid {
-  from { background-position-x: 0; }
-  to   { background-position-x: -420px; }
-}
-@keyframes bgFlowNear {
-  from { background-position-x: 0; }
-  to   { background-position-x: -300px; }
+@keyframes bgCloud {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(10%); }
 }
 
 @keyframes bgRain {
@@ -483,6 +426,11 @@ body {
 @keyframes bgSnow {
   0%   { transform: translateY(-50%); }
   100% { transform: translateY(0); }
+}
+
+@keyframes bgFog {
+  0%   { transform: translateY(-4%); opacity: 0.7; }
+  100% { transform: translateY(4%);  opacity: 1; }
 }
 
 /* A steeper, faster fall for the near rain plane so it reads ahead of ::after. */
@@ -502,6 +450,16 @@ body {
 .weatherBg.paused::after,
 .weatherBg.paused > .bgLayer {
   animation-play-state: paused;
+}
+
+/* Halt every treatment's motion under a reduced-motion preference — one static
+   frame per category. */
+@media (prefers-reduced-motion: reduce) {
+  .weatherBg::before,
+  .weatherBg::after,
+  .weatherBg > .bgLayer {
+    animation: none;
+  }
 }
 
 /* The ribbon and its readout share one flex column so a mobile location rotation
