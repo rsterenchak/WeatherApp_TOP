@@ -175,3 +175,10 @@
   - File: `WeatherApp_main/src/style.css`, `WeatherApp_main/src/sky.js`
   - Completed: 2026-07-16
   <!-- id: c28f0eaf-fadf-4804-a132-39c1f8b5aed4 -->
+
+- [ ] **[MEDIUM]** Rebuild the six weather backgrounds with horizon, cloud silhouettes, and procedural noise
+  - Type: feature
+  - Description: The six `.weatherBg` treatments read as abstract gradients rather than sky: each per-category gradient is inverted (lightest at the zenith, darkest at the horizon — real skies scatter more light low, so it should be the reverse), the cloud masses are single `radial-gradient` circles with a 70% falloff and therefore have no silhouette, and all four depth planes drift at near-identical rate and opacity so there is no parallax. Flip every gradient to lighten toward the horizon and add a horizon band, replace the circles with SVG-masked cloud silhouettes, spread the planes into true aerial perspective (`.bgLayer--far` blurred, desaturated, ~60s; `.bgLayer--near` sharp, saturated, ~17s), and add a two-ridge horizon on `.bgLayer--ground` for scale. Generate `bg-fog`'s banks and `bg-clear-night`'s star field from `feTurbulence` fractal noise shipped as self-contained data-URI SVG background images — filter defined and applied inside the same SVG, `stitchTiles='stitch'`, two planes at different scales — which keeps it cross-browser and needs no `<svg><defs>` in the document. Reuse the existing four planes plus their `::before`/`::after` pseudo-elements (12 paint slots against a worst case of 9 for `bg-rain`) so the markup in `src/sky.js` is untouched, and animate unconditionally with no `prefers-reduced-motion` gate.
+  - File: `src/style.css`
+  - Completed: YYYY-MM-DD (PR #<number>)
+  <!-- id: a53dcebc-ffd9-4e5e-83fe-4696200ce25f -->
