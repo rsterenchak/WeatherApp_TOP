@@ -93,49 +93,107 @@ body {
   bottom: 0;
 }
 
-/* SUNNY — warm daytime sky with a soft sun glow that slowly breathes. */
+/* ------------------------------------------------------------------------- *
+ * Procedural imagery, generated once (a throwaway seeded generator) and pasted
+ * here as self-contained data-URI SVGs — the filter is defined AND applied
+ * inside each SVG, so `url(#id)` resolves in-document with no page-level
+ * <svg><defs>. Nothing else ships; src/sky.js and the four-plane markup are
+ * untouched.
+ *   --cloud-*      white ellipse clusters warped by feTurbulence +
+ *                  feDisplacementMap (6 octaves), used as a MASK so the lighting
+ *                  gradient stays in CSS and each category can tint the cloud.
+ *   --ridge-*      an opaque rectangle whose top edge is displaced by noise that
+ *                  varies along X only (baseFrequency '0.0042 0.0003'), so the
+ *                  horizon rolls like hills with no bezier corner or facet. The
+ *                  -dim variant is the far ridge at half alpha for rain.
+ *   --rain-*       three tiles of discrete white streaks placed by a seeded RNG
+ *                  (110/62/28 at 400x520 / 460x600 / 520x680), each a rounded
+ *                  rect carrying a transparent->opaque gradient as motion blur.
+ * ------------------------------------------------------------------------- */
+.weatherBg {
+  --cloud-a: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='260' viewBox='0 0 600 260'%3E%3Cfilter id='c' x='-20%25' y='-40%25' width='140%25' height='180%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012' numOctaves='6' seed='7' stitchTiles='stitch' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='110' xChannelSelector='R' yChannelSelector='G'/%3E%3CfeGaussianBlur stdDeviation='1.4'/%3E%3C/filter%3E%3Cg fill='%23fff' filter='url(%23c)'%3E%3Cellipse cx='169' cy='153' rx='133' ry='52'/%3E%3Cellipse cx='272' cy='118' rx='92' ry='53'/%3E%3Cellipse cx='369' cy='103' rx='84' ry='60'/%3E%3Cellipse cx='306' cy='99' rx='103' ry='44'/%3E%3Cellipse cx='310' cy='106' rx='158' ry='42'/%3E%3Cellipse cx='413' cy='98' rx='83' ry='39'/%3E%3Cellipse cx='237' cy='123' rx='139' ry='37'/%3E%3C/g%3E%3C/svg%3E");
+  --cloud-b: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='260' viewBox='0 0 600 260'%3E%3Cfilter id='c' x='-20%25' y='-40%25' width='140%25' height='180%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012' numOctaves='6' seed='23' stitchTiles='stitch' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='96' xChannelSelector='R' yChannelSelector='G'/%3E%3CfeGaussianBlur stdDeviation='1.4'/%3E%3C/filter%3E%3Cg fill='%23fff' filter='url(%23c)'%3E%3Cellipse cx='170' cy='129' rx='97' ry='45'/%3E%3Cellipse cx='214' cy='121' rx='156' ry='62'/%3E%3Cellipse cx='153' cy='135' rx='89' ry='37'/%3E%3Cellipse cx='446' cy='144' rx='113' ry='59'/%3E%3Cellipse cx='167' cy='117' rx='129' ry='68'/%3E%3Cellipse cx='214' cy='144' rx='91' ry='40'/%3E%3Cellipse cx='385' cy='96' rx='134' ry='47'/%3E%3C/g%3E%3C/svg%3E");
+  --ridge-far: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='220' viewBox='0 0 1200 220' preserveAspectRatio='none'%3E%3Cfilter id='r' x='-6%25' y='-30%25' width='112%25' height='160%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.0042 0.0003' numOctaves='2' seed='3' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='60' xChannelSelector='R' yChannelSelector='G'/%3E%3CfeGaussianBlur stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-40' y='70' width='1280' height='220' fill='%230c1219' fill-opacity='1' filter='url(%23r)'/%3E%3C/svg%3E");
+  --ridge-near: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='220' viewBox='0 0 1200 220' preserveAspectRatio='none'%3E%3Cfilter id='r' x='-6%25' y='-30%25' width='112%25' height='160%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.0042 0.0003' numOctaves='2' seed='11' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='60' xChannelSelector='R' yChannelSelector='G'/%3E%3CfeGaussianBlur stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-40' y='118' width='1280' height='220' fill='%2305080d' fill-opacity='1' filter='url(%23r)'/%3E%3C/svg%3E");
+  --ridge-far-dim: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='220' viewBox='0 0 1200 220' preserveAspectRatio='none'%3E%3Cfilter id='r' x='-6%25' y='-30%25' width='112%25' height='160%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.0042 0.0003' numOctaves='2' seed='3' result='n'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='n' scale='60' xChannelSelector='R' yChannelSelector='G'/%3E%3CfeGaussianBlur stdDeviation='0.7'/%3E%3C/filter%3E%3Crect x='-40' y='70' width='1280' height='220' fill='%230c1219' fill-opacity='0.5' filter='url(%23r)'/%3E%3C/svg%3E");
+  --rain-far: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='520' viewBox='0 0 400 520'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fff' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%23fff' stop-opacity='1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='340.4' y='264.6' width='1.97' height='35.0' rx='0.98' fill='url(%23g)' opacity='0.78'/%3E%3Crect x='196.8' y='475.4' width='1.19' height='29.3' rx='0.59' fill='url(%23g)' opacity='0.70'/%3E%3Crect x='332.7' y='172.0' width='2.63' height='26.2' rx='1.31' fill='url(%23g)' opacity='0.55'/%3E%3Crect x='85.1' y='136.7' width='2.40' height='37.4' rx='1.20' fill='url(%23g)' opacity='0.50'/%3E%3Crect x='106.4' y='281.1' width='1.71' height='22.5' rx='0.85' fill='url(%23g)' opacity='0.43'/%3E%3Crect x='191.3' y='157.8' width='2.46' height='17.1' rx='1.23' fill='url(%23g)' opacity='0.44'/%3E%3Crect x='12.4' y='345.0' width='1.90' height='30.4' rx='0.95' fill='url(%23g)' opacity='0.73'/%3E%3Crect x='86.9' y='373.7' width='1.99' height='29.7' rx='0.99' fill='url(%23g)' opacity='0.44'/%3E%3Crect x='76.6' y='372.8' width='1.52' height='32.3' rx='0.76' fill='url(%23g)' opacity='0.79'/%3E%3Crect x='285.3' y='120.7' width='1.47' height='17.1' rx='0.73' fill='url(%23g)' opacity='0.35'/%3E%3Crect x='192.1' y='95.4' width='1.30' height='32.9' rx='0.65' fill='url(%23g)' opacity='0.55'/%3E%3Crect x='350.5' y='400.9' width='2.43' height='27.7' rx='1.22' fill='url(%23g)' opacity='0.40'/%3E%3Crect x='80.2' y='293.5' width='2.56' height='43.3' rx='1.28' fill='url(%23g)' opacity='0.65'/%3E%3Crect x='385.4' y='147.8' width='1.57' height='34.0' rx='0.79' fill='url(%23g)' opacity='0.65'/%3E%3Crect x='114.3' y='135.7' width='2.11' height='43.7' rx='1.05' fill='url(%23g)' opacity='0.49'/%3E%3Crect x='82.7' y='501.0' width='2.26' height='26.7' rx='1.13' fill='url(%23g)' opacity='0.42'/%3E%3Crect x='82.7' y='-19.0' width='2.26' height='26.7' rx='1.13' fill='url(%23g)' opacity='0.42'/%3E%3Crect x='154.0' y='319.6' width='2.42' height='24.6' rx='1.21' fill='url(%23g)' opacity='0.70'/%3E%3Crect x='243.8' y='459.0' width='2.59' height='17.4' rx='1.29' fill='url(%23g)' opacity='0.49'/%3E%3Crect x='206.9' y='32.9' width='2.08' height='43.6' rx='1.04' fill='url(%23g)' opacity='0.48'/%3E%3Crect x='230.4' y='147.6' width='1.98' height='34.8' rx='0.99' fill='url(%23g)' opacity='0.44'/%3E%3Crect x='106.5' y='444.4' width='1.16' height='25.6' rx='0.58' fill='url(%23g)' opacity='0.84'/%3E%3Crect x='199.6' y='456.4' width='1.87' height='39.9' rx='0.94' fill='url(%23g)' opacity='0.71'/%3E%3Crect x='67.2' y='115.2' width='2.63' height='24.1' rx='1.31' fill='url(%23g)' opacity='0.85'/%3E%3Crect x='73.5' y='48.4' width='1.88' height='32.1' rx='0.94' fill='url(%23g)' opacity='0.76'/%3E%3Crect x='91.7' y='250.0' width='1.70' height='41.5' rx='0.85' fill='url(%23g)' opacity='0.46'/%3E%3Crect x='55.2' y='171.7' width='2.63' height='37.1' rx='1.31' fill='url(%23g)' opacity='0.52'/%3E%3Crect x='322.8' y='332.1' width='2.50' height='35.6' rx='1.25' fill='url(%23g)' opacity='0.65'/%3E%3Crect x='34.5' y='56.0' width='2.40' height='41.3' rx='1.20' fill='url(%23g)' opacity='0.81'/%3E%3Crect x='381.3' y='77.8' width='1.43' height='37.3' rx='0.71' fill='url(%23g)' opacity='0.67'/%3E%3Crect x='103.7' y='481.7' width='1.13' height='44.4' rx='0.56' fill='url(%23g)' opacity='0.56'/%3E%3Crect x='103.7' y='-38.3' width='1.13' height='44.4' rx='0.56' fill='url(%23g)' opacity='0.56'/%3E%3Crect x='8.3' y='4.4' width='1.25' height='34.6' rx='0.63' fill='url(%23g)' opacity='0.52'/%3E%3Crect x='239.8' y='262.8' width='2.03' height='41.6' rx='1.01' fill='url(%23g)' opacity='0.73'/%3E%3Crect x='282.4' y='326.2' width='2.04' height='18.3' rx='1.02' fill='url(%23g)' opacity='0.35'/%3E%3Crect x='262.5' y='139.7' width='1.90' height='21.6' rx='0.95' fill='url(%23g)' opacity='0.40'/%3E%3Crect x='62.7' y='265.3' width='1.50' height='23.4' rx='0.75' fill='url(%23g)' opacity='0.78'/%3E%3Crect x='340.5' y='131.0' width='1.16' height='35.8' rx='0.58' fill='url(%23g)' opacity='0.56'/%3E%3Crect x='309.1' y='369.7' width='2.49' height='19.3' rx='1.25' fill='url(%23g)' opacity='0.60'/%3E%3Crect x='296.3' y='369.5' width='2.15' height='18.9' rx='1.07' fill='url(%23g)' opacity='0.68'/%3E%3Crect x='274.0' y='302.0' width='1.56' height='27.3' rx='0.78' fill='url(%23g)' opacity='0.56'/%3E%3Crect x='238.5' y='362.5' width='2.53' height='26.4' rx='1.26' fill='url(%23g)' opacity='0.55'/%3E%3Crect x='390.2' y='249.2' width='2.44' height='40.8' rx='1.22' fill='url(%23g)' opacity='0.58'/%3E%3Crect x='77.7' y='463.5' width='1.36' height='38.8' rx='0.68' fill='url(%23g)' opacity='0.67'/%3E%3Crect x='392.6' y='86.8' width='1.45' height='19.0' rx='0.72' fill='url(%23g)' opacity='0.43'/%3E%3Crect x='110.4' y='493.0' width='1.32' height='27.4' rx='0.66' fill='url(%23g)' opacity='0.75'/%3E%3Crect x='110.4' y='-27.0' width='1.32' height='27.4' rx='0.66' fill='url(%23g)' opacity='0.75'/%3E%3Crect x='225.4' y='299.2' width='2.39' height='28.6' rx='1.20' fill='url(%23g)' opacity='0.47'/%3E%3Crect x='364.9' y='263.2' width='1.10' height='29.1' rx='0.55' fill='url(%23g)' opacity='0.81'/%3E%3Crect x='147.1' y='157.5' width='1.33' height='30.5' rx='0.67' fill='url(%23g)' opacity='0.56'/%3E%3Crect x='153.8' y='210.8' width='2.09' height='43.3' rx='1.04' fill='url(%23g)' opacity='0.54'/%3E%3Crect x='327.0' y='254.3' width='2.65' height='17.0' rx='1.32' fill='url(%23g)' opacity='0.61'/%3E%3Crect x='201.0' y='275.4' width='2.54' height='45.7' rx='1.27' fill='url(%23g)' opacity='0.76'/%3E%3Crect x='55.6' y='424.6' width='2.58' height='17.0' rx='1.29' fill='url(%23g)' opacity='0.38'/%3E%3Crect x='242.7' y='256.7' width='1.46' height='34.9' rx='0.73' fill='url(%23g)' opacity='0.53'/%3E%3Crect x='295.4' y='154.7' width='2.51' height='44.6' rx='1.25' fill='url(%23g)' opacity='0.67'/%3E%3Crect x='239.2' y='148.4' width='1.51' height='20.8' rx='0.76' fill='url(%23g)' opacity='0.60'/%3E%3Crect x='39.4' y='159.9' width='2.19' height='43.1' rx='1.09' fill='url(%23g)' opacity='0.53'/%3E%3Crect x='256.1' y='145.3' width='1.16' height='16.7' rx='0.58' fill='url(%23g)' opacity='0.38'/%3E%3Crect x='5.2' y='223.1' width='2.40' height='40.6' rx='1.20' fill='url(%23g)' opacity='0.42'/%3E%3Crect x='175.3' y='328.9' width='1.21' height='20.3' rx='0.60' fill='url(%23g)' opacity='0.64'/%3E%3Crect x='1.1' y='277.6' width='2.68' height='20.7' rx='1.34' fill='url(%23g)' opacity='0.43'/%3E%3Crect x='308.1' y='493.0' width='1.77' height='41.4' rx='0.89' fill='url(%23g)' opacity='0.38'/%3E%3Crect x='308.1' y='-27.0' width='1.77' height='41.4' rx='0.89' fill='url(%23g)' opacity='0.38'/%3E%3Crect x='382.5' y='336.9' width='2.08' height='33.9' rx='1.04' fill='url(%23g)' opacity='0.56'/%3E%3Crect x='362.4' y='81.1' width='1.96' height='29.1' rx='0.98' fill='url(%23g)' opacity='0.49'/%3E%3Crect x='234.8' y='390.4' width='2.02' height='35.2' rx='1.01' fill='url(%23g)' opacity='0.57'/%3E%3Crect x='127.6' y='477.9' width='1.95' height='23.2' rx='0.97' fill='url(%23g)' opacity='0.56'/%3E%3Crect x='247.1' y='230.0' width='2.35' height='44.0' rx='1.18' fill='url(%23g)' opacity='0.44'/%3E%3Crect x='223.6' y='206.0' width='2.01' height='27.2' rx='1.00' fill='url(%23g)' opacity='0.40'/%3E%3Crect x='186.0' y='162.8' width='1.26' height='45.1' rx='0.63' fill='url(%23g)' opacity='0.63'/%3E%3Crect x='68.6' y='161.9' width='1.66' height='25.8' rx='0.83' fill='url(%23g)' opacity='0.68'/%3E%3Crect x='110.5' y='15.5' width='2.21' height='38.5' rx='1.10' fill='url(%23g)' opacity='0.65'/%3E%3Crect x='350.9' y='306.8' width='2.65' height='25.6' rx='1.32' fill='url(%23g)' opacity='0.73'/%3E%3Crect x='53.4' y='438.8' width='2.63' height='32.3' rx='1.31' fill='url(%23g)' opacity='0.68'/%3E%3Crect x='183.0' y='405.6' width='2.42' height='44.1' rx='1.21' fill='url(%23g)' opacity='0.74'/%3E%3Crect x='58.1' y='300.7' width='2.26' height='25.1' rx='1.13' fill='url(%23g)' opacity='0.55'/%3E%3Crect x='61.7' y='172.8' width='1.20' height='22.1' rx='0.60' fill='url(%23g)' opacity='0.72'/%3E%3Crect x='261.4' y='202.7' width='2.18' height='20.3' rx='1.09' fill='url(%23g)' opacity='0.71'/%3E%3Crect x='178.6' y='94.1' width='2.20' height='41.8' rx='1.10' fill='url(%23g)' opacity='0.85'/%3E%3Crect x='148.1' y='305.1' width='2.52' height='40.1' rx='1.26' fill='url(%23g)' opacity='0.83'/%3E%3Crect x='267.7' y='512.6' width='2.28' height='32.9' rx='1.14' fill='url(%23g)' opacity='0.37'/%3E%3Crect x='267.7' y='-7.4' width='2.28' height='32.9' rx='1.14' fill='url(%23g)' opacity='0.37'/%3E%3Crect x='207.8' y='420.1' width='1.24' height='22.1' rx='0.62' fill='url(%23g)' opacity='0.57'/%3E%3Crect x='393.6' y='215.7' width='1.98' height='20.4' rx='0.99' fill='url(%23g)' opacity='0.38'/%3E%3Crect x='316.2' y='34.8' width='1.62' height='42.1' rx='0.81' fill='url(%23g)' opacity='0.59'/%3E%3Crect x='259.0' y='427.4' width='2.51' height='42.2' rx='1.25' fill='url(%23g)' opacity='0.53'/%3E%3Crect x='207.7' y='80.5' width='2.19' height='37.6' rx='1.09' fill='url(%23g)' opacity='0.48'/%3E%3Crect x='203.0' y='239.1' width='2.68' height='17.8' rx='1.34' fill='url(%23g)' opacity='0.63'/%3E%3Crect x='275.6' y='95.5' width='1.75' height='42.3' rx='0.88' fill='url(%23g)' opacity='0.78'/%3E%3Crect x='198.2' y='246.0' width='1.47' height='34.5' rx='0.73' fill='url(%23g)' opacity='0.78'/%3E%3Crect x='362.3' y='418.2' width='2.45' height='31.3' rx='1.23' fill='url(%23g)' opacity='0.57'/%3E%3Crect x='271.6' y='420.1' width='2.37' height='27.0' rx='1.19' fill='url(%23g)' opacity='0.58'/%3E%3Crect x='179.2' y='329.6' width='2.41' height='26.2' rx='1.21' fill='url(%23g)' opacity='0.78'/%3E%3Crect x='86.2' y='131.4' width='1.92' height='20.8' rx='0.96' fill='url(%23g)' opacity='0.57'/%3E%3Crect x='277.3' y='404.1' width='1.78' height='24.8' rx='0.89' fill='url(%23g)' opacity='0.58'/%3E%3Crect x='265.8' y='380.5' width='1.36' height='18.0' rx='0.68' fill='url(%23g)' opacity='0.84'/%3E%3Crect x='189.5' y='88.4' width='2.44' height='42.0' rx='1.22' fill='url(%23g)' opacity='0.36'/%3E%3Crect x='238.1' y='96.8' width='1.92' height='24.4' rx='0.96' fill='url(%23g)' opacity='0.81'/%3E%3Crect x='220.6' y='144.6' width='1.17' height='41.1' rx='0.58' fill='url(%23g)' opacity='0.55'/%3E%3Crect x='106.5' y='179.6' width='1.34' height='37.9' rx='0.67' fill='url(%23g)' opacity='0.77'/%3E%3Crect x='310.4' y='336.6' width='1.52' height='33.0' rx='0.76' fill='url(%23g)' opacity='0.37'/%3E%3Crect x='242.7' y='155.6' width='1.43' height='26.8' rx='0.71' fill='url(%23g)' opacity='0.43'/%3E%3Crect x='137.7' y='57.7' width='1.44' height='41.6' rx='0.72' fill='url(%23g)' opacity='0.72'/%3E%3Crect x='256.3' y='195.4' width='2.69' height='25.3' rx='1.34' fill='url(%23g)' opacity='0.80'/%3E%3Crect x='72.7' y='468.5' width='2.54' height='20.3' rx='1.27' fill='url(%23g)' opacity='0.54'/%3E%3Crect x='287.8' y='463.7' width='1.79' height='24.5' rx='0.90' fill='url(%23g)' opacity='0.50'/%3E%3Crect x='384.0' y='138.6' width='1.71' height='20.5' rx='0.85' fill='url(%23g)' opacity='0.76'/%3E%3Crect x='288.5' y='448.7' width='2.64' height='31.7' rx='1.32' fill='url(%23g)' opacity='0.73'/%3E%3Crect x='365.7' y='131.3' width='1.11' height='19.6' rx='0.56' fill='url(%23g)' opacity='0.51'/%3E%3Crect x='181.4' y='160.7' width='2.69' height='32.0' rx='1.34' fill='url(%23g)' opacity='0.38'/%3E%3Crect x='395.8' y='282.6' width='1.30' height='45.3' rx='0.65' fill='url(%23g)' opacity='0.61'/%3E%3Crect x='211.4' y='136.8' width='1.50' height='31.0' rx='0.75' fill='url(%23g)' opacity='0.40'/%3E%3Crect x='364.7' y='52.7' width='1.66' height='41.9' rx='0.83' fill='url(%23g)' opacity='0.55'/%3E%3Crect x='364.0' y='463.9' width='1.64' height='23.1' rx='0.82' fill='url(%23g)' opacity='0.50'/%3E%3C/svg%3E");
+  --rain-mid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='460' height='600' viewBox='0 0 460 600'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fff' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%23fff' stop-opacity='1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='181.9' y='368.3' width='1.35' height='24.0' rx='0.68' fill='url(%23g)' opacity='0.42'/%3E%3Crect x='293.1' y='161.7' width='2.65' height='25.8' rx='1.32' fill='url(%23g)' opacity='0.36'/%3E%3Crect x='88.2' y='435.1' width='2.03' height='25.2' rx='1.01' fill='url(%23g)' opacity='0.61'/%3E%3Crect x='80.9' y='297.8' width='2.21' height='33.1' rx='1.10' fill='url(%23g)' opacity='0.57'/%3E%3Crect x='247.8' y='195.9' width='1.58' height='17.9' rx='0.79' fill='url(%23g)' opacity='0.56'/%3E%3Crect x='321.2' y='276.6' width='2.59' height='31.1' rx='1.29' fill='url(%23g)' opacity='0.62'/%3E%3Crect x='359.5' y='396.9' width='1.88' height='38.7' rx='0.94' fill='url(%23g)' opacity='0.44'/%3E%3Crect x='38.6' y='197.5' width='2.63' height='19.9' rx='1.31' fill='url(%23g)' opacity='0.69'/%3E%3Crect x='245.1' y='151.5' width='2.49' height='27.0' rx='1.25' fill='url(%23g)' opacity='0.73'/%3E%3Crect x='376.7' y='7.7' width='1.47' height='33.4' rx='0.73' fill='url(%23g)' opacity='0.71'/%3E%3Crect x='82.1' y='270.6' width='2.31' height='32.8' rx='1.16' fill='url(%23g)' opacity='0.77'/%3E%3Crect x='44.0' y='72.1' width='1.63' height='34.2' rx='0.81' fill='url(%23g)' opacity='0.71'/%3E%3Crect x='367.6' y='207.9' width='2.06' height='42.5' rx='1.03' fill='url(%23g)' opacity='0.43'/%3E%3Crect x='143.6' y='12.2' width='1.42' height='27.6' rx='0.71' fill='url(%23g)' opacity='0.51'/%3E%3Crect x='266.6' y='370.8' width='2.35' height='26.4' rx='1.18' fill='url(%23g)' opacity='0.70'/%3E%3Crect x='96.6' y='79.3' width='1.71' height='45.2' rx='0.85' fill='url(%23g)' opacity='0.50'/%3E%3Crect x='117.7' y='296.8' width='1.43' height='18.6' rx='0.71' fill='url(%23g)' opacity='0.59'/%3E%3Crect x='284.7' y='235.5' width='1.41' height='30.9' rx='0.70' fill='url(%23g)' opacity='0.39'/%3E%3Crect x='1.5' y='147.7' width='2.35' height='35.9' rx='1.18' fill='url(%23g)' opacity='0.67'/%3E%3Crect x='44.1' y='261.3' width='2.44' height='36.3' rx='1.22' fill='url(%23g)' opacity='0.65'/%3E%3Crect x='391.2' y='169.3' width='1.18' height='29.7' rx='0.59' fill='url(%23g)' opacity='0.84'/%3E%3Crect x='364.5' y='480.8' width='2.04' height='18.8' rx='1.02' fill='url(%23g)' opacity='0.37'/%3E%3Crect x='341.6' y='307.9' width='1.86' height='24.9' rx='0.93' fill='url(%23g)' opacity='0.58'/%3E%3Crect x='296.7' y='369.4' width='1.48' height='31.4' rx='0.74' fill='url(%23g)' opacity='0.81'/%3E%3Crect x='70.9' y='68.0' width='2.67' height='42.3' rx='1.33' fill='url(%23g)' opacity='0.63'/%3E%3Crect x='243.3' y='347.9' width='1.98' height='33.8' rx='0.99' fill='url(%23g)' opacity='0.63'/%3E%3Crect x='35.9' y='22.4' width='1.13' height='32.1' rx='0.56' fill='url(%23g)' opacity='0.72'/%3E%3Crect x='243.0' y='131.6' width='1.22' height='18.4' rx='0.61' fill='url(%23g)' opacity='0.45'/%3E%3Crect x='407.3' y='228.2' width='1.49' height='36.6' rx='0.74' fill='url(%23g)' opacity='0.79'/%3E%3Crect x='66.2' y='2.9' width='1.58' height='42.7' rx='0.79' fill='url(%23g)' opacity='0.62'/%3E%3Crect x='356.3' y='535.9' width='2.13' height='37.7' rx='1.06' fill='url(%23g)' opacity='0.65'/%3E%3Crect x='372.7' y='578.0' width='1.18' height='30.5' rx='0.59' fill='url(%23g)' opacity='0.71'/%3E%3Crect x='372.7' y='-22.0' width='1.18' height='30.5' rx='0.59' fill='url(%23g)' opacity='0.71'/%3E%3Crect x='423.8' y='459.8' width='2.11' height='35.4' rx='1.05' fill='url(%23g)' opacity='0.41'/%3E%3Crect x='42.7' y='530.7' width='2.09' height='19.4' rx='1.04' fill='url(%23g)' opacity='0.42'/%3E%3Crect x='142.4' y='71.3' width='1.19' height='41.1' rx='0.59' fill='url(%23g)' opacity='0.42'/%3E%3Crect x='412.6' y='292.8' width='2.52' height='36.9' rx='1.26' fill='url(%23g)' opacity='0.52'/%3E%3Crect x='158.8' y='446.0' width='1.93' height='42.5' rx='0.96' fill='url(%23g)' opacity='0.79'/%3E%3Crect x='205.3' y='273.1' width='1.82' height='44.0' rx='0.91' fill='url(%23g)' opacity='0.47'/%3E%3Crect x='161.6' y='565.9' width='1.61' height='35.2' rx='0.81' fill='url(%23g)' opacity='0.36'/%3E%3Crect x='161.6' y='-34.1' width='1.61' height='35.2' rx='0.81' fill='url(%23g)' opacity='0.36'/%3E%3Crect x='366.9' y='46.6' width='2.06' height='32.1' rx='1.03' fill='url(%23g)' opacity='0.78'/%3E%3Crect x='395.1' y='71.0' width='1.67' height='42.0' rx='0.83' fill='url(%23g)' opacity='0.41'/%3E%3Crect x='232.4' y='485.4' width='1.17' height='29.1' rx='0.58' fill='url(%23g)' opacity='0.51'/%3E%3Crect x='451.9' y='424.1' width='2.67' height='32.1' rx='1.33' fill='url(%23g)' opacity='0.68'/%3E%3Crect x='150.6' y='394.8' width='2.24' height='26.1' rx='1.12' fill='url(%23g)' opacity='0.43'/%3E%3Crect x='234.0' y='37.7' width='2.44' height='33.0' rx='1.22' fill='url(%23g)' opacity='0.73'/%3E%3Crect x='86.5' y='198.1' width='1.69' height='29.5' rx='0.84' fill='url(%23g)' opacity='0.38'/%3E%3Crect x='414.9' y='228.2' width='1.35' height='22.7' rx='0.68' fill='url(%23g)' opacity='0.68'/%3E%3Crect x='246.1' y='521.8' width='1.84' height='16.4' rx='0.92' fill='url(%23g)' opacity='0.58'/%3E%3Crect x='89.4' y='94.8' width='1.43' height='24.9' rx='0.71' fill='url(%23g)' opacity='0.83'/%3E%3Crect x='81.5' y='57.6' width='2.24' height='18.1' rx='1.12' fill='url(%23g)' opacity='0.54'/%3E%3Crect x='47.5' y='290.2' width='1.45' height='29.9' rx='0.72' fill='url(%23g)' opacity='0.80'/%3E%3Crect x='260.0' y='129.8' width='1.38' height='34.3' rx='0.69' fill='url(%23g)' opacity='0.39'/%3E%3Crect x='259.5' y='556.5' width='1.71' height='42.6' rx='0.85' fill='url(%23g)' opacity='0.63'/%3E%3Crect x='12.4' y='179.1' width='1.76' height='34.5' rx='0.88' fill='url(%23g)' opacity='0.62'/%3E%3Crect x='412.7' y='264.3' width='1.32' height='40.4' rx='0.66' fill='url(%23g)' opacity='0.39'/%3E%3Crect x='260.1' y='295.5' width='2.32' height='43.9' rx='1.16' fill='url(%23g)' opacity='0.77'/%3E%3Crect x='314.3' y='193.4' width='1.33' height='30.8' rx='0.67' fill='url(%23g)' opacity='0.53'/%3E%3Crect x='204.5' y='103.9' width='2.25' height='23.1' rx='1.13' fill='url(%23g)' opacity='0.41'/%3E%3Crect x='39.9' y='108.8' width='1.37' height='17.5' rx='0.69' fill='url(%23g)' opacity='0.47'/%3E%3Crect x='89.5' y='38.0' width='1.12' height='36.2' rx='0.56' fill='url(%23g)' opacity='0.84'/%3E%3Crect x='182.0' y='3.3' width='2.06' height='25.1' rx='1.03' fill='url(%23g)' opacity='0.82'/%3E%3Crect x='451.4' y='233.8' width='1.96' height='37.3' rx='0.98' fill='url(%23g)' opacity='0.56'/%3E%3C/svg%3E");
+  --rain-near: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='680' viewBox='0 0 520 680'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23fff' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%23fff' stop-opacity='1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='367.2' y='175.3' width='2.04' height='33.2' rx='1.02' fill='url(%23g)' opacity='0.69'/%3E%3Crect x='193.3' y='142.2' width='1.31' height='26.6' rx='0.66' fill='url(%23g)' opacity='0.80'/%3E%3Crect x='263.4' y='571.8' width='1.85' height='31.8' rx='0.93' fill='url(%23g)' opacity='0.39'/%3E%3Crect x='410.7' y='478.7' width='1.82' height='33.4' rx='0.91' fill='url(%23g)' opacity='0.57'/%3E%3Crect x='104.2' y='335.9' width='1.24' height='40.9' rx='0.62' fill='url(%23g)' opacity='0.45'/%3E%3Crect x='301.6' y='112.4' width='2.45' height='38.8' rx='1.23' fill='url(%23g)' opacity='0.71'/%3E%3Crect x='494.6' y='74.4' width='1.46' height='45.4' rx='0.73' fill='url(%23g)' opacity='0.39'/%3E%3Crect x='519.3' y='42.7' width='2.48' height='28.8' rx='1.24' fill='url(%23g)' opacity='0.56'/%3E%3Crect x='93.2' y='600.3' width='1.33' height='27.1' rx='0.67' fill='url(%23g)' opacity='0.66'/%3E%3Crect x='513.9' y='129.0' width='1.79' height='37.3' rx='0.90' fill='url(%23g)' opacity='0.78'/%3E%3Crect x='273.1' y='10.0' width='2.68' height='28.5' rx='1.34' fill='url(%23g)' opacity='0.58'/%3E%3Crect x='146.6' y='257.5' width='2.21' height='30.4' rx='1.10' fill='url(%23g)' opacity='0.50'/%3E%3Crect x='40.9' y='631.7' width='2.20' height='19.9' rx='1.10' fill='url(%23g)' opacity='0.52'/%3E%3Crect x='96.9' y='557.1' width='2.51' height='45.6' rx='1.25' fill='url(%23g)' opacity='0.63'/%3E%3Crect x='369.7' y='648.8' width='1.64' height='26.0' rx='0.82' fill='url(%23g)' opacity='0.79'/%3E%3Crect x='450.1' y='570.7' width='1.40' height='34.9' rx='0.70' fill='url(%23g)' opacity='0.42'/%3E%3Crect x='58.0' y='21.1' width='2.26' height='38.6' rx='1.13' fill='url(%23g)' opacity='0.60'/%3E%3Crect x='505.9' y='512.7' width='1.78' height='22.6' rx='0.89' fill='url(%23g)' opacity='0.63'/%3E%3Crect x='86.6' y='329.3' width='1.84' height='29.4' rx='0.92' fill='url(%23g)' opacity='0.57'/%3E%3Crect x='450.4' y='623.8' width='2.29' height='34.4' rx='1.15' fill='url(%23g)' opacity='0.80'/%3E%3Crect x='144.1' y='131.6' width='2.49' height='16.2' rx='1.25' fill='url(%23g)' opacity='0.41'/%3E%3Crect x='461.3' y='169.6' width='1.37' height='44.5' rx='0.69' fill='url(%23g)' opacity='0.52'/%3E%3Crect x='203.4' y='349.0' width='2.44' height='23.0' rx='1.22' fill='url(%23g)' opacity='0.77'/%3E%3Crect x='197.4' y='230.9' width='2.26' height='32.4' rx='1.13' fill='url(%23g)' opacity='0.39'/%3E%3Crect x='308.6' y='587.4' width='2.59' height='38.5' rx='1.29' fill='url(%23g)' opacity='0.41'/%3E%3Crect x='293.2' y='90.2' width='2.42' height='32.8' rx='1.21' fill='url(%23g)' opacity='0.82'/%3E%3Crect x='286.5' y='523.7' width='1.12' height='20.4' rx='0.56' fill='url(%23g)' opacity='0.56'/%3E%3Crect x='443.0' y='275.2' width='1.62' height='33.1' rx='0.81' fill='url(%23g)' opacity='0.53'/%3E%3C/svg%3E");
+}
+
+/* Aerial perspective is carried by the far/mid/near planes: the far plane is soft
+   and desaturated and crawls, the mid plane is a touch sharp and quicker, the
+   near plane is sharp and fastest. Shared mask-repeat for the cloud categories. */
+.weatherBg > .bgLayer--far,
+.weatherBg > .bgLayer--mid,
+.weatherBg > .bgLayer--near {
+  -webkit-mask-repeat: repeat-x;
+  mask-repeat: repeat-x;
+}
+
+/* SUNNY — warm daytime sky lightening to a peach horizon, a soft sun, warm cloud
+   wisps parallaxing across three planes, and a ridge horizon. */
 .weatherBg.bg-sunny {
-  background: linear-gradient(180deg, #2c4c72 0%, #1a2c40 55%, var(--ground) 100%);
+  --s0: #14263c; --s1: #285079; --s2: #3f7099; --hz: #cf9a63;
+  background: linear-gradient(180deg, var(--s0) 0%, var(--s1) 44%, var(--s2) 76%, var(--hz) 89%, var(--ground) 100%);
 }
 .weatherBg.bg-sunny::before {
-  top: -12%;
-  right: -6%;
-  width: 46vmax;
-  height: 46vmax;
+  top: -10%;
+  right: -4%;
+  width: 44vmax;
+  height: 44vmax;
   border-radius: 50%;
-  background: radial-gradient(circle at center, rgba(217, 164, 65, 0.45), rgba(217, 164, 65, 0) 68%);
-  animation: bgSun 14s ease-in-out infinite alternate;
+  background: radial-gradient(circle at center, rgba(255, 214, 140, 0.5), rgba(255, 196, 96, 0) 66%);
+  animation: bgSun 16s ease-in-out infinite alternate;
 }
 .weatherBg.bg-sunny::after {
-  bottom: -18%;
-  left: -12%;
-  width: 40vmax;
-  height: 40vmax;
-  border-radius: 50%;
-  background: radial-gradient(circle at center, rgba(111, 168, 160, 0.18), rgba(111, 168, 160, 0) 70%);
-  animation: bgSun 18s ease-in-out infinite alternate-reverse;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 46%;
+  background: linear-gradient(0deg, rgba(255, 196, 120, 0.16) 0%, rgba(255, 196, 120, 0.04) 34%, rgba(255, 196, 120, 0) 60%);
+  animation: bgGround 12s ease-in-out infinite alternate;
 }
-/* far: a high, blurred warm haze band that slowly breathes behind the sun. */
 .weatherBg.bg-sunny > .bgLayer--far {
-  background: radial-gradient(120% 60% at 78% 4%, rgba(217, 164, 65, 0.22), rgba(217, 164, 65, 0) 60%);
-  filter: blur(6px);
-  animation: bgSun 22s ease-in-out infinite alternate;
+  background: linear-gradient(180deg, rgba(240, 224, 208, 0.9), rgba(210, 196, 184, 0.5));
+  -webkit-mask-image: var(--cloud-b); mask-image: var(--cloud-b);
+  -webkit-mask-size: 600px auto; mask-size: 600px auto;
+  -webkit-mask-position: 0 16%; mask-position: 0 16%;
+  filter: blur(8px) saturate(0.5);
+  opacity: 0.38;
+  animation: bgDriftFar 60s linear infinite;
 }
-/* mid: faint diagonal light shafts spilling from the sun. */
 .weatherBg.bg-sunny > .bgLayer--mid {
-  background: repeating-linear-gradient(64deg, rgba(217, 164, 65, 0.05) 0 2px, rgba(217, 164, 65, 0) 2px 26px);
-  opacity: 0.7;
-  animation: bgSun 16s ease-in-out infinite alternate-reverse;
+  background: linear-gradient(180deg, rgba(246, 234, 220, 0.95), rgba(214, 200, 188, 0.55));
+  -webkit-mask-image: var(--cloud-a); mask-image: var(--cloud-a);
+  -webkit-mask-size: 460px auto; mask-size: 460px auto;
+  -webkit-mask-position: 0 30%; mask-position: 0 30%;
+  filter: blur(3px) saturate(0.85);
+  opacity: 0.5;
+  animation: bgDriftMid 34s linear infinite;
 }
-/* ground: warm light pooling along the bottom of the scene. */
+.weatherBg.bg-sunny > .bgLayer--near {
+  background: linear-gradient(180deg, rgba(252, 244, 234, 1), rgba(224, 210, 198, 0.6));
+  -webkit-mask-image: var(--cloud-b); mask-image: var(--cloud-b);
+  -webkit-mask-size: 360px auto; mask-size: 360px auto;
+  -webkit-mask-position: 0 44%; mask-position: 0 44%;
+  filter: none;
+  opacity: 0.5;
+  animation: bgDriftNear 17s linear infinite;
+}
 .weatherBg.bg-sunny > .bgLayer--ground {
-  background: linear-gradient(0deg, rgba(217, 164, 65, 0.16), rgba(217, 164, 65, 0) 100%);
+  background:
+    var(--ridge-near) center bottom / 100% 100% no-repeat,
+    var(--ridge-far) center bottom / 100% 100% no-repeat,
+    linear-gradient(0deg, rgba(255, 196, 120, 0.18), rgba(255, 196, 120, 0) 100%);
   animation: bgGround 12s ease-in-out infinite alternate;
 }
 
-/* CLEAR NIGHT — deep sky, a low moon glow, and a field of twinkling stars. */
+/* CLEAR NIGHT — deep sky lightening to a low horizon glow, a moon, twinkling star
+   planes, and a dark ridge horizon. (No clouds at night; stars carry the depth.) */
 .weatherBg.bg-clear-night {
-  background: linear-gradient(180deg, #101a2c 0%, #0d1420 55%, var(--ground) 100%);
+  --s0: #0a1120; --s1: #101d31; --s2: #1c3049; --hz: #2b4a68;
+  background: linear-gradient(180deg, var(--s0) 0%, var(--s1) 44%, var(--s2) 76%, var(--hz) 89%, var(--ground) 100%);
 }
 .weatherBg.bg-clear-night::before {
   inset: 0;
@@ -153,12 +211,11 @@ body {
 .weatherBg.bg-clear-night::after {
   top: 12%;
   right: 14%;
-  width: 92px;
-  height: 92px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
-  background: radial-gradient(circle at 38% 38%, rgba(234, 238, 242, 0.85), rgba(140, 160, 174, 0.35) 62%, rgba(140, 160, 174, 0) 72%);
+  background: radial-gradient(circle at 38% 38%, rgba(234, 238, 242, 0.88), rgba(140, 160, 174, 0.35) 62%, rgba(140, 160, 174, 0) 72%);
 }
-/* far: a dense field of tiny, dim, slightly blurred stars — the deep sky. */
 .weatherBg.bg-clear-night > .bgLayer--far {
   background-image:
     radial-gradient(0.8px 0.8px at 12% 30%, rgba(234, 238, 242, 0.5), transparent 60%),
@@ -173,8 +230,6 @@ body {
   opacity: 0.7;
   animation: bgTwinkle 7s ease-in-out infinite alternate-reverse;
 }
-/* mid: a moderate field of stars — brighter than the far plane, no glow yet,
-   twinkling on its own offset so the three star planes shimmer independently. */
 .weatherBg.bg-clear-night > .bgLayer--mid {
   background-image:
     radial-gradient(1.4px 1.4px at 16% 22%, rgba(234, 238, 242, 0.7), transparent 60%),
@@ -186,7 +241,6 @@ body {
   opacity: 0.85;
   animation: bgTwinkle 6s ease-in-out infinite alternate;
 }
-/* near: a few large foreground stars, each with a soft drop-shadow glow. */
 .weatherBg.bg-clear-night > .bgLayer--near {
   background-image:
     radial-gradient(2.4px 2.4px at 22% 20%, rgba(234, 238, 242, 1), transparent 62%),
@@ -195,105 +249,138 @@ body {
   filter: drop-shadow(0 0 4px rgba(234, 238, 242, 0.7));
   animation: bgTwinkle 3.4s ease-in-out infinite alternate;
 }
-/* ground: cool moonlight pooling faintly along the horizon. */
 .weatherBg.bg-clear-night > .bgLayer--ground {
-  background: linear-gradient(0deg, rgba(140, 160, 174, 0.14), rgba(140, 160, 174, 0) 100%);
+  background:
+    var(--ridge-near) center bottom / 100% 100% no-repeat,
+    var(--ridge-far) center bottom / 100% 100% no-repeat,
+    linear-gradient(0deg, rgba(140, 160, 174, 0.14), rgba(140, 160, 174, 0) 100%);
   animation: bgGround 14s ease-in-out infinite alternate;
 }
 
-/* CLOUDY (also overcast, partly, and the neutral fallback) — cool grey-blue with
-   two soft cloud masses drifting laterally. */
+/* CLOUDY (also overcast, partly, and the neutral fallback) — cool grey-blue
+   lightening to the horizon, with warped cloud silhouettes across three depth
+   planes at genuinely different rates, blurs and opacities, over a ridge horizon. */
 .weatherBg.bg-cloudy {
-  background: linear-gradient(180deg, #23303f 0%, #172230 55%, var(--ground) 100%);
+  --s0: #16222f; --s1: #2c4256; --s2: #47607a; --hz: #5e788f;
+  background: linear-gradient(180deg, var(--s0) 0%, var(--s1) 44%, var(--s2) 76%, var(--hz) 89%, var(--ground) 100%);
 }
 .weatherBg.bg-cloudy::before {
-  top: 14%;
-  left: -20%;
-  width: 55vmax;
-  height: 24vmax;
-  border-radius: 50%;
-  background: radial-gradient(circle at center, rgba(140, 160, 174, 0.2), rgba(140, 160, 174, 0) 70%);
-  animation: bgCloud 40s ease-in-out infinite alternate;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(150, 168, 182, 0.8), rgba(120, 138, 152, 0.4));
+  -webkit-mask-image: var(--cloud-b); mask-image: var(--cloud-b);
+  -webkit-mask-repeat: repeat-x; mask-repeat: repeat-x;
+  -webkit-mask-size: 620px auto; mask-size: 620px auto;
+  -webkit-mask-position: 0 8%; mask-position: 0 8%;
+  filter: blur(12px) saturate(0.45);
+  opacity: 0.36;
+  animation: bgDriftFarRev 74s linear infinite;
 }
 .weatherBg.bg-cloudy::after {
-  bottom: 10%;
-  right: -24%;
-  width: 60vmax;
-  height: 26vmax;
-  border-radius: 50%;
-  background: radial-gradient(circle at center, rgba(111, 130, 148, 0.16), rgba(111, 130, 148, 0) 70%);
-  animation: bgCloud 52s ease-in-out infinite alternate-reverse;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 44%;
+  background: linear-gradient(0deg, rgba(158, 176, 190, 0.14), rgba(158, 176, 190, 0) 62%);
 }
-/* far: a wide, heavily blurred cloud band high in the scene, barely moving. */
 .weatherBg.bg-cloudy > .bgLayer--far {
-  background: radial-gradient(80% 40% at 30% 22%, rgba(140, 160, 174, 0.16), rgba(140, 160, 174, 0) 70%);
-  filter: blur(10px);
-  animation: bgCloud 70s ease-in-out infinite alternate-reverse;
+  background: linear-gradient(180deg, rgba(196, 210, 222, 0.9), rgba(150, 166, 180, 0.5));
+  -webkit-mask-image: var(--cloud-a); mask-image: var(--cloud-a);
+  -webkit-mask-size: 600px auto; mask-size: 600px auto;
+  -webkit-mask-position: 0 18%; mask-position: 0 18%;
+  filter: blur(8px) saturate(0.5);
+  opacity: 0.5;
+  animation: bgDriftFar 60s linear infinite;
 }
-/* mid: a moderate cloud mass drifting at a middling pace and blur, sitting
-   between the far haze and the sharp near cloud. */
 .weatherBg.bg-cloudy > .bgLayer--mid {
-  background: radial-gradient(52% 30% at 46% 32%, rgba(158, 176, 190, 0.18), rgba(158, 176, 190, 0) 70%);
-  filter: blur(5px);
-  animation: bgCloud 48s ease-in-out infinite alternate;
+  background: linear-gradient(180deg, rgba(206, 220, 230, 0.95), rgba(158, 174, 188, 0.55));
+  -webkit-mask-image: var(--cloud-b); mask-image: var(--cloud-b);
+  -webkit-mask-size: 460px auto; mask-size: 460px auto;
+  -webkit-mask-position: 0 34%; mask-position: 0 34%;
+  filter: blur(3px) saturate(0.85);
+  opacity: 0.7;
+  animation: bgDriftMid 34s linear infinite;
 }
-/* near: a smaller, sharper cloud drifting faster across the foreground. */
 .weatherBg.bg-cloudy > .bgLayer--near {
-  background: radial-gradient(34% 26% at 62% 40%, rgba(176, 192, 204, 0.2), rgba(176, 192, 204, 0) 68%);
-  filter: blur(2px);
-  animation: bgCloud 30s ease-in-out infinite alternate;
+  background: linear-gradient(180deg, rgba(216, 228, 238, 1), rgba(170, 186, 200, 0.6));
+  -webkit-mask-image: var(--cloud-a); mask-image: var(--cloud-a);
+  -webkit-mask-size: 360px auto; mask-size: 360px auto;
+  -webkit-mask-position: 0 52%; mask-position: 0 52%;
+  filter: blur(1px);
+  opacity: 0.85;
+  animation: bgDriftNear 17s linear infinite;
 }
-/* ground: dim horizon light under the overcast. */
 .weatherBg.bg-cloudy > .bgLayer--ground {
-  background: linear-gradient(0deg, rgba(140, 160, 174, 0.12), rgba(140, 160, 174, 0) 100%);
+  background:
+    var(--ridge-near) center bottom / 100% 100% no-repeat,
+    var(--ridge-far) center bottom / 100% 100% no-repeat,
+    linear-gradient(0deg, rgba(150, 168, 182, 0.12), rgba(150, 168, 182, 0) 100%);
   animation: bgGround 16s ease-in-out infinite alternate;
 }
 
-/* RAIN (also drizzle, showers, thunder) — darker sky, a heavy drifting cloud,
-   and a faint diagonal rain sheen sliding down. */
+/* RAIN (also drizzle, showers, thunder) — darker sky lightening to the horizon, a
+   dark storm cloud overhead, three planes of discrete streaks falling along their
+   own 9deg axis (the plane is rotated so drops travel down-tilt), and a ridge
+   horizon with the far ridge dropped to 50% for the visibility loss of rain. */
 .weatherBg.bg-rain {
-  background: linear-gradient(180deg, #1c2734 0%, #121b26 55%, var(--ground) 100%);
+  --s0: #101b27; --s1: #223440; --s2: #3b5262; --hz: #4d6577;
+  background: linear-gradient(180deg, var(--s0) 0%, var(--s1) 44%, var(--s2) 76%, var(--hz) 89%, var(--ground) 100%);
 }
 .weatherBg.bg-rain::before {
-  top: -8%;
-  left: -18%;
-  width: 62vmax;
-  height: 30vmax;
-  border-radius: 50%;
-  background: radial-gradient(circle at center, rgba(120, 140, 158, 0.22), rgba(120, 140, 158, 0) 70%);
-  animation: bgCloud 46s ease-in-out infinite alternate;
+  left: 0;
+  right: 0;
+  top: -6%;
+  height: 46%;
+  background: linear-gradient(180deg, rgba(120, 138, 152, 0.85), rgba(70, 84, 96, 0.5));
+  -webkit-mask-image: var(--cloud-b); mask-image: var(--cloud-b);
+  -webkit-mask-repeat: repeat-x; mask-repeat: repeat-x;
+  -webkit-mask-size: 460px auto; mask-size: 460px auto;
+  -webkit-mask-position: 0 40%; mask-position: 0 40%;
+  filter: blur(3px);
+  opacity: 0.75;
+  animation: bgDriftMid 40s linear infinite;
 }
-.weatherBg.bg-rain::after {
-  inset: 0;
-  background-image: repeating-linear-gradient(74deg, rgba(160, 190, 214, 0.07) 0 1px, rgba(160, 190, 214, 0) 1px 9px);
-  animation: bgRain 0.9s linear infinite;
-}
-/* far: a broad, blurred storm cloud drifting slowly high overhead. */
 .weatherBg.bg-rain > .bgLayer--far {
-  background: radial-gradient(90% 44% at 66% 12%, rgba(120, 140, 158, 0.2), rgba(120, 140, 158, 0) 70%);
-  filter: blur(9px);
-  animation: bgCloud 60s ease-in-out infinite alternate-reverse;
+  inset: -20%;
+  background-image: var(--rain-far);
+  background-repeat: repeat;
+  background-size: 400px 520px;
+  transform: rotate(9deg);
+  filter: blur(2px);
+  opacity: 0.5;
+  animation: bgRainFar 1.5s linear infinite;
 }
-/* mid: a middle sheet of rain streaks between the base ::after sheen and the
-   coarse near streaks — moderate angle, gauge and speed. */
 .weatherBg.bg-rain > .bgLayer--mid {
-  background-image: repeating-linear-gradient(76deg, rgba(170, 198, 220, 0.09) 0 1px, rgba(170, 198, 220, 0) 1px 12px);
-  animation: bgRain 0.72s linear infinite;
+  inset: -20%;
+  background-image: var(--rain-mid);
+  background-repeat: repeat;
+  background-size: 460px 600px;
+  transform: rotate(9deg);
+  filter: blur(1px);
+  opacity: 0.72;
+  animation: bgRainMid 1s linear infinite;
 }
-/* near: coarser, faster rain streaks at a steeper angle for foreground depth. */
 .weatherBg.bg-rain > .bgLayer--near {
-  background-image: repeating-linear-gradient(78deg, rgba(180, 206, 226, 0.11) 0 2px, rgba(180, 206, 226, 0) 2px 15px);
-  animation: bgRainNear 0.55s linear infinite;
+  inset: -20%;
+  background-image: var(--rain-near);
+  background-repeat: repeat;
+  background-size: 520px 680px;
+  transform: rotate(9deg);
+  opacity: 0.9;
+  animation: bgRainNearFall 0.7s linear infinite;
 }
-/* ground: a wet sheen catching the light at the bottom of the scene. */
 .weatherBg.bg-rain > .bgLayer--ground {
-  background: linear-gradient(0deg, rgba(120, 140, 158, 0.18), rgba(120, 140, 158, 0) 100%);
+  background:
+    var(--ridge-near) center bottom / 100% 100% no-repeat,
+    var(--ridge-far-dim) center bottom / 100% 100% no-repeat,
+    linear-gradient(0deg, rgba(150, 180, 200, 0.2), rgba(150, 180, 200, 0) 100%);
   animation: bgGround 9s ease-in-out infinite alternate;
 }
 
-/* SNOW — cool light sky with slowly drifting flakes. */
+/* SNOW — cool sky lightening to the horizon, with slowly drifting flakes at three
+   depths over a lit snow ground and a ridge horizon. */
 .weatherBg.bg-snow {
-  background: linear-gradient(180deg, #2a3949 0%, #1a2634 55%, var(--ground) 100%);
+  --s0: #172637; --s1: #33495e; --s2: #52708c; --hz: #6b869f;
+  background: linear-gradient(180deg, var(--s0) 0%, var(--s1) 44%, var(--s2) 76%, var(--hz) 89%, var(--ground) 100%);
 }
 .weatherBg.bg-snow::before,
 .weatherBg.bg-snow::after {
@@ -314,7 +401,6 @@ body {
   opacity: 0.6;
   animation: bgSnow 22s linear infinite;
 }
-/* far: tiny, faint, blurred flakes falling slowly in the deep background. */
 .weatherBg.bg-snow > .bgLayer--far {
   background-image:
     radial-gradient(1px 1px at 16% 12%, rgba(255, 255, 255, 0.55), transparent 60%),
@@ -330,9 +416,6 @@ body {
   opacity: 0.7;
   animation: bgSnow 30s linear infinite;
 }
-/* mid: medium flakes at a moderate pace and a hair of blur — the middle plane
-   that fills the gap between the faint far field and the glowing near flakes, so
-   snow reads as three depth layers rather than a foreground-and-backdrop pair. */
 .weatherBg.bg-snow > .bgLayer--mid {
   background-image:
     radial-gradient(2px 2px at 24% 18%, rgba(255, 255, 255, 0.75), transparent 60%),
@@ -346,7 +429,6 @@ body {
   opacity: 0.85;
   animation: bgSnow 16s linear infinite;
 }
-/* near: large foreground flakes with a soft glow, falling fast. */
 .weatherBg.bg-snow > .bgLayer--near {
   background-image:
     radial-gradient(3.4px 3.4px at 26% 16%, rgba(255, 255, 255, 0.95), transparent 62%),
@@ -357,16 +439,20 @@ body {
   filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.7));
   animation: bgSnow 8s linear infinite;
 }
-/* ground: a lit band of settled snow glowing at the bottom of the scene. */
 .weatherBg.bg-snow > .bgLayer--ground {
-  height: 30%;
-  background: linear-gradient(0deg, rgba(234, 240, 246, 0.28), rgba(234, 240, 246, 0.05) 60%, rgba(234, 240, 246, 0) 100%);
+  height: 34%;
+  background:
+    var(--ridge-near) center bottom / 100% 100% no-repeat,
+    var(--ridge-far) center bottom / 100% 100% no-repeat,
+    linear-gradient(0deg, rgba(234, 240, 246, 0.32), rgba(234, 240, 246, 0.06) 55%, rgba(234, 240, 246, 0) 100%);
   animation: bgGround 11s ease-in-out infinite alternate;
 }
 
-/* FOG (also mist, haze) — muted sky with slow horizontal haze bands. */
+/* FOG (also mist, haze) — muted sky lightening to the horizon, slow horizontal
+   haze bands across the depth planes, and a ridge horizon barely showing through. */
 .weatherBg.bg-fog {
-  background: linear-gradient(180deg, #232c35 0%, #182029 55%, var(--ground) 100%);
+  --s0: #161f29; --s1: #2c3b49; --s2: #47596a; --hz: #5b6f80;
+  background: linear-gradient(180deg, var(--s0) 0%, var(--s1) 44%, var(--s2) 76%, var(--hz) 89%, var(--ground) 100%);
 }
 .weatherBg.bg-fog::before {
   inset: 0;
@@ -375,31 +461,29 @@ body {
     linear-gradient(0deg, rgba(140, 160, 174, 0) 54%, rgba(140, 160, 174, 0.1) 72%, rgba(140, 160, 174, 0) 88%);
   animation: bgFog 24s ease-in-out infinite alternate;
 }
-/* far: a thin, high haze band drifting the other way, slower. */
 .weatherBg.bg-fog > .bgLayer--far {
   background-image: linear-gradient(0deg, rgba(140, 160, 174, 0) 8%, rgba(140, 160, 174, 0.08) 22%, rgba(140, 160, 174, 0) 38%);
   filter: blur(3px);
   opacity: 0.8;
   animation: bgFog 34s ease-in-out infinite alternate-reverse;
 }
-/* mid: a middle haze band drifting between the thin far band and the low near
-   mass, moderately blurred. */
 .weatherBg.bg-fog > .bgLayer--mid {
   background-image: linear-gradient(0deg, rgba(150, 168, 182, 0) 24%, rgba(150, 168, 182, 0.1) 44%, rgba(150, 168, 182, 0) 62%);
   filter: blur(5px);
   opacity: 0.85;
   animation: bgFog 26s ease-in-out infinite alternate;
 }
-/* near: a soft, heavily blurred haze mass low in the scene. */
 .weatherBg.bg-fog > .bgLayer--near {
   background-image: linear-gradient(0deg, rgba(176, 192, 204, 0.14) 0%, rgba(176, 192, 204, 0.06) 40%, rgba(176, 192, 204, 0) 68%);
   filter: blur(8px);
   animation: bgFog 18s ease-in-out infinite alternate;
 }
-/* ground: a dense fog pool settling along the bottom. */
 .weatherBg.bg-fog > .bgLayer--ground {
   height: 42%;
-  background: linear-gradient(0deg, rgba(176, 192, 204, 0.22), rgba(176, 192, 204, 0) 100%);
+  background:
+    var(--ridge-near) center bottom / 100% 100% no-repeat,
+    var(--ridge-far) center bottom / 100% 100% no-repeat,
+    linear-gradient(0deg, rgba(176, 192, 204, 0.22), rgba(176, 192, 204, 0) 100%);
   animation: bgGround 15s ease-in-out infinite alternate;
 }
 
@@ -413,15 +497,14 @@ body {
   100% { opacity: 1; }
 }
 
-@keyframes bgCloud {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(10%); }
-}
-
-@keyframes bgRain {
-  0%   { background-position: 0 0; }
-  100% { background-position: -9px 32px; }
-}
+/* Cloud-plane drift: the mask PATTERN scrolls one tile width per loop (seamless,
+   since the tile repeats every tile width and the paint gradient is uniform in
+   x). Distinct durations per plane read as parallax; the plane itself never moves
+   so coverage is viewport-independent. */
+@keyframes bgDriftFar    { from { -webkit-mask-position-x: 0; mask-position-x: 0; } to { -webkit-mask-position-x: -600px; mask-position-x: -600px; } }
+@keyframes bgDriftFarRev { from { -webkit-mask-position-x: -620px; mask-position-x: -620px; } to { -webkit-mask-position-x: 0; mask-position-x: 0; } }
+@keyframes bgDriftMid    { from { -webkit-mask-position-x: 0; mask-position-x: 0; } to { -webkit-mask-position-x: -460px; mask-position-x: -460px; } }
+@keyframes bgDriftNear   { from { -webkit-mask-position-x: 0; mask-position-x: 0; } to { -webkit-mask-position-x: -360px; mask-position-x: -360px; } }
 
 @keyframes bgSnow {
   0%   { transform: translateY(-50%); }
@@ -433,11 +516,12 @@ body {
   100% { transform: translateY(4%);  opacity: 1; }
 }
 
-/* A steeper, faster fall for the near rain plane so it reads ahead of ::after. */
-@keyframes bgRainNear {
-  0%   { background-position: 0 0; }
-  100% { background-position: -15px 44px; }
-}
+/* Rain fall: background-position-y advances one tile height per loop (seamless);
+   the plane's static rotate(9deg) is outside the keyframe, so the tilt holds and
+   the streaks fall along their own axis rather than across it. */
+@keyframes bgRainFar      { from { background-position: 0 0; } to { background-position: 0 520px; } }
+@keyframes bgRainMid      { from { background-position: 0 0; } to { background-position: 0 600px; } }
+@keyframes bgRainNearFall { from { background-position: 0 0; } to { background-position: 0 680px; } }
 
 /* A gentle breathe for the ground-lighting accent across every category. */
 @keyframes bgGround {
@@ -445,21 +529,13 @@ body {
   100% { opacity: 1; }
 }
 
-/* Frozen while the tab is hidden (sky.js toggles .paused on visibilitychange). */
+/* Frozen while the tab is hidden (sky.js toggles .paused on visibilitychange).
+   Per the spec these treatments animate unconditionally — there is deliberately
+   no prefers-reduced-motion gate on the background. */
 .weatherBg.paused::before,
 .weatherBg.paused::after,
 .weatherBg.paused > .bgLayer {
   animation-play-state: paused;
-}
-
-/* Halt every treatment's motion under a reduced-motion preference — one static
-   frame per category. */
-@media (prefers-reduced-motion: reduce) {
-  .weatherBg::before,
-  .weatherBg::after,
-  .weatherBg > .bgLayer {
-    animation: none;
-  }
 }
 
 /* The ribbon and its readout share one flex column so a mobile location rotation
